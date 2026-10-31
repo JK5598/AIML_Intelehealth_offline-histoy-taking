@@ -1,0 +1,5 @@
+# Only needed for the AI version. The keyword (no-AI) version uses plain Python 3.
+llama-cpp-python>=0.3.36
+
+# Optional, for checking the code
+pyflakes

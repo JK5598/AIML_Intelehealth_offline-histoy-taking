@@ -1,0 +1,236 @@
+# Offline history-taking prototype (laptop version)
+
+A Python prototype of the history-taking module. It runs in a terminal on a laptop, fully offline once the files are downloaded. The goal is to get the logic and the AI prompts right on a laptop first, then port them to Android.
+
+## What it does
+
+1. The CHW enters age and sex.
+2. The CHW picks the main complaint by number, or types the patient's words and the AI suggests a match.
+3. The CHW can type more of the patient's story in their own words.
+4. The app walks the Intelehealth protocol one question at a time. For each question it:
+   - checks whether the patient's story already answered it, and if so asks the CHW to confirm instead of asking again (AI only)
+   - notices what the patient said "no" to and offers to save it as a "No" (works without AI too)
+   - otherwise shows the options; the CHW types a number, or the patient's words for the AI to map
+   - skips questions by age and sex, enforces required questions, and asks the follow-up questions under each answer
+5. It runs past medical history and family history.
+6. It shows a red-flag alert as soon as a danger sign is recorded, and a softer "possible red flag, please check" when a danger sign only came up next to a "no" or "not".
+7. It prints a summary for the doctor (template, or an AI draft) with the physical-exam steps, and saves the visit as JSON.
+
+## Files
+
+| File | Job |
+|---|---|
+| `main.py` | Runs one visit from start to finish and saves `visit.json` |
+| `protocols.py` | Loads the Intelehealth JSON files, fixes the known label errors, and reads the rules (required, multi-choice, age and sex filters) |
+| `intake.py` | The protocol walker: asks questions, follows branches, records answers |
+| `keyword_mapper.py` | **No-AI baseline**: matches the patient's words to options by shared keywords |
+| `ai_mapper.py` | **AI version**: MedPsy through llama.cpp, with constrained JSON output and thinking skipped |
+| `negation.py` | **No-AI negation check**: finds what the patient said "no" to ("no fever", "I have not fainted") |
+| `red_flags.py` | Red-flag rules (**placeholder list**, to be replaced with Intelehealth's or a clinician's criteria) |
+| `summary.py` | Template summary, and a check that red flags appear in the AI summary |
+| `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
+| `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
+| `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
+| `red_flag_cases.csv` | Patient sentences with the red flags (and possible red flags) they should raise |
+
+## Setup
+
+```bash
+# 1. Protocol files
+git clone https://github.com/Intelehealth/intelehealth-ayu-protocols.git
+
+# 2. llama.cpp for Python (only needed for the AI version)
+pip install llama-cpp-python
+
+# 3. A MedPsy model file (only needed for the AI version)
+#    1.7B, 1.3 GB:  https://huggingface.co/qvac/MedPsy-1.7B-GGUF  (medpsy-1.7b-q4_k_m-imat.gguf)
+#    4B,   2.7 GB:  https://huggingface.co/qvac/MedPsy-4B-GGUF    (medpsy-4b-q4_k_m-imat.gguf)
+```
+
+## Run it
+
+```bash
+PROTOCOLS="intelehealth-ayu-protocols/protocols/v2/All Protocols (JSON)"
+
+# No-AI baseline
+python main.py --protocols "$PROTOCOLS"
+
+# AI version
+python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf
+
+# Show questions in Hindi (the AI still works in English)
+python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf --language hi
+
+# Quick tests
+python smoke_test.py "$PROTOCOLS"
+python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
+```
+
+## How the main ideas show up in the code
+
+**Protocols lead, AI assists.** `intake.py` decides every question from the protocol tree. The AI is only called in `ai_mapper.py` for three things: matching the complaint, mapping the patient's words to options, and checking whether the story already answered a question. It can also draft the summary.
+
+**Constrained decoding.** Each AI call passes a *grammar* to llama.cpp (`one_number_grammar`, and `YES_NO_GRAMMAR` for the double-check). The grammar only allows replies like `{"answer": 2}`, using 0 or an option number that actually exists for that question, so the model can't invent an answer. The app sends short numbers (1, 2, 3...) instead of the long Intelehealth IDs and converts back to the IDs afterwards. That keeps the reply to about 7–8 tokens.
+
+**Skipping thinking.** `chat_prompt` ends with an empty `<think></think>` block (the prefill trick), so the model answers straight away.
+
+**"Not mentioned" option.** When checking the story, option 0 means "the patient didn't mention this." This was added because the first version, which filled the whole form in one go, made up a lot of answers (see the results below).
+
+**Best answer first, then "anything else?"** For every question the model may pick only ONE option (or 0). For a multi-choice question it is then asked again with the options it already picked listed as "Already recorded" and 0 meaning "Nothing else", up to 4 rounds. This replaced letting the model pick up to 3 numbers at once, which made it over-pick.
+
+**Negation is plain code, not AI.** `negation.py` looks for words like *no, not, never, without, denies* and treats the next few words (up to 5, stopping at a comma, period, or *but*) as things the patient said no to. If the patient sounds unsure ("not sure", "don't know", "don't think", "maybe"), nothing counts as a no. "Can't" is not treated as a no, because "can't breathe" or "can't stop vomiting" describes a symptom. It is used in three places:
+- **Guard:** if the AI picks an option the patient said no to, the pick is dropped before the CHW sees it.
+- **Saving "No" answers:** on multi-choice questions, the CHW sees the patient's words and is asked "Patient said they do NOT have: Fever. Save as 'No'?" Only on "y" is it saved, with `"status": "said_no"`. It shows as "Fever: patient said NO" in the summary. Questions the patient never mentioned are not saved as "No"; they stay blank.
+- **Red flags:** answers the CHW saved as "No" never raise a red flag. A danger sign that only appears inside a "no ..." phrase in the patient's words is NOT ignored: it is shown as a **possible** red flag ("please check with the patient"), because missing a real red flag is worse than a false alarm.
+
+We say "said_no" rather than "absent" (which reads like "no answer") or "denied" (the Intelehealth history files use "Denied" to mean the patient *refused to answer*).
+
+**CHW always confirms.** Every AI pick is shown as "Suggested: … Correct?" or "Patient already said: … Keep?". Nothing the AI suggests is saved without a yes.
+
+**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.3"):
+
+```
+schema_version, visit_id, created, synced
+patient            {age, sex}
+chief_complaint    {protocol, patient_words}
+patient_story      the patient's own words, as typed
+answers            one entry per answered/skipped question:
+    section        "hpi" | "past_history" | "family_history"
+    question_id, question
+    answer_ids, answers, value
+    status         "present" | "said_no" (patient said they don't have it) | "skipped" (CHW skipped an optional question)
+    source         "tapped" | "keyword" | "ai" | "from story" | null for skipped
+    patient_words
+red_flags, possible_red_flags, physical_exam_steps
+summary            {template, ai_draft}
+run_info           not patient data: mapper, minutes, questions_asked, filled_from_story,
+                   suggestions_accepted, suggestions_rejected, rejected_suggestions, ai_timings
+```
+
+`rejected_suggestions` keeps every suggestion the CHW said "no" to (complaint match, mapped answer, story pre-fill, or "save as No"), so we can measure how often the AI is wrong in real use. `suggestions_accepted` counts the ones the CHW kept.
+
+## Not done yet
+
+- Red-flag rules are placeholders.
+- Negation only understands English words and simple patterns.
+- The placeholder red-flag rules match exact phrases, so they miss other wordings (e.g. "vomited blood" is not caught, only "vomiting blood"). One case in `red_flag_cases.csv` fails on purpose to show this.
+- No ROS checklist yet (waiting to hear from Intelehealth).
+- Photo steps (`camera`) are skipped.
+- The AI summary is only checked for red flags, not yet fact by fact.
+- No real syncing; the visit file just has `"synced": false`.
+- This is a laptop terminal app. The Android version comes next.
+
+## First results (October 29, 2026)
+
+These ran on a 2-core cloud computer, so the speeds are much slower than a good laptop and aren't phone speeds. The test phrases were written by us, not checked by a clinician, so treat them as early signals.
+
+**1. Mapping the patient's words to one question's options** (`evaluate_mapping.py`, 18 phrases)
+
+| Method | Correct | Time per answer (2-core CPU) |
+|---|---|---|
+| Keyword baseline (no AI) | 6/18 (33%) | instant |
+| MedPsy-1.7B | 12–14/18 (67–78%) | ~2.3 s |
+| MedPsy-4B | 12–13/18 (67–72%) | ~5.3 s |
+
+- The AI understands everyday phrasing the baseline misses completely ("around my belly button" → Umbilical, "nothing comes out when I cough" → Dry).
+- On multi-select questions, the 4B often picks **too many** options (for example, the right region plus a neighboring one). Most of its misses were this kind.
+- Small wording changes in the prompt shifted the scores by 1–2 cases, so we need a bigger test set before trusting the numbers.
+- Fixing the "Lower (R) - Left Illiac Fossa" label error helped: after the fix, 1.7B got "lower left side" right.
+
+**2. Filling several questions from one story** ("one sentence fills many questions")
+- First try: one prompt that filled the whole form at once. **Both models made up many answers** (smoking, medications, treatments the patient never mentioned). We dropped this approach.
+- Current approach: check the story **one question at a time**, with an explicit "0 = not mentioned" option. The 4B was much better at saying "not mentioned," but it still over-picks on multi-select questions, and once it picked "Fever" when the patient said "no fever."
+- In a full test visit, 6 of 12 complaint questions were pre-filled from one sentence, but some of those suggestions were wrong. **CHW confirmation is essential**, and we should measure confirmed vs rejected suggestions.
+
+**3. AI-written summary: not safe yet**
+The 4B summary **invented facts**: exam findings that were never done, "no allergies" when the patient had allergies, and a possible diagnosis. It also leaked some of its thinking text. So the app now uses the **template summary by default**, and the AI draft only appears with `--ai-summary`, clearly labeled. This matches our plan to keep summaries checkable.
+
+**4. Speed**
+A full test visit took about 3.5 minutes of AI time on the 2-core computer, around 5 s per AI step with the 4B. We still need to measure real phone speed.
+
+## Second results (October 29, 2026): negation and over-picking fixes
+
+Same 2-core cloud computer. The test set grew from 18 to **57 cases** (`test_cases.csv`): 35 "map these words to this question" cases and 22 "did the patient's story already answer this?" cases, including multi-answer and "no ..." phrases. The first 18 are our own phrases from the first session; the 39 new ones were written by the AI assistant (Claude) during this session. None come from real patients, and **no clinician has checked them**, so the scores are likely optimistic.
+
+**What changed in the code**
+1. `negation.py` (no AI) finds what the patient said "no" to. AI picks that contradict it are dropped, and the CHW is offered to record them as absent (renamed "said_no" in the evening, see below).
+2. The model picks **one** best option at a time instead of up to three at once.
+3. For multi-choice questions it is then asked "anything else?" (0 = nothing else), and any extra pick has to pass a separate **yes/no double-check** ("Did the patient clearly say *Eye pain*?").
+
+**Results on the 57 cases**
+
+| Version | Model | Correct (words) | Correct (story) | Extra picks | Missed picks | Picked something the patient said NO to | AI calls | Avg s / call |
+|---|---|---|---|---|---|---|---|---|
+| Keyword baseline | none | 11/35 | 8/22 | 9 | 38 | 0 | 0 | – |
+| Old (pick up to 3 at once) | 1.7B | 19/35 | 8/22 | 34 | 17 | 2 | 57 | 2.6 |
+| Old (pick up to 3 at once) | 4B | 19/35 | 9/22 | 44 | 8 | 3 | 57 | 6.4 |
+| Best first + "anything else?" | 1.7B | 22/35 | 12/22 | 26 | 5 | 0 | 108 | 2.5 |
+| Best first + "anything else?" | 4B | 27/35 | 16/22 | 23 | 3 | 0 | 112 | 5.8 |
+| **+ double-check extra picks (kept)** | **1.7B** | **28/35** | **15/22** | **8** | **9** | **0** | **109** | **2.6** |
+| **+ double-check extra picks (kept)** | **4B** | **28/35** | **17/22** | **5** | **10** | **0** | **107** | **6.0** |
+| + double-check every story pick too | 1.7B | 28/35 | 15/22 | 4 | 14 | 0 | 121 | 2.8 |
+| + double-check every story pick too | 4B | 28/35 | 12/22 | 2 | 18 | 0 | 115 | 6.3 |
+
+**What we learned**
+- Asking for one best answer, then "anything else?", fixed most of the 4B's over-picking. The extra rounds still picked neighbors (the next abdominal region, "Nausea" after "Vomiting") until we added the yes/no double-check.
+- Double-checking *every* story pick went too far: the model said "no" to correct answers written in medical words (it rejected "Right Hypochondrium" for "near my right ribs"). So only the extra picks are double-checked.
+- After the negation guard, neither model ever suggested something the patient said "no" to (was 2–3 times before).
+- The **1.7B is now about as accurate as the 4B at less than half the time per call**, which matters for phones.
+- The negation code found the right "no" answers in 33/33 multi-choice cases, but we wrote those cases together with the rules, so this number is optimistic. It also misses synonyms ("no stomach pain" doesn't match "Abdominal pain") and only reads English.
+- The main remaining error: on single-choice questions the story never mentioned (severity, nature of fever), the model sometimes still fills in an answer ("Moderate"). The CHW has to reject these, so we should count how often that happens with real users.
+- The red-flag check used to search the raw words, so "chest pain, no shortness of breath" raised the breathlessness alert. At this point we made it ignore "no ..." phrases and absent answers; that turned out to hide real red flags and was changed in the evening (see below).
+
+**What to improve next**
+- Get the test set checked by a clinician (`checked_by` column) and grow it from Intelehealth's case histories
+- Stop invented answers on single-choice story questions (for example, only pre-fill single-choice questions when the double-check also says yes)
+- Hindi / Hinglish negation words in `negation.py`, once we know how CHWs type
+- Port to Android and measure on a real mid-range phone
+
+## Fixes after review (October 29, 2026, evening)
+
+- **"absent" renamed to "said_no".** "Absent" read like "no answer". The CHW prompt now shows the patient's words and asks "Save as 'No'?". The summary shows the patient's own words near the top. Record `schema_version` is now 0.3.
+- **Unsure is not a no.** "not sure if I have chills" used to be offered as "No chills". Now "not sure", "don't know", "don't think" and "maybe" stop the negation.
+- **"Can't" removed from the negation words.** With it, "I can't stop vomiting blood" raised NO red flag, because the words after "can't" were thrown away. That was a dangerous miss introduced earlier the same day.
+- **Red flags now err toward alerting.** Danger signs inside "no ..." phrases are shown as *possible* red flags instead of being dropped. Answers the CHW saved as "No" still never alert.
+- **New tests:** 8 negation-only cases in `test_cases.csv` (mode `negation`) and 10 cases in `red_flag_cases.csv`. Results: "said no" found correctly in 41/41 multi-choice cases; red flags 9/10 (the miss is the placeholder rule gap above). These were also written by the AI assistant and are not clinician-checked.
+- The AI scores above are unchanged: the negation change gives the same result on every option of the 57 earlier cases.
+- **Possible red flags go away once the CHW saves the matching "No".** `red_flags.check()` drops a possible red flag when the complaint name plus the labels saved as "No" match the same rule (for example "Chest Discomfort or Pain" + "Difficulty breathing"). Real red flags are never hidden. `intake.py` cleans its list after every answer, so the summary and `possible_red_flags` in the record only list flags that are still open. `red_flag_cases.csv` has a new `said_no_labels` column and 3 new cases (12/13 pass; the miss is the same placeholder rule gap).
+- **Story answers no longer get cut short.** `value_from_story()` now allows up to 150 characters (apostrophes too, but never `"` or `\`, so the reply stays valid JSON). A plain-code check then throws the answer away (treated as "not mentioned") if fewer than half of its words are the patient's own words.
+
+## Story check results (October 29, 2026, night)
+
+**The problem.** When the patient's story never talked about a single-choice question (severity, nature of fever), the model often still picked an answer. Only the *extra* picks on multi-choice questions were double-checked.
+
+**What changed**
+- `protocols.story_prefill_allowed()`: questions whose text says "severe" or "severity" are never pre-filled from the story; they are always asked. The words are in `NO_STORY_PREFILL_WORDS`. `evaluate_mapping.py` uses the same rule.
+- `AIMapper(story_check=...)` adds an optional check on the first pick of single-choice story questions. Multi-choice questions and typed answers are unchanged. The default is `"yes_no"` (chosen after the results below); `"off"` gives the old behavior. Choose it with `--story-check` in `main.py` and `evaluate_mapping.py`, or as the third argument of `smoke_test.py`.
+  - `yes_no`: reuses the existing yes/no double-check (`patient_clearly_said`).
+  - `evidence`: the model must quote the patient's words, and plain code keeps the pick only if the quote really is in the story.
+- 25 new `story` rows in `test_cases.csv`, all on single-choice questions: 15 where the story does not mention the topic, 10 where it clearly does. They were **written by the AI assistant (Claude) and are not clinician-checked**. There are now 47 story cases: 23 with "none" expected, 24 with an answer.
+- New number in the report: **invented answers** (story cases with "none" expected where something was picked).
+
+**Results** (65 answer + story cases; run on an Apple M5 laptop with 10 CPU cores and 16 GB, CPU only, so the speeds are not comparable with the 2-core cloud numbers above)
+
+| Story check | Model | Correct (words) | Correct (story) | Extra picks | Missed picks | Invented answers | Picked something the patient said NO to | AI calls | Avg s / call |
+|---|---|---|---|---|---|---|---|---|---|
+| none (keyword baseline) | none | 11/35 | 23/47 | 9 | 48 | 0 | 0 | 0 | – |
+| off | 1.7B | 28/35 | 33/47 | 15 | 10 | 11 | 0 | 128 | 0.6 |
+| off | 4B | 28/35 | 41/47 | 6 | 12 | 1 | 0 | 128 | 1.5 |
+| yes_no | 1.7B | 28/35 | 38/47 | 4 | 16 | **0** | 0 | 154 | 0.8 |
+| yes_no | 4B | 28/35 | 35/47 | 2 | 19 | **0** | 0 | 145 | 1.9 |
+| evidence | 1.7B | 28/35 | 30/47 | 9 | 19 | 5 | 0 | 128 | 1.0 |
+| evidence | 4B | 28/35 | 38/47 | 9 | 13 | 3 | 0 | 128 | 2.1 |
+
+The baseline's "story" score went up from 8/22 because it never picks anything, and most new story cases expect "none".
+
+**What we learned**
+- `yes_no` stopped every invented answer on both models. The price is correct answers it rejected (the question is then asked normally): 6 on the 1.7B and 7 on the 4B. Examples: "Wet" from "a lot of yellow phlegm", "Irregular" from "comes and goes", "No" from "I don't smoke".
+- `evidence` did not work well. The quote only proves the words are in the story, not that they support the answer ("chills and weakness" was accepted as evidence for "Irregular (comes & goes)"). The 1.7B also lost good answers by writing `Patient said '...'` around its quote, or "sudden" when the story said "suddenly".
+- The 4B with `off` already invents very little (1/23). The 1.7B with `off` invents a lot (11/23), so the check matters most for the small model we want on phones.
+
+**`value_from_story()` test** (`check_value_from_story.py`: 17 cases, 11 where the story does not answer the question). `mostly_from_story()` now skips words of 3 letters or fewer, but always counts numbers.
+
+| Model | Invented answers that got through | Stopped by the model ("not mentioned") | Stopped by the word check | Good answers kept |
+|---|---|---|---|---|
+| 1.7B | 1 ("Additional information" + story "Fever" gave "Fever") | 9 | 1 ("since yesterday" for a story with no time) | 6/6 |
+| 4B | 0 | 11 | 0 | 6/6 |
