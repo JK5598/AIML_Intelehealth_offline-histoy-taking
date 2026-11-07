@@ -12,6 +12,68 @@ VISITS = [
     ("bad headache", "Throbbing headache on one side since yesterday, light hurts my eyes, I feel like vomiting."),
 ]
 
+# Option questions the CHW answers by typing the patient's words: (question starts with, patient's words).
+# About half of the option questions in the three visits are on this list; the rest get a number as before.
+PATIENT_WORDS = [
+    ("which part of the abdomen", "near my right ribs"),
+    ("how did the pain start", "it started suddenly"),
+    ("character of the pain", "it comes and goes"),
+    ("describe the pain", "it feels like cramps"),
+    ("what worsens the pain", "it hurts more after eating"),
+    ("what relieves", "it gets better after I vomit"),
+    ("how does fever change", "it comes and goes"),
+    ("in a day, when do you feel fever", "mostly at night"),
+    ("which part of your head", "all over my head"),
+    ("how did the symptom start", "it started yesterday morning, I remember the time"),
+    ("character of headache", "it throbs"),
+    ("in a day, when do you feel pain", "worst when I wake up"),
+    ("does the symptom get worse", "when I bend down"),
+    ("do you have the following symptom", "nausea and vomiting"),
+    ("do you have a history of any", "I have sugar disease"),
+    ("current medication", "I'm not taking any medicine"),
+    ("do you have any allergies", "no allergies"),
+    ("smoking history", "I have never smoked"),
+    ("alcohol use", "I don't drink"),
+    ("do you have a family history", "my mother has high blood pressure"),
+]
+
+
+class WordsConsole(AutoConsole):
+    """Like AutoConsole, but answers the option questions in PATIENT_WORDS with the patient's words.
+    If the AI can't match them, the question comes back and gets a number instead."""
+
+    def __init__(self, complaint_words, story):
+        super().__init__(complaint_words, story)
+        self.question = ""
+        self.option_questions = set()
+        self.answered_in_words = set()
+
+    def show(self, text=""):
+        super().show(text)
+        if text and not text.startswith(" "):
+            self.question = text.lower()
+
+    def ask(self, prompt):
+        if "Number(s)" in prompt:
+            self.option_questions.add(self.question)
+        words = self.words_for(prompt)
+        if words is None:
+            return super().ask(prompt)
+        self.answered_in_words.add(self.question)
+        self.log.append(prompt + " " + words)
+        return words
+
+    def words_for(self, prompt):
+        # Let AutoConsole type its '?' and '?2' first, and never retype words for the same question.
+        if "Number(s)" not in prompt or not self.help_asked_on_option:
+            return None
+        if self.question in self.answered_in_words:
+            return None
+        for start, words in PATIENT_WORDS:
+            if self.question.startswith(start):
+                return words
+        return None
+
 # Task names used in ai_mapper.py, grouped the way we report them.
 GROUPS = {
     "match complaint": "complaint match",
@@ -68,11 +130,17 @@ def run(model_path, folder):
     all_visits = {}
     for number, (complaint_words, story) in enumerate(VISITS, start=1):
         mapper.timings = []
-        console = AutoConsole(complaint_words, story)
+        console = WordsConsole(complaint_words, story)
         visit = run_visit(console, mapper, folder)
         totals = add_up(visit["run_info"]["ai_timings"])
         print_table(f"Visit {number}: {visit['chief_complaint']['protocol']} "
                     f"(\"{complaint_words}\")", totals)
+        mapped = 0
+        for answer in visit["answers"]:
+            if answer["source"] == mapper.name:
+                mapped += 1
+        print(f"   {len(console.answered_in_words)} of {len(console.option_questions)} option questions "
+              f"answered in the patient's words; the AI matched {mapped} of them")
         for group, row in totals.items():
             if group not in all_visits:
                 all_visits[group] = empty_row()
