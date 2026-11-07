@@ -254,15 +254,15 @@ class AIMapper:
                 break
         return picked
 
-    def map_answer(self, question_text, option_labels, patient_words, multi_choice):
+    def map_answer(self, question_text, option_labels, patient_words, multi_choice, task="map answer"):
         words_line = f"Patient said: \"{patient_words}\""
         picked = self.pick_best_then_more(ANSWER_RULES, words_line, question_text, option_labels,
-                                          multi_choice, "Unclear / no option matches", "map answer")
+                                          multi_choice, "Unclear / no option matches", task)
         return {"indexes": picked, "unclear": not picked}
 
     def match_complaint(self, complaint_names, patient_words):
         return self.map_answer("What is the patient's main complaint?", complaint_names,
-                               patient_words, multi_choice=False)
+                               patient_words, multi_choice=False, task="match complaint")
 
     def answer_from_story(self, question_text, option_labels, story, multi_choice):
         """Checks one question against the patient's story. Returns [] when it wasn't mentioned."""

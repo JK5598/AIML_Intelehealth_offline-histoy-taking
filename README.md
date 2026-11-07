@@ -38,6 +38,7 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `red_flag_cases.csv` | Patient sentences with the red flags (and possible red flags) they should raise |
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
+| `workload_report.py` | Runs 3 automatic visits with a model and prints AI calls, tokens and seconds per visit, split by task |
 | `explanation_results_<model>.csv` | Made by `evaluate_explanations.py`: the AI's sentence next to the expected meaning, with an empty `correct (y/n/partly)` column |
 
 ## Setup
@@ -72,6 +73,7 @@ python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf --lan
 python smoke_test.py "$PROTOCOLS"
 python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
 python evaluate_explanations.py medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf          # reads explanation_test_cases.csv
+python workload_report.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # AI work per visit
 ```
 
 ## How the main ideas show up in the code
@@ -314,3 +316,23 @@ The slowest word is always the first one: the model reads the rules and the exam
 - **Option words, 1.7B:** they changed too, because the prompt changed. Terminal dribbling is now right ("at the very end of urinating") and Metallic taste lost "cleaned with bleach", but Double vision got worse ("seeing two things that aren't there"). Photophobia is still wrong ("like the room is spinning") and Gonorrhoea is still tied to the eye.
 - **4B:** mostly right both times. Still off: Provocative factors ("better or worse"), Migratory (rash), and Transient got worse ("goes away and comes back").
 - Phonophobia is no longer "fear of loud sounds" on either model.
+
+## Workload per visit (November 7, 2026)
+
+`workload_report.py` runs 3 automatic visits with `smoke_test.py`'s `AutoConsole`: Abdominal Pain ("my stomach pain"), Fever ("I have fever") and Headache ("bad headache"), each with a short story. It adds up `run_info["ai_timings"]` by task. Apple M5 laptop, 10 CPU cores, CPU only, one model at a time. Averages per visit:
+
+| Task | 1.7B calls | 1.7B prompt / output tokens | 1.7B seconds | 4B calls | 4B prompt / output tokens | 4B seconds |
+|---|---|---|---|---|---|---|
+| Complaint match | 1.0 | 511 / 7 | 1.7 | 1.0 | 511 / 7 | 4.3 |
+| Option mapping | 0 | 0 / 0 | 0 | 0 | 0 / 0 | 0 |
+| Story check | 13.3 | 2593 / 90 | 7.8 | 12.0 | 2320 / 91 | 15.4 |
+| Yes/no check | 4.3 | 546 / 26 | 2.2 | 2.0 | 244 / 12 | 2.3 |
+| Explain | 1.3 | 833 / 20 | 2.3 | 1.3 | 836 / 16 | 5.8 |
+| **All** | **20.0** | **4482 / 143** | **14.1** | **16.3** | **3910 / 126** | **27.8** |
+
+- **Option mapping is 0 because `AutoConsole` always taps a number.** A CHW who types the patient's words would add one or more calls per question (each probably close to a story-check call: about 0.6 s on the 1.7B and 1.3 s on the 4B on this laptop), so these numbers are a floor, not a real visit.
+- The story check is most of the work: each question is checked against the story once (plus the yes/no double-check).
+- Visits differ a lot: from 14 to 23 calls (1.7B) and 12 to 20 calls (4B), depending on what the story pre-fills and which follow-up questions open.
+- Explain calls are few (`AutoConsole` types `?` twice and `?2` once per visit, and most Abdominal Pain and Fever words are in `explanations.json`), but each one costs about 620 prompt tokens because of the 7 worked examples. On Headache, which has no entries in the file, all 3 went to the AI.
+- The AI summary (`--ai-summary`) was not turned on, so it is not counted.
+- Seconds are not simply proportional to tokens: llama.cpp reuses the start of the prompt when it matches the previous call.
