@@ -78,6 +78,7 @@ EXPLAIN_RULES = ("You explain medical words to a community health worker who has
                  "Do not give advice. Do not guess a diagnosis. Answer in one short sentence only.")
 
 # Worked examples shown to the model before the real word: (complaint, question, option, good answer).
+# When option is None, the example explains the question itself.
 EXPLAIN_EXAMPLES = [
     ("Abdominal Pain", "Which part of the abdomen do you feel pain?", "Epigastric",
      "The upper middle part of the belly, just below where the ribs meet."),
@@ -88,6 +89,9 @@ EXPLAIN_EXAMPLES = [
      "and weight loss, and spreads through the air."),
     ("Abdominal Pain", "Timing", "Postprandial", "After eating."),
     ("Fever", "Character", "Intermittent", "Comes and goes."),
+    ("Fever", "Nature of fever", None,
+     "Asks about the pattern of the fever: is it there all the time, or does it come and go?"),
+    ("Cough", "What aggravates the cough?", None, "Asks what makes the cough worse."),
 ]
 
 STORY_CHECKS = ["off", "yes_no", "evidence"]
@@ -159,7 +163,10 @@ def explain_prompt(text, kind, question_text, complaint):
     """The rules, then the worked examples as earlier turns of the chat, then the real word."""
     prompt = f"<|im_start|>system\n{EXPLAIN_RULES}<|im_end|>\n"
     for example_complaint, example_question, example_option, answer in EXPLAIN_EXAMPLES:
-        user = explain_message(example_option, "option", example_question, example_complaint)
+        if example_option is None:
+            user = explain_message(example_question, "question", "", example_complaint)
+        else:
+            user = explain_message(example_option, "option", example_question, example_complaint)
         prompt += f"<|im_start|>user\n{user}<|im_end|>\n"
         prompt += f"<|im_start|>assistant\n{SKIP_THINKING}{answer}<|im_end|>\n"
     user = explain_message(text, kind, question_text, complaint)

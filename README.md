@@ -110,7 +110,7 @@ Where each explanation comes from, in this order:
 | AI (MedPsy) | not in the file, and a model is loaded | one short sentence + `(AI explanation – not checked)` |
 | nothing | not in the file and no model (keyword mode) | `No explanation available yet.` |
 
-If a word is in the file, the AI is never called for it. The AI call (`AIMapper.explain`) has no grammar because it needs free text, but it is capped at 60 tokens and cut to the first sentence. The rules (`EXPLAIN_RULES`) tell the model to give the usual medical meaning of the word itself in everyday words, for someone with no medical training, and not to tie it to the patient's complaint unless the word is about that body part. They also say: no advice, no diagnosis guessing, one sentence only. Before the real word, the prompt shows 5 worked examples (`EXPLAIN_EXAMPLES` in `ai_mapper.py`: Epigastric, Hemoptysis, Tuberculosis, Postprandial, Intermittent) as earlier turns of the chat, each answer starting with the same empty `<think></think>` prefill. To change the examples, edit that list. Each message starts with the chief complaint ("The patient's main complaint is Headache."); on the complaint list there is no complaint yet, so that line is left out. Each text is asked about once per visit.
+If a word is in the file, the AI is never called for it. The AI call (`AIMapper.explain`) has no grammar because it needs free text, but it is capped at 60 tokens and cut to the first sentence. The rules (`EXPLAIN_RULES`) tell the model to give the usual medical meaning of the word itself in everyday words, for someone with no medical training, and not to tie it to the patient's complaint unless the word is about that body part. They also say: no advice, no diagnosis guessing, one sentence only. Before the real word, the prompt shows 7 worked examples (`EXPLAIN_EXAMPLES` in `ai_mapper.py`) as earlier turns of the chat: 5 answer options (Epigastric, Hemoptysis, Tuberculosis, Postprandial, Intermittent) and 2 questions ("Nature of fever", "What aggravates the cough?"), each in the same message format as the real word, each answer starting with the same empty `<think></think>` prefill. To change the examples, edit that list. Each message starts with the chief complaint ("The patient's main complaint is Headache."); on the complaint list there is no complaint yet, so that line is left out. Each text is asked about once per visit.
 
 `explanations.json` has two parts:
 
@@ -294,17 +294,23 @@ The baseline's "story" score went up from 8/22 because it never picks anything, 
 
 ## Explanation test (November 7, 2026)
 
-**What changed.** New rules for `AIMapper.explain()`: give the usual medical meaning of the word itself, and don't tie it to the complaint unless the word is about that body part. Five worked examples are now shown to the model before the real word (`EXPLAIN_EXAMPLES`). In our earlier hand test, this cut wrong explanations on the 1.7B from 5/24 to 2/24 and made them faster.
+**What changed.** New rules for `AIMapper.explain()`: give the usual medical meaning of the word itself, and don't tie it to the complaint unless the word is about that body part. Worked examples are now shown to the model before the real word (`EXPLAIN_EXAMPLES`). In our earlier hand test, the new rules and 5 option examples cut wrong explanations on the 1.7B from 5/24 to 2/24 and made them faster. Then, because all 5 were answer options and most mistakes were on question words, we added 2 question examples ("Nature of fever", "What aggravates the cough?").
 
 **Test set.** `explanation_test_cases.csv` has 24 words that are not in `explanations.json`, from the Headache, Dizziness & Vertigo, Palpitations, Red or painful eye, Urine disturbance and Skin disorder protocols: 19 answer options and 5 questions (Paresthesia, Atopic dermatitis, Voiding difficulty, Provocative factors, Migratory). Phonophobia is not in the v2 Headache protocol (only in v3 Vomiting); it is listed under Headache so we can keep checking the old mistake. The expected meanings were **written by the AI assistant (Claude) and are not clinician-checked** (`checked_by` is empty).
 
 **Speed** (Apple M5 laptop, 10 CPU cores, CPU only, one model at a time)
 
-| Model | 24 words took | Average per word | Slowest word |
-|---|---|---|---|
-| MedPsy-1.7B | 9.8 s | 0.41 s | 1.61 s |
-| MedPsy-4B | 22.9 s | 0.95 s | 4.36 s |
+| Model | Examples | 24 words took | Average per word | Slowest word |
+|---|---|---|---|---|
+| MedPsy-1.7B | 5 options | 9.8 s | 0.41 s | 1.61 s |
+| MedPsy-1.7B | 5 options + 2 questions | 10.4 s | 0.43 s | 2.00 s |
+| MedPsy-4B | 5 options | 22.9 s | 0.95 s | 4.36 s |
+| MedPsy-4B | 5 options + 2 questions | 24.0 s | 1.00 s | 6.24 s |
 
-The slowest word is always the first one: the model reads the rules and the 5 examples once, and llama.cpp reuses that part of the prompt for the next words. In the app, other AI calls happen between explanations, so each `?N` will usually be closer to the first-word time.
+The slowest word is always the first one: the model reads the rules and the examples once, and llama.cpp reuses that part of the prompt for the next words. In the app, other AI calls happen between explanations, so each `?N` will usually be closer to the first-word time. The 2 extra examples made that first word about 0.4 s (1.7B) and 1.9 s (4B) slower.
 
-**Correctness: not graded yet.** The answers are in `explanation_results_medpsy-1.7b-q4_k_m-imat.csv` and `explanation_results_medpsy-4b-q4_k_m-imat.csv`; a person should fill in `correct (y/n/partly)`. A first look (by Claude, not a grade): the 4B was mostly right, with "Provocative factors" read as "what makes it better or worse" and "Migratory" tied to a rash instead of joint pain. The 1.7B had more clear mistakes, for example Photophobia ("like the room is spinning"), Metallic taste ("like it's been cleaned with bleach"), Terminal dribbling ("leaking when you try to stop"), Voiding difficulty ("trouble getting to the bathroom") and Atopic dermatitis (it asked a question back instead of explaining). Phonophobia is no longer "fear of loud sounds" on either model.
+**Correctness: not graded yet.** The answers from the latest run (7 examples) are in `explanation_results_medpsy-1.7b-q4_k_m-imat.csv` and `explanation_results_medpsy-4b-q4_k_m-imat.csv`; the 5-example answers are in the git history. A person should fill in `correct (y/n/partly)`. A first look (by Claude, not a grade):
+- **Question words, 1.7B:** the question examples helped. Paresthesia and Atopic dermatitis are now explained as questions ("Asks about tingling, numbness, or pins and needles..."; before, Atopic dermatitis got a question back instead of an explanation). Voiding difficulty is still wrong ("trouble getting or staying in the bathroom"), Migratory is still tied to a rash instead of joint pain, and Provocative factors went from "happen or get worse" to "happen or get better".
+- **Option words, 1.7B:** they changed too, because the prompt changed. Terminal dribbling is now right ("at the very end of urinating") and Metallic taste lost "cleaned with bleach", but Double vision got worse ("seeing two things that aren't there"). Photophobia is still wrong ("like the room is spinning") and Gonorrhoea is still tied to the eye.
+- **4B:** mostly right both times. Still off: Provocative factors ("better or worse"), Migratory (rash), and Transient got worse ("goes away and comes back").
+- Phonophobia is no longer "fear of loud sounds" on either model.
