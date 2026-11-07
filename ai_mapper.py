@@ -73,8 +73,22 @@ EVIDENCE_RULES = ("You help a community health worker fill in a patient history 
                   "Never pick something the patient said they do NOT have. Never guess.")
 
 EXPLAIN_RULES = ("You explain medical words to a community health worker who has no medical training. "
-                 "Explain what the word or question means in everyday words, simple enough for a 12-year-old. "
+                 "Give the usual medical meaning of the word itself, in everyday words, simple enough for a 12-year-old. "
+                 "Do not connect it to the patient's complaint unless the word is about that body part. "
                  "Do not give advice. Do not guess a diagnosis. Answer in one short sentence only.")
+
+# Worked examples shown to the model before the real word: (complaint, question, option, good answer).
+EXPLAIN_EXAMPLES = [
+    ("Abdominal Pain", "Which part of the abdomen do you feel pain?", "Epigastric",
+     "The upper middle part of the belly, just below where the ribs meet."),
+    ("Cough", "Associated symptoms", "Hemoptysis",
+     "Coughing up blood, or mucus (phlegm) with blood in it."),
+    ("Fever", "H/o specific illness", "Tuberculosis",
+     "An infection, usually of the lungs, that causes a long-lasting cough, fever, night sweats, "
+     "and weight loss, and spreads through the air."),
+    ("Abdominal Pain", "Timing", "Postprandial", "After eating."),
+    ("Fever", "Character", "Intermittent", "Comes and goes."),
+]
 
 STORY_CHECKS = ["off", "yes_no", "evidence"]
 
@@ -125,6 +139,33 @@ def evidence_in_story(evidence, story):
     evidence_text = " " + " ".join(evidence_words) + " "
     story_text = " " + " ".join(plain_words(story)) + " "
     return evidence_text in story_text
+
+
+def explain_message(text, kind, question_text, complaint):
+    message = ""
+    if complaint:
+        message += f"The patient's main complaint is {complaint}.\n"
+    if kind == "question":
+        message += (f"Question on a patient history form: \"{text}\"\n"
+                    f"What is this question asking? Explain in everyday words.")
+    else:
+        message += (f"Question on a patient history form: \"{question_text}\"\n"
+                    f"Answer option: \"{text}\"\n"
+                    f"What does \"{text}\" mean? Explain in everyday words.")
+    return message
+
+
+def explain_prompt(text, kind, question_text, complaint):
+    """The rules, then the worked examples as earlier turns of the chat, then the real word."""
+    prompt = f"<|im_start|>system\n{EXPLAIN_RULES}<|im_end|>\n"
+    for example_complaint, example_question, example_option, answer in EXPLAIN_EXAMPLES:
+        user = explain_message(example_option, "option", example_question, example_complaint)
+        prompt += f"<|im_start|>user\n{user}<|im_end|>\n"
+        prompt += f"<|im_start|>assistant\n{SKIP_THINKING}{answer}<|im_end|>\n"
+    user = explain_message(text, kind, question_text, complaint)
+    prompt += f"<|im_start|>user\n{user}<|im_end|>\n"
+    prompt += f"<|im_start|>assistant\n{SKIP_THINKING}"
+    return prompt
 
 
 def first_sentence(text):
@@ -263,17 +304,8 @@ class AIMapper:
 
     def explain(self, text, kind, question_text="", complaint=""):
         """One short, plain sentence about a question or an answer option. Free text, so no grammar."""
-        user = ""
-        if complaint:
-            user += f"The patient's main complaint is {complaint}.\n"
-        if kind == "question":
-            user += (f"Question on a patient history form: \"{text}\"\n"
-                     f"What is this question asking? Explain in everyday words.")
-        else:
-            user += (f"Question on a patient history form: \"{question_text}\"\n"
-                     f"Answer option: \"{text}\"\n"
-                     f"What does \"{text}\" mean? Explain in everyday words.")
-        reply = self.generate(chat_prompt(EXPLAIN_RULES, user), max_tokens=60, task="explain")
+        prompt = explain_prompt(text, kind, question_text, complaint)
+        reply = self.generate(prompt, max_tokens=60, task="explain")
         reply = reply.split("</think>")[-1]
         return first_sentence(reply)
 

@@ -36,6 +36,9 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
 | `red_flag_cases.csv` | Patient sentences with the red flags (and possible red flags) they should raise |
+| `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
+| `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
+| `explanation_results_<model>.csv` | Made by `evaluate_explanations.py`: the AI's sentence next to the expected meaning, with an empty `correct (y/n/partly)` column |
 
 ## Setup
 
@@ -68,6 +71,7 @@ python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf --lan
 # Quick tests (the smoke test also types "?" twice and "?2" once, and checks they are never saved)
 python smoke_test.py "$PROTOCOLS"
 python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
+python evaluate_explanations.py medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf          # reads explanation_test_cases.csv
 ```
 
 ## How the main ideas show up in the code
@@ -106,7 +110,7 @@ Where each explanation comes from, in this order:
 | AI (MedPsy) | not in the file, and a model is loaded | one short sentence + `(AI explanation – not checked)` |
 | nothing | not in the file and no model (keyword mode) | `No explanation available yet.` |
 
-If a word is in the file, the AI is never called for it. The AI call (`AIMapper.explain`) reuses `chat_prompt` with the empty `<think></think>` prefill. It has no grammar because it needs free text, but it is capped at 60 tokens and cut to the first sentence. The prompt starts with the chief complaint ("The patient's main complaint is Headache.") so the model has context, then tells it to explain in everyday words for someone with no medical training, not to give advice, not to guess a diagnosis, and to use one sentence only. On the complaint list there is no complaint yet, so that line is left out. Each text is asked about once per visit.
+If a word is in the file, the AI is never called for it. The AI call (`AIMapper.explain`) has no grammar because it needs free text, but it is capped at 60 tokens and cut to the first sentence. The rules (`EXPLAIN_RULES`) tell the model to give the usual medical meaning of the word itself in everyday words, for someone with no medical training, and not to tie it to the patient's complaint unless the word is about that body part. They also say: no advice, no diagnosis guessing, one sentence only. Before the real word, the prompt shows 5 worked examples (`EXPLAIN_EXAMPLES` in `ai_mapper.py`: Epigastric, Hemoptysis, Tuberculosis, Postprandial, Intermittent) as earlier turns of the chat, each answer starting with the same empty `<think></think>` prefill. To change the examples, edit that list. Each message starts with the chief complaint ("The patient's main complaint is Headache."); on the complaint list there is no complaint yet, so that line is left out. Each text is asked about once per visit.
 
 `explanations.json` has two parts:
 
@@ -169,7 +173,8 @@ run_info           not patient data: mapper, minutes, questions_asked, filled_fr
 - Simple explanations (`?`):
   - Every entry in `explanations.json` is an unchecked draft written by the AI assistant. A clinician or teammate needs to check them and fill in `checked_by`.
   - Only the three pilot protocols, past/family history and the complaint list are covered. In other protocols `?` usually explains only the question, and the CHW has to use `?N` for each option.
-  - The AI still gets meanings wrong sometimes. Asked with `?N`, the 1.7B said "Phonophobia means fear of loud sounds" (it means sounds bother or hurt you). No v2 protocol uses that word, so it is not in `explanations.json`. Passing the complaint helped: before, on a Headache question it said "Pain after coughing means when you cough, your chest hurts"; with "Headache" in the prompt it said "coughing makes your head hurt more". This is why AI explanations are labeled and logged.
+  - The AI still gets meanings wrong sometimes, especially the 1.7B (see "Explanation test" below: for example "Photophobia" became "like the room is spinning when it's bright outside"). This is why AI explanations are labeled and logged.
+  - The results of `evaluate_explanations.py` have not been graded by a person yet.
   - No pictures yet. The Android version could show images from Intelehealth's `protocols/v2/physicalExamAssets` next to the explanation, for example `abdominalregions9.jpg` for the nine abdomen regions and `jaundiceexample.jpg` for Jaundice.
 
 ## First results (October 29, 2026)
@@ -286,3 +291,20 @@ The baseline's "story" score went up from 8/22 because it never picks anything, 
 |---|---|---|---|---|
 | 1.7B | 1 ("Additional information" + story "Fever" gave "Fever") | 9 | 1 ("since yesterday" for a story with no time) | 6/6 |
 | 4B | 0 | 11 | 0 | 6/6 |
+
+## Explanation test (November 7, 2026)
+
+**What changed.** New rules for `AIMapper.explain()`: give the usual medical meaning of the word itself, and don't tie it to the complaint unless the word is about that body part. Five worked examples are now shown to the model before the real word (`EXPLAIN_EXAMPLES`). In our earlier hand test, this cut wrong explanations on the 1.7B from 5/24 to 2/24 and made them faster.
+
+**Test set.** `explanation_test_cases.csv` has 24 words that are not in `explanations.json`, from the Headache, Dizziness & Vertigo, Palpitations, Red or painful eye, Urine disturbance and Skin disorder protocols: 19 answer options and 5 questions (Paresthesia, Atopic dermatitis, Voiding difficulty, Provocative factors, Migratory). Phonophobia is not in the v2 Headache protocol (only in v3 Vomiting); it is listed under Headache so we can keep checking the old mistake. The expected meanings were **written by the AI assistant (Claude) and are not clinician-checked** (`checked_by` is empty).
+
+**Speed** (Apple M5 laptop, 10 CPU cores, CPU only, one model at a time)
+
+| Model | 24 words took | Average per word | Slowest word |
+|---|---|---|---|
+| MedPsy-1.7B | 9.8 s | 0.41 s | 1.61 s |
+| MedPsy-4B | 22.9 s | 0.95 s | 4.36 s |
+
+The slowest word is always the first one: the model reads the rules and the 5 examples once, and llama.cpp reuses that part of the prompt for the next words. In the app, other AI calls happen between explanations, so each `?N` will usually be closer to the first-word time.
+
+**Correctness: not graded yet.** The answers are in `explanation_results_medpsy-1.7b-q4_k_m-imat.csv` and `explanation_results_medpsy-4b-q4_k_m-imat.csv`; a person should fill in `correct (y/n/partly)`. A first look (by Claude, not a grade): the 4B was mostly right, with "Provocative factors" read as "what makes it better or worse" and "Migratory" tied to a rash instead of joint pain. The 1.7B had more clear mistakes, for example Photophobia ("like the room is spinning"), Metallic taste ("like it's been cleaned with bleach"), Terminal dribbling ("leaking when you try to stop"), Voiding difficulty ("trouble getting to the bathroom") and Atopic dermatitis (it asked a question back instead of explaining). Phonophobia is no longer "fear of loud sounds" on either model.
