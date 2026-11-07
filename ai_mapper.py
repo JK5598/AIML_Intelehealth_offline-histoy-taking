@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import time
 
@@ -71,6 +72,10 @@ EVIDENCE_RULES = ("You help a community health worker fill in a patient history 
                   "If the patient did not mention this topic, choose 0 with empty evidence. "
                   "Never pick something the patient said they do NOT have. Never guess.")
 
+EXPLAIN_RULES = ("You explain medical words to a community health worker who has no medical training. "
+                 "Explain what the word or question means in everyday words, simple enough for a 12-year-old. "
+                 "Do not give advice. Do not guess a diagnosis. Answer in one short sentence only.")
+
 STORY_CHECKS = ["off", "yes_no", "evidence"]
 
 
@@ -122,6 +127,15 @@ def evidence_in_story(evidence, story):
     return evidence_text in story_text
 
 
+def first_sentence(text):
+    """Keeps only the first sentence, so a long reply stays short."""
+    text = " ".join(text.split())
+    match = re.search(r"[.!?](\s|$)", text)
+    if match:
+        return text[:match.end()].strip()
+    return text
+
+
 class AIMapper:
     name = "ai"
 
@@ -129,6 +143,7 @@ class AIMapper:
         if story_check not in STORY_CHECKS:
             raise ValueError(f"story_check must be one of {STORY_CHECKS}")
         self.model = Llama(model_path=model_path, n_ctx=context_size, verbose=False)
+        self.model_name = os.path.basename(model_path)
         self.story_check = story_check
         self.timings = []
 
@@ -245,6 +260,22 @@ class AIMapper:
         if not mostly_from_story(value, story):
             return ""
         return value
+
+    def explain(self, text, kind, question_text="", complaint=""):
+        """One short, plain sentence about a question or an answer option. Free text, so no grammar."""
+        user = ""
+        if complaint:
+            user += f"The patient's main complaint is {complaint}.\n"
+        if kind == "question":
+            user += (f"Question on a patient history form: \"{text}\"\n"
+                     f"What is this question asking? Explain in everyday words.")
+        else:
+            user += (f"Question on a patient history form: \"{question_text}\"\n"
+                     f"Answer option: \"{text}\"\n"
+                     f"What does \"{text}\" mean? Explain in everyday words.")
+        reply = self.generate(chat_prompt(EXPLAIN_RULES, user), max_tokens=60, task="explain")
+        reply = reply.split("</think>")[-1]
+        return first_sentence(reply)
 
     def write_summary(self, facts_text):
         system = ("You write short summaries of patient histories for a remote doctor. "

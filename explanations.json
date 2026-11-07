@@ -1,0 +1,1143 @@
+{
+  "about": "Plain-language explanations shown when the CHW types '?' (question plus options listed here) or '?N' (one option). Written as drafts by an AI assistant (Claude). An entry shows as 'Draft - not checked yet' until a teammate who checked it writes their name in checked_by.",
+  "terms": {
+    "Right Hypochondrium": {
+      "text": "The upper right part of the belly, just below the right ribs.",
+      "checked_by": ""
+    },
+    "Epigastric": {
+      "text": "The upper middle part of the belly, just below where the ribs meet.",
+      "checked_by": ""
+    },
+    "Left Hypochondrium": {
+      "text": "The upper left part of the belly, just below the left ribs.",
+      "checked_by": ""
+    },
+    "Right Lumbar": {
+      "text": "The right side of the belly, at the level of the belly button.",
+      "checked_by": ""
+    },
+    "Umbilical": {
+      "text": "The middle of the belly, around the belly button.",
+      "checked_by": ""
+    },
+    "Left Lumbar": {
+      "text": "The left side of the belly, at the level of the belly button.",
+      "checked_by": ""
+    },
+    "Right Iliac Fossa": {
+      "text": "The lower right part of the belly, just above the right hip bone.",
+      "checked_by": ""
+    },
+    "Hypogastric/Suprapubic": {
+      "text": "The lower middle part of the belly, below the belly button and just above the private parts.",
+      "checked_by": ""
+    },
+    "Left Iliac Fossa": {
+      "text": "The lower left part of the belly, just above the left hip bone.",
+      "checked_by": ""
+    },
+    "Right scapula": {
+      "text": "The right shoulder blade, the flat bone on the upper back.",
+      "checked_by": ""
+    },
+    "Groin": {
+      "text": "The fold where the top of the leg meets the lower belly.",
+      "checked_by": ""
+    },
+    "Sacral region": {
+      "text": "The lowest part of the back, just above the buttocks.",
+      "checked_by": ""
+    },
+    "Flanks": {
+      "text": "The sides of the body between the lowest ribs and the hips, toward the back.",
+      "checked_by": ""
+    },
+    "Gradual": {
+      "text": "Came on slowly, little by little.",
+      "checked_by": ""
+    },
+    "Rapidly increasing": {
+      "text": "Got worse quickly over a short time.",
+      "checked_by": ""
+    },
+    "Sudden": {
+      "text": "Started all at once, without warning.",
+      "checked_by": ""
+    },
+    "Rapid": {
+      "text": "Came on quickly.",
+      "checked_by": ""
+    },
+    "Constant": {
+      "text": "There all the time, without stopping.",
+      "checked_by": ""
+    },
+    "Colicky / Intermittent (comes & goes)": {
+      "text": "Pain that comes in waves: it gets strong, eases, and then comes back.",
+      "checked_by": ""
+    },
+    "Gnawing/chewing": {
+      "text": "A nagging pain that feels like something is biting or chewing inside.",
+      "checked_by": ""
+    },
+    "Cramping": {
+      "text": "A squeezing, tightening pain, like a muscle cramp.",
+      "checked_by": ""
+    },
+    "Dull, aching": {
+      "text": "A steady, heavy pain that is not sharp.",
+      "checked_by": ""
+    },
+    "Stabbing": {
+      "text": "A sudden sharp pain, like being poked with a knife.",
+      "checked_by": ""
+    },
+    "Burning": {
+      "text": "A hot, burning feeling.",
+      "checked_by": ""
+    },
+    "Bloating": {
+      "text": "The belly feels full, tight, or swollen.",
+      "checked_by": ""
+    },
+    "Intermittent": {
+      "text": "Comes and goes.",
+      "checked_by": ""
+    },
+    "Static (Not change)": {
+      "text": "Stays the same; not getting better or worse.",
+      "checked_by": ""
+    },
+    "Progressive": {
+      "text": "Slowly getting worse over time.",
+      "checked_by": ""
+    },
+    "Continous": {
+      "text": "There all the time, without stopping.",
+      "checked_by": ""
+    },
+    "Nausea": {
+      "text": "Feeling like you are going to vomit (throw up).",
+      "checked_by": ""
+    },
+    "Vomiting": {
+      "text": "Throwing up food or liquid from the stomach through the mouth.",
+      "checked_by": ""
+    },
+    "Anorexia": {
+      "text": "Not wanting to eat; not feeling hungry.",
+      "checked_by": ""
+    },
+    "Diarrhea": {
+      "text": "Passing loose, watery stools (poop) more often than usual.",
+      "checked_by": ""
+    },
+    "Constipation": {
+      "text": "Passing hard stools (poop), or passing stool less often than usual, often with pushing.",
+      "checked_by": ""
+    },
+    "Fever": {
+      "text": "The body is hotter than normal.",
+      "checked_by": ""
+    },
+    "Abdominal distention/Bloating": {
+      "text": "The belly feels full, tight, or swollen, or looks bigger than usual.",
+      "checked_by": ""
+    },
+    "Belching/Burping": {
+      "text": "Air coming up from the stomach and out through the mouth.",
+      "checked_by": ""
+    },
+    "Passing gas": {
+      "text": "Air coming out from the bottom (farting).",
+      "checked_by": ""
+    },
+    "Change in appetite": {
+      "text": "Wanting to eat more or less than usual.",
+      "checked_by": ""
+    },
+    "Color change in stool [describe]": {
+      "text": "The stool (poop) is a different color than usual, for example black, red, or very pale.",
+      "checked_by": ""
+    },
+    "Blood in stool": {
+      "text": "Blood in or on the stool (poop); it can look red, or make the stool black.",
+      "checked_by": ""
+    },
+    "Change in frequency of urination [describe]": {
+      "text": "Passing urine (peeing) more often or less often than usual.",
+      "checked_by": ""
+    },
+    "Color change in urine [describe]": {
+      "text": "The urine (pee) is a different color than usual, for example very dark, red, or brown.",
+      "checked_by": ""
+    },
+    "Hiccups": {
+      "text": "Sudden jumps in the chest that make a 'hic' sound.",
+      "checked_by": ""
+    },
+    "Restlessness": {
+      "text": "Not able to stay still or relax.",
+      "checked_by": ""
+    },
+    "Injury": {
+      "text": "Being hurt, for example by a fall, a hit, or an accident.",
+      "checked_by": ""
+    },
+    "Breathlessness": {
+      "text": "Feeling short of breath, or not able to get enough air.",
+      "checked_by": ""
+    },
+    "Vaginal discharge [describe]": {
+      "text": "Fluid or mucus that comes out of the vagina.",
+      "checked_by": ""
+    },
+    "Curd-like": {
+      "text": "Thick and white, with lumps like curd (yogurt).",
+      "checked_by": ""
+    },
+    "Blood-stained": {
+      "text": "Has some blood in it.",
+      "checked_by": ""
+    },
+    "Medications [describe]": {
+      "text": "A medicine; type which medicine made the pain less.",
+      "checked_by": ""
+    },
+    "Pressure": {
+      "text": "Pushing or pressing on the painful area.",
+      "checked_by": ""
+    },
+    "Urination": {
+      "text": "Passing urine (peeing).",
+      "checked_by": ""
+    },
+    "Straining": {
+      "text": "Pushing hard, for example when passing stool (poop) or lifting something heavy.",
+      "checked_by": ""
+    },
+    "Leaning forward": {
+      "text": "Bending the upper body forward while sitting or standing.",
+      "checked_by": ""
+    },
+    "Squatting": {
+      "text": "Sitting low on the feet with the knees fully bent.",
+      "checked_by": ""
+    },
+    "Passing of stool": {
+      "text": "Passing stool (pooping).",
+      "checked_by": ""
+    },
+    "Has not started menstruation": {
+      "text": "Has not had her first monthly period yet.",
+      "checked_by": ""
+    },
+    "Is menstruating": {
+      "text": "Still gets her monthly periods.",
+      "checked_by": ""
+    },
+    "Menopause": {
+      "text": "Her monthly periods have stopped for good, usually around age 45 to 55.",
+      "checked_by": ""
+    },
+    "Chills": {
+      "text": "Feeling very cold and shivering, often with a fever.",
+      "checked_by": ""
+    },
+    "Loss of smell/taste sensation": {
+      "text": "Not able to smell things or taste food like before.",
+      "checked_by": ""
+    },
+    "Loss of smell": {
+      "text": "Not able to smell things like before.",
+      "checked_by": ""
+    },
+    "Loss of taste sensation": {
+      "text": "Not able to taste food like before.",
+      "checked_by": ""
+    },
+    "Dry": {
+      "text": "A cough that brings up no mucus (phlegm).",
+      "checked_by": ""
+    },
+    "Productive (With sputum)": {
+      "text": "A cough that brings up mucus (phlegm) from the chest.",
+      "checked_by": ""
+    },
+    "Wet": {
+      "text": "A cough that brings up mucus (phlegm).",
+      "checked_by": ""
+    },
+    "Chest pain/discomfort": {
+      "text": "Pain or an uncomfortable feeling in the chest.",
+      "checked_by": ""
+    },
+    "Abdominal pain": {
+      "text": "Pain in the belly.",
+      "checked_by": ""
+    },
+    "Joint pain": {
+      "text": "Pain where two bones meet, like the knee, elbow, wrist, or fingers.",
+      "checked_by": ""
+    },
+    "General weakness": {
+      "text": "Feeling tired and weak all over the body.",
+      "checked_by": ""
+    },
+    "Night sweats": {
+      "text": "Sweating a lot during sleep, enough to wet clothes or bedsheets.",
+      "checked_by": ""
+    },
+    "Neck stiffness": {
+      "text": "The neck feels stiff and hurts when bending the head forward.",
+      "checked_by": ""
+    },
+    "Burning sensation during urination": {
+      "text": "A burning or stinging feeling while passing urine (peeing).",
+      "checked_by": ""
+    },
+    "Pain during urination": {
+      "text": "Pain while passing urine (peeing).",
+      "checked_by": ""
+    },
+    "Trouble when starting to urinate or trouble maintaining flow of urine": {
+      "text": "Hard to start peeing, or the stream of pee is weak or stops and starts.",
+      "checked_by": ""
+    },
+    "Skin rash": {
+      "text": "Red spots, bumps, or patches on the skin.",
+      "checked_by": ""
+    },
+    "Photosensitivity": {
+      "text": "Being bothered by light, for example bright light hurts the eyes or sunlight causes a rash on the skin.",
+      "checked_by": ""
+    },
+    "Chronic liver disease": {
+      "text": "A long-lasting illness of the liver, the organ under the right ribs that cleans the blood.",
+      "checked_by": ""
+    },
+    "Chronic renal disease": {
+      "text": "A long-lasting illness of the kidneys, the organs that clean the blood and make urine (pee).",
+      "checked_by": ""
+    },
+    "HIV/AIDS": {
+      "text": "HIV is a virus that weakens the body's protection against infections, and AIDS is the late, serious stage of HIV.",
+      "checked_by": ""
+    },
+    "All day/ Constant": {
+      "text": "The fever is there all day and does not go away.",
+      "checked_by": ""
+    },
+    "Irregular (comes & goes)": {
+      "text": "The fever comes and goes, with no fixed pattern.",
+      "checked_by": ""
+    },
+    "Alternate days": {
+      "text": "The fever comes every other day: one day fever, the next day none.",
+      "checked_by": ""
+    },
+    "Postprandial": {
+      "text": "After eating.",
+      "checked_by": ""
+    },
+    "Preprandial": {
+      "text": "Before eating.",
+      "checked_by": ""
+    },
+    "Body Temperature (F)": {
+      "text": "The temperature on the thermometer, in degrees Fahrenheit (normal is about 98.6 F).",
+      "checked_by": ""
+    },
+    "Recent contact with persons having fever": {
+      "text": "Was recently close to someone who had a fever.",
+      "checked_by": ""
+    },
+    "Recent travel": {
+      "text": "The patient or their family went on a trip recently.",
+      "checked_by": ""
+    },
+    "Recent hospitalization": {
+      "text": "Stayed in a hospital recently.",
+      "checked_by": ""
+    },
+    "Needles use (for drug)": {
+      "text": "A needle was put into the body recently, for example to inject drugs.",
+      "checked_by": ""
+    },
+    "Relapse": {
+      "text": "The same fever came back again after it had gone away.",
+      "checked_by": ""
+    },
+    "Combined high and low": {
+      "text": "The fever is sometimes high and sometimes low.",
+      "checked_by": ""
+    },
+    "Acute (0-2 weeks)": {
+      "text": "Started recently: less than 2 weeks ago.",
+      "checked_by": ""
+    },
+    "Subacute ( 2 - 8 weeks)": {
+      "text": "Has lasted between 2 and 8 weeks.",
+      "checked_by": ""
+    },
+    "Chronic (More than 8 weeks)": {
+      "text": "Has lasted a long time: more than 8 weeks (about 2 months).",
+      "checked_by": ""
+    },
+    "Seasonal": {
+      "text": "Happens in a certain season of the year, like winter or the rainy season.",
+      "checked_by": ""
+    },
+    "Wheezing": {
+      "text": "A high whistling sound when breathing, usually when breathing out.",
+      "checked_by": ""
+    },
+    "Shortness of breath": {
+      "text": "Feeling like you cannot get enough air.",
+      "checked_by": ""
+    },
+    "Pain/Tightness of chest": {
+      "text": "Pain in the chest, or a feeling that the chest is being squeezed.",
+      "checked_by": ""
+    },
+    "Hemoptysis": {
+      "text": "Coughing up blood, or mucus (phlegm) with blood in it.",
+      "checked_by": ""
+    },
+    "Weight change (kg)": {
+      "text": "The patient's body weight has gone up or down.",
+      "checked_by": ""
+    },
+    "Hoarseness": {
+      "text": "The voice sounds rough, croaky, or weak.",
+      "checked_by": ""
+    },
+    "Burning feeling in a throat at night/early in the morning": {
+      "text": "A hot, burning feeling in the throat at night or early in the morning, sometimes with a sour taste.",
+      "checked_by": ""
+    },
+    "Nasal congestion/Stuffy nose": {
+      "text": "The nose feels blocked, so it is hard to breathe through it.",
+      "checked_by": ""
+    },
+    "Runny nose": {
+      "text": "Liquid keeps coming out of the nose.",
+      "checked_by": ""
+    },
+    "Post nasal drip": {
+      "text": "Mucus from the nose runs down the back of the throat, so the patient often needs to clear the throat or swallow.",
+      "checked_by": ""
+    },
+    "Exposure to dusts/fumes": {
+      "text": "Breathing in dust, smoke, or chemical fumes, for example at work.",
+      "checked_by": ""
+    },
+    "Recent severe stress": {
+      "text": "Feeling very worried, upset, or under a lot of pressure lately.",
+      "checked_by": ""
+    },
+    "Recurrent diarrhoea": {
+      "text": "Loose, watery stools (poop) that keep coming back again and again.",
+      "checked_by": ""
+    },
+    "Ex-smoker": {
+      "text": "Used to smoke but has stopped.",
+      "checked_by": ""
+    },
+    "Declined to answer": {
+      "text": "The patient did not want to answer this question.",
+      "checked_by": ""
+    },
+    "Incomplete": {
+      "text": "Some vaccines for the child's age are still missing.",
+      "checked_by": ""
+    },
+    "Complete": {
+      "text": "All vaccines for the child's age have been given.",
+      "checked_by": ""
+    },
+    "On-going": {
+      "text": "The child is still getting vaccines on schedule.",
+      "checked_by": ""
+    },
+    "High Blood Pressure": {
+      "text": "The blood pushes too hard against the walls of the blood vessels; it often causes no symptoms.",
+      "checked_by": ""
+    },
+    "Heart Problems": {
+      "text": "Any illness of the heart, such as a heart attack or a weak heart.",
+      "checked_by": ""
+    },
+    "Stroke": {
+      "text": "Blood stops flowing to part of the brain, which can suddenly cause weakness on one side of the body, a drooping face, or trouble speaking.",
+      "checked_by": ""
+    },
+    "Diabetes": {
+      "text": "A long-lasting illness where there is too much sugar in the blood.",
+      "checked_by": ""
+    },
+    "Asthma": {
+      "text": "A long-lasting illness where the airways in the chest get tight, causing wheezing, coughing, and trouble breathing.",
+      "checked_by": ""
+    },
+    "Tuberculosis": {
+      "text": "An infection, usually of the lungs, that causes a long-lasting cough, fever, night sweats, and weight loss, and spreads through the air.",
+      "checked_by": ""
+    },
+    "Cancer/Tumour": {
+      "text": "A lump or growth in the body that should not be there; cancer can spread and harm the body.",
+      "checked_by": ""
+    },
+    "Operation": {
+      "text": "Surgery: a doctor cuts the body open to treat a problem.",
+      "checked_by": ""
+    },
+    "Hospitalization": {
+      "text": "Staying in a hospital, usually overnight or longer, for treatment.",
+      "checked_by": ""
+    },
+    "Surgery": {
+      "text": "An operation, where a doctor cuts the body open to fix a problem.",
+      "checked_by": ""
+    },
+    "Angioplasty": {
+      "text": "A treatment where a doctor opens a blocked blood vessel of the heart using a thin tube with a tiny balloon.",
+      "checked_by": ""
+    },
+    "Medication": {
+      "text": "Medicines.",
+      "checked_by": ""
+    },
+    "Abdomen (Stomach/Liver/Bile/Kidney/Colon)": {
+      "text": "The belly, including the stomach, liver, gallbladder, kidneys, and large bowel.",
+      "checked_by": ""
+    },
+    "Prostate": {
+      "text": "A small gland in men, just below the bladder, that helps make semen.",
+      "checked_by": ""
+    },
+    "C-Section": {
+      "text": "Delivering a baby through an operation that cuts through the belly and the womb.",
+      "checked_by": ""
+    },
+    "Hysterectomy": {
+      "text": "An operation to remove the womb (uterus).",
+      "checked_by": ""
+    },
+    "I always take them as prescribed": {
+      "text": "Always takes the medicine exactly as the doctor or health worker said.",
+      "checked_by": ""
+    },
+    "Sometimes I take them as prescribed": {
+      "text": "Only sometimes takes the medicine the way the doctor or health worker said.",
+      "checked_by": ""
+    },
+    "I seldom take them as prescribed": {
+      "text": "Rarely takes the medicine the way the doctor or health worker said.",
+      "checked_by": ""
+    },
+    "Denied answer": {
+      "text": "The patient did not want to answer this question.",
+      "checked_by": ""
+    },
+    "Denied": {
+      "text": "The patient did not want to answer this question.",
+      "checked_by": ""
+    },
+    "Never-smoker": {
+      "text": "Has never smoked.",
+      "checked_by": ""
+    },
+    "Current-smoker": {
+      "text": "Smokes now.",
+      "checked_by": ""
+    },
+    "High BP": {
+      "text": "High blood pressure: the blood pushes too hard against the walls of the blood vessels.",
+      "checked_by": ""
+    },
+    "Heart Disease": {
+      "text": "Any illness of the heart, such as a heart attack or a weak heart.",
+      "checked_by": ""
+    },
+    "Jaundice": {
+      "text": "The skin and the white part of the eyes turn yellow, often because of a liver problem.",
+      "checked_by": ""
+    },
+    "Cancer": {
+      "text": "An illness where some cells in the body grow out of control and can spread.",
+      "checked_by": ""
+    },
+    "Abdominal Pain": {
+      "text": "Pain in the belly.",
+      "checked_by": ""
+    },
+    "Abdominal distention": {
+      "text": "The belly is swollen or looks bigger than usual.",
+      "checked_by": ""
+    },
+    "Abnormal Bleeding": {
+      "text": "Bleeding that is not normal, for example very heavy, without a clear reason, or from an unusual place.",
+      "checked_by": ""
+    },
+    "Blood in stool or Black stool": {
+      "text": "Blood in the stool (poop), which can look red, or make the stool black and sticky like tar.",
+      "checked_by": ""
+    },
+    "Dizziness & Vertigo": {
+      "text": "Feeling light-headed or unsteady; vertigo is the feeling that you or the room is spinning.",
+      "checked_by": ""
+    },
+    "Dyspepsia": {
+      "text": "Indigestion: pain, burning, or a too-full feeling in the upper belly, usually after eating.",
+      "checked_by": ""
+    },
+    "Fatigue & General weakness": {
+      "text": "Feeling very tired and weak most of the time.",
+      "checked_by": ""
+    },
+    "Fever & Rash": {
+      "text": "Fever together with red spots, bumps, or patches on the skin.",
+      "checked_by": ""
+    },
+    "Gait & balance disorder": {
+      "text": "Trouble walking normally or keeping balance.",
+      "checked_by": ""
+    },
+    "Genital disease (Female)": {
+      "text": "Problems of a woman's private parts, such as discharge, itching, sores, or pain.",
+      "checked_by": ""
+    },
+    "Disorders of Hearing": {
+      "text": "Problems with hearing, such as hearing less or hearing ringing in the ears.",
+      "checked_by": ""
+    },
+    "Hypertension follow up": {
+      "text": "A check-up visit for a patient who already has high blood pressure.",
+      "checked_by": ""
+    },
+    "Hypertension screening": {
+      "text": "Checking a person's blood pressure to find out if it is too high.",
+      "checked_by": ""
+    },
+    "Lymph node enlargement": {
+      "text": "Swollen glands: small lumps under the skin, often in the neck, armpit, or groin.",
+      "checked_by": ""
+    },
+    "Muscle weakness or Paralysis": {
+      "text": "Muscles are weak, or a part of the body cannot move at all.",
+      "checked_by": ""
+    },
+    "Numbness, Tingling, Sensory loss": {
+      "text": "Losing feeling in a part of the body, or a pins-and-needles feeling.",
+      "checked_by": ""
+    },
+    "Oedema": {
+      "text": "Swelling caused by extra fluid in the body, often in the feet, legs, or face.",
+      "checked_by": ""
+    },
+    "Oral Pain": {
+      "text": "Pain in the mouth, teeth, gums, or tongue.",
+      "checked_by": ""
+    },
+    "Palpitations": {
+      "text": "Feeling the heart beat fast, hard, or unevenly.",
+      "checked_by": ""
+    },
+    "Smell & Taste disorder": {
+      "text": "Problems with smelling or tasting, for example losing the sense of smell.",
+      "checked_by": ""
+    },
+    "Syncope": {
+      "text": "Fainting: suddenly passing out for a short time and falling down.",
+      "checked_by": ""
+    },
+    "Urine disturbance": {
+      "text": "Any problem with passing urine (pee), such as pain, burning, or going too often.",
+      "checked_by": ""
+    },
+    "Visual impairment": {
+      "text": "Problems with seeing clearly.",
+      "checked_by": ""
+    },
+    "Vomiting Blood": {
+      "text": "Throwing up blood, which can look red or like coffee grounds.",
+      "checked_by": ""
+    }
+  },
+  "questions": {
+    "Main complaint": {
+      "text": "Asks for the main health problem that made the patient come today.",
+      "checked_by": ""
+    },
+    "Since when have you had this symptom?": {
+      "text": "Asks how long the patient has had this problem, for example 3 days or 2 weeks.",
+      "checked_by": ""
+    },
+    "Do you have the following symptom(s)?": {
+      "text": "Asks if the patient has any of these other problems along with the main one.",
+      "checked_by": ""
+    },
+    "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+      "text": "Asks if the patient already took any medicine or home remedy, or saw anyone for help, for this problem.",
+      "checked_by": ""
+    },
+    "Additional information": {
+      "text": "A place to write anything else important the patient said that was not asked above.",
+      "checked_by": ""
+    },
+    "Other [describe]": {
+      "text": "Type the patient's answer in their own words, because it is not in the list.",
+      "checked_by": ""
+    },
+    "Yes [Describe]": {
+      "text": "Type what the patient said, in a few words.",
+      "checked_by": ""
+    },
+    "Describe": {
+      "text": "Type the patient's answer in a few words.",
+      "checked_by": ""
+    },
+    "[Enter since when]": {
+      "text": "Asks how long ago this started, for example 2 weeks or 5 years.",
+      "checked_by": ""
+    },
+    "Since when": {
+      "text": "Asks how long ago this started, or the date it started.",
+      "checked_by": ""
+    },
+    "Since": {
+      "text": "Asks how long ago this started, for example 5 years.",
+      "checked_by": ""
+    },
+    "When": {
+      "text": "Asks the date when this happened.",
+      "checked_by": ""
+    },
+    "on": {
+      "text": "Asks the date when this happened.",
+      "checked_by": ""
+    },
+    "Which part of the abdomen do you feel pain?": {
+      "text": "Asks where on the belly the pain is; the abdomen is the belly, between the chest and the hips.",
+      "checked_by": ""
+    },
+    "Does the pain move to other parts of the body?": {
+      "text": "Asks if the pain stays in one place or also spreads to another part of the body, like the back or shoulder.",
+      "checked_by": ""
+    },
+    "Pain radiates to": {
+      "text": "Asks where else the pain spreads to from where it started.",
+      "checked_by": ""
+    },
+    "How did the pain start?": {
+      "text": "Asks if the pain came on slowly, got worse quickly, or started all at once.",
+      "checked_by": ""
+    },
+    "What time of the day do you feel the pain?": {
+      "text": "Asks if the pain is worse at a certain time of day, like in the morning or at night.",
+      "checked_by": ""
+    },
+    "Character of the pain": {
+      "text": "Asks what the pain feels like, for example steady, coming and going, cramping, or a dull ache.",
+      "checked_by": ""
+    },
+    "How severe is the pain?": {
+      "text": "Asks how bad the pain is, from 1 (a little pain) to 10 (the worst pain the patient can imagine).",
+      "checked_by": ""
+    },
+    "Change in appetite": {
+      "text": "Asks if the patient wants to eat more or less than usual.",
+      "checked_by": ""
+    },
+    "Color change in stool [describe]": {
+      "text": "Type the new color of the stool (poop), for example black, red, or very pale.",
+      "checked_by": ""
+    },
+    "Change in frequency of urination [describe]": {
+      "text": "Type how the patient passes urine (pees) more often or less often than usual.",
+      "checked_by": ""
+    },
+    "Color change in urine [describe]": {
+      "text": "Type the new color of the urine (pee), for example very dark, red, or brown.",
+      "checked_by": ""
+    },
+    "Is the discharge foul-smelling?": {
+      "text": "Asks if the fluid coming from the vagina has a bad smell.",
+      "checked_by": ""
+    },
+    "Character of the discharge [describe]": {
+      "text": "Asks what the fluid from the vagina looks like, for example thick and white, green, watery, or with blood.",
+      "checked_by": ""
+    },
+    "What worsens the pain?": {
+      "text": "Asks what makes the pain worse, like eating, moving, or coughing.",
+      "checked_by": ""
+    },
+    "What relieves/lessens the pain?": {
+      "text": "Asks what makes the pain better or less, like medicine, food, or sitting a certain way.",
+      "checked_by": ""
+    },
+    "Medications [describe]": {
+      "text": "Type the name of the medicine that makes the pain less.",
+      "checked_by": ""
+    },
+    "Menstrual history": {
+      "text": "Asks about the patient's monthly periods: if they have started, are still coming, or have stopped for good.",
+      "checked_by": ""
+    },
+    "Age at onset": {
+      "text": "Asks how old the patient was when her monthly periods first started.",
+      "checked_by": ""
+    },
+    "Last menstruation period": {
+      "text": "Asks the date the patient's last monthly period started.",
+      "checked_by": ""
+    },
+    "Age at menopause": {
+      "text": "Asks how old the patient was when her monthly periods stopped for good.",
+      "checked_by": ""
+    },
+    "Nature of fever": {
+      "text": "Asks about the pattern of the fever: is it there all the time, or does it come and go?",
+      "checked_by": ""
+    },
+    "In a day, when do you feel fever the most?": {
+      "text": "Asks at what time of day the fever is worst, like morning, evening, or night.",
+      "checked_by": ""
+    },
+    "Severity": {
+      "text": "Asks how strong the fever is: low (body a little warm), moderate (in between), or high (body very hot).",
+      "checked_by": ""
+    },
+    "Did you recently measure fever using thermometer?": {
+      "text": "Asks if the patient's body temperature was checked with a thermometer recently.",
+      "checked_by": ""
+    },
+    "Body Temperature (F)": {
+      "text": "Asks the number shown on the thermometer, in degrees Fahrenheit (normal is about 98.6 F).",
+      "checked_by": ""
+    },
+    "Loss of smell/taste sensation": {
+      "text": "Asks if the patient lost their sense of smell, their sense of taste, or both.",
+      "checked_by": ""
+    },
+    "Cough": {
+      "text": "Asks what kind of cough the patient has: dry, or bringing up mucus (phlegm).",
+      "checked_by": ""
+    },
+    "Productive (With sputum)": {
+      "text": "Asks about the mucus (phlegm) the patient coughs up.",
+      "checked_by": ""
+    },
+    "Color of sputum": {
+      "text": "Asks the color of the mucus (phlegm) the patient coughs up.",
+      "checked_by": ""
+    },
+    "Chest pain/discomfort": {
+      "text": "Asks more about the pain or uncomfortable feeling in the chest.",
+      "checked_by": ""
+    },
+    "Site": {
+      "text": "Asks where exactly the pain or discomfort is.",
+      "checked_by": ""
+    },
+    "While breathing in, do both sides of the lower chest get pulled in?": {
+      "text": "Asks if the bottom of the chest sinks inward each time the patient breathes in, which shows breathing is hard work.",
+      "checked_by": ""
+    },
+    "Do you experience a grunting noise in chest while breathing?": {
+      "text": "Asks if the patient makes a short, low 'uh' sound each time they breathe out.",
+      "checked_by": ""
+    },
+    "Abdominal pain": {
+      "text": "Asks more about the pain in the belly.",
+      "checked_by": ""
+    },
+    "How did the abdominal pain start?": {
+      "text": "Asks if the belly pain came on quickly or slowly.",
+      "checked_by": ""
+    },
+    "How has the abdominal pain progressed?": {
+      "text": "Asks how the belly pain has changed over time: coming and going, staying the same, or getting worse.",
+      "checked_by": ""
+    },
+    "Describe the pain": {
+      "text": "Asks what the pain feels like, for example steady, cramping, stabbing, or burning.",
+      "checked_by": ""
+    },
+    "When does the pain increase?": {
+      "text": "Asks when the pain gets worse, for example before or after eating.",
+      "checked_by": ""
+    },
+    "Does the pain go to other part of the body?": {
+      "text": "Asks if the pain spreads to another place, like the chest, neck, or back.",
+      "checked_by": ""
+    },
+    "Joint pain": {
+      "text": "Asks more about the pain in the joints (the places where bones meet, like knees, elbows, and fingers).",
+      "checked_by": ""
+    },
+    "Does the pain involve single or multiple joints?": {
+      "text": "Asks if the pain is in one joint or in many joints (joints are where bones meet, like knees and elbows).",
+      "checked_by": ""
+    },
+    "Single joint [Describe which joint]": {
+      "text": "Type which joint hurts, for example right knee.",
+      "checked_by": ""
+    },
+    "Multiple joints [Describe which joints]": {
+      "text": "Type which joints hurt, for example both knees and wrists.",
+      "checked_by": ""
+    },
+    "Pain in any other location": {
+      "text": "Asks where else in the body the patient has pain.",
+      "checked_by": ""
+    },
+    "Have you ever been diagnosed with any of the following specific diseases?": {
+      "text": "Asks if a doctor or health worker ever told the patient they have one of these long-lasting illnesses.",
+      "checked_by": ""
+    },
+    "Have you experienced the following situation within the previous months before fever started?": {
+      "text": "Asks about things that happened in the months before the fever began.",
+      "checked_by": ""
+    },
+    "Any recent contact with any persons with fever?": {
+      "text": "Asks if the patient was recently close to someone who had a fever.",
+      "checked_by": ""
+    },
+    "Did you/your family travel recently?": {
+      "text": "Asks if the patient or their family went on a trip recently.",
+      "checked_by": ""
+    },
+    "Where": {
+      "text": "Asks the place the patient or family travelled to.",
+      "checked_by": ""
+    },
+    "Have you recently been hospitalized?": {
+      "text": "Asks if the patient recently stayed in a hospital.",
+      "checked_by": ""
+    },
+    "Have you recently used any needles (eg: for drugs)?": {
+      "text": "Asks if a needle was recently put into the patient's body, for example to inject drugs.",
+      "checked_by": ""
+    },
+    "Have you had this fever before as well?": {
+      "text": "Asks if the patient had the same kind of fever in the past.",
+      "checked_by": ""
+    },
+    "Has there been a recent epidemic in the community (other than Covid-19)?": {
+      "text": "Asks if many people in the village or area have recently become sick with the same illness.",
+      "checked_by": ""
+    },
+    "Is there a specific time of occurence of cough?": {
+      "text": "Asks if the cough happens more at a certain time or in a certain situation, like at night or when lying down.",
+      "checked_by": ""
+    },
+    "Which season": {
+      "text": "Asks in which season of the year the cough happens, for example winter or the rainy season.",
+      "checked_by": ""
+    },
+    "What aggravates the cough?": {
+      "text": "Asks what makes the cough worse.",
+      "checked_by": ""
+    },
+    "Is the cough dry or wet?": {
+      "text": "Asks if the cough brings up mucus (phlegm): dry means no mucus, wet means mucus comes up.",
+      "checked_by": ""
+    },
+    "What is the colour of the sputum?": {
+      "text": "Asks the color of the mucus (phlegm) the patient coughs up.",
+      "checked_by": ""
+    },
+    "Weight change (kg)": {
+      "text": "Asks how much the patient's body weight has gone up or down, in kilograms.",
+      "checked_by": ""
+    },
+    "Weight gain": {
+      "text": "Asks how many kilograms the patient has gained.",
+      "checked_by": ""
+    },
+    "Weight loss": {
+      "text": "Asks how many kilograms the patient has lost.",
+      "checked_by": ""
+    },
+    "Have you taken any medication recently?": {
+      "text": "Asks if the patient has taken any medicine in the last few days or weeks.",
+      "checked_by": ""
+    },
+    "Do you smoke/have ever smoked?": {
+      "text": "Asks if the patient smokes now or smoked in the past, for example cigarettes or bidis.",
+      "checked_by": ""
+    },
+    "How many cigarettes per day did you smoke?": {
+      "text": "Asks how many cigarettes (or bidis) the patient smoked each day.",
+      "checked_by": ""
+    },
+    "What is your occupation?": {
+      "text": "Asks what work the patient does, for example farming or construction.",
+      "checked_by": ""
+    },
+    "Any exposure to dusts/fumes?": {
+      "text": "Asks if the patient breathes in dust, smoke, or chemical fumes, for example at work.",
+      "checked_by": ""
+    },
+    "Yes": {
+      "text": "Fill in the details for the patient's 'Yes' answer.",
+      "checked_by": ""
+    },
+    "Other": {
+      "text": "Type the other answer in the patient's own words.",
+      "checked_by": ""
+    },
+    "Frequency": {
+      "text": "Asks how often the patient does this, for example how many times a day.",
+      "checked_by": ""
+    },
+    "[Describe location of pain]": {
+      "text": "Type where else in the body the patient has pain.",
+      "checked_by": ""
+    },
+    "[Enter if known]": {
+      "text": "Type the latest blood sugar and HbA1C numbers, if the patient knows them.",
+      "checked_by": ""
+    },
+    "Has your child been vaccinated?": {
+      "text": "Asks if the child has had the vaccines (shots or drops that protect against diseases) for their age.",
+      "checked_by": ""
+    },
+    "Pregnancy status": {
+      "text": "Asks if the patient is pregnant now.",
+      "checked_by": ""
+    },
+    "Do you have a history of any of the following?": {
+      "text": "Asks if the patient has ever had any of these illnesses or events in the past.",
+      "checked_by": ""
+    },
+    "Diagnosed on": {
+      "text": "Asks the date when a doctor or health worker first found this illness.",
+      "checked_by": ""
+    },
+    "Current medication": {
+      "text": "Asks what medicines the patient takes now for this illness.",
+      "checked_by": ""
+    },
+    "What was the problem?": {
+      "text": "Asks what the heart problem was, in the patient's words.",
+      "checked_by": ""
+    },
+    "Occured/Diagnosed on": {
+      "text": "Asks the date it happened or when a doctor found it.",
+      "checked_by": ""
+    },
+    "Occured on": {
+      "text": "Asks the date it happened.",
+      "checked_by": ""
+    },
+    "How was it treated?": {
+      "text": "Asks what treatment the patient got for it.",
+      "checked_by": ""
+    },
+    "When were you diagnosed?": {
+      "text": "Asks the date when a doctor or health worker first found this illness.",
+      "checked_by": ""
+    },
+    "Last measured Blood Sugar and HbA1C": {
+      "text": "Asks for the patient's most recent blood sugar test results; HbA1C is a blood test that shows the average sugar level over about 3 months.",
+      "checked_by": ""
+    },
+    "Did you take treatment?": {
+      "text": "Asks if the patient took medicine for this illness.",
+      "checked_by": ""
+    },
+    "How long did you take the treatment?": {
+      "text": "Asks for how many weeks or months the patient took the medicine.",
+      "checked_by": ""
+    },
+    "Describe the disease": {
+      "text": "Asks what kind of cancer or growth the patient has and where in the body it is.",
+      "checked_by": ""
+    },
+    "What was the operation?": {
+      "text": "Asks which part of the body was operated on.",
+      "checked_by": ""
+    },
+    "When did it occur?": {
+      "text": "Asks the date it happened.",
+      "checked_by": ""
+    },
+    "Reason": {
+      "text": "Asks why the patient was in the hospital.",
+      "checked_by": ""
+    },
+    "How long were you hospitalized?": {
+      "text": "Asks how many days or weeks the patient stayed in the hospital.",
+      "checked_by": ""
+    },
+    "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+      "text": "Asks if the patient took any medicine lately, including traditional or herbal medicines.",
+      "checked_by": ""
+    },
+    "Name of Medications": {
+      "text": "Asks the names of the medicines the patient took.",
+      "checked_by": ""
+    },
+    "Medication Name": {
+      "text": "Asks the name of the medicine.",
+      "checked_by": ""
+    },
+    "From": {
+      "text": "Asks the date the patient started taking this medicine.",
+      "checked_by": ""
+    },
+    "To": {
+      "text": "Asks the date the patient stopped taking this medicine.",
+      "checked_by": ""
+    },
+    "How often do you have trouble taking medicines the way you have been told to take them?": {
+      "text": "Asks how often the patient misses doses or does not take medicines the way the doctor or health worker said.",
+      "checked_by": ""
+    },
+    "Do you have any allergies?": {
+      "text": "Asks if any medicine, food, or other thing has ever caused a bad reaction, like a rash, swelling, or trouble breathing.",
+      "checked_by": ""
+    },
+    "Do you chew tobbaco?": {
+      "text": "Asks if the patient chews tobacco, for example gutka, khaini, or paan with tobacco.",
+      "checked_by": ""
+    },
+    "How often do you chew tobacco?": {
+      "text": "Asks how many times a day the patient chews tobacco.",
+      "checked_by": ""
+    },
+    "Smoking history": {
+      "text": "Asks if the patient smokes now, smoked in the past, or never smoked.",
+      "checked_by": ""
+    },
+    "How many cigarettes per day do you smoke?": {
+      "text": "Asks how many cigarettes (or bidis) the patient smokes each day.",
+      "checked_by": ""
+    },
+    "Alcohol use": {
+      "text": "Asks if the patient drinks alcohol, like beer, wine, or local liquor.",
+      "checked_by": ""
+    },
+    "How often do you take alcohol?": {
+      "text": "Asks how often the patient drinks alcohol, for example every day or once a week.",
+      "checked_by": ""
+    },
+    "No. of drinks consumed in one go": {
+      "text": "Asks how many drinks the patient has at one time.",
+      "checked_by": ""
+    },
+    "Do you have a family history of any of the following?": {
+      "text": "Asks if a close family member (mother, father, sister, or brother) has had any of these illnesses.",
+      "checked_by": ""
+    },
+    "[Describe relation]": {
+      "text": "Type which other family member has it, for example grandmother or uncle.",
+      "checked_by": ""
+    }
+  }
+}

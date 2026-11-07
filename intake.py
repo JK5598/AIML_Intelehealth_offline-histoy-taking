@@ -1,5 +1,6 @@
 import re
 
+import explanations
 import negation
 import protocols as p
 import red_flags
@@ -20,6 +21,19 @@ def parse_numbers(reply, how_many):
     if all(1 <= n <= how_many for n in numbers):
         return [n - 1 for n in numbers]
     return None
+
+
+def option_to_explain(reply):
+    """'?3' -> 3. Anything else -> None."""
+    match = re.fullmatch(r"\?\s*(\d+)", reply)
+    if not match:
+        return None
+    return int(match.group(1))
+
+
+def explain_hint(option_count):
+    example = min(3, option_count)
+    return f"   (Type ? to explain the question, or ?{example} to explain option {example}.)"
 
 
 def is_yes(reply):
@@ -43,6 +57,7 @@ class Intake:
         self.said_no_ids = set()
         self.section = ""
         self.rejected = []
+        self.explainer = explanations.Explainer(mapper, console)
 
     def record(self, question, chosen, value=None, source="tapped", patient_words=None, status="present"):
         self.answers.append({
@@ -90,14 +105,28 @@ class Intake:
                 still_possible.append(flag)
         self.possible_alerts = still_possible
 
-    def ask_value(self, node, prompt):
+    def confirm(self, prompt, question, option_labels):
+        """Asks a yes/no question. Typing '?' shows simple explanations, then asks again."""
+        while True:
+            reply = self.console.ask(prompt)
+            if reply != "?":
+                return is_yes(reply)
+            self.explainer.show(p.display_text(question), option_labels)
+
+    def ask_value(self, node, prompt, about=None):
+        """'about' is the question to explain when the CHW types '?'. By default it is the node itself."""
+        if about is None:
+            about = node
         kind = p.input_type(node)
         if kind == "camera":
             self.console.show("   (photo step skipped in this prototype)")
             return ""
         self.questions_asked += 1
         while True:
-            value = self.console.ask(f"   {prompt} ({kind}):")
+            value = self.console.ask(f"   {prompt} ({kind}) (? = explain):")
+            if value == "?":
+                self.explainer.show(p.display_text(about))
+                continue
             if value or not p.is_required(node):
                 return value
             self.console.show("   This one is required.")
@@ -116,27 +145,45 @@ class Intake:
             return
         shown = ", ".join(p.option_label(options[i], self.language) for i in said_no)
         chosen = [options[i] for i in said_no]
+        english_labels = [p.option_label(option) for option in chosen]
         self.console.show(f"   Patient's words: \"{words}\"")
-        if is_yes(self.console.ask(f"   Patient said they do NOT have: {shown}. Save as 'No'? (y/n)")):
+        if self.confirm(f"   Patient said they do NOT have: {shown}. Save as 'No'? (y/n)", question, english_labels):
             for option in chosen:
                 self.said_no_ids.add((question.get("id"), option.get("id")))
             self.record(question, chosen, source=source, patient_words=words, status="said_no")
         else:
             self.note_rejected(question, chosen, "said no", words)
 
-    def choose_options(self, question, options):
-        labels = [p.option_label(option, self.language) for option in options]
-        multi = p.is_multi_choice(question)
-        required = p.is_required(question)
-        self.questions_asked += 1
-
+    def show_choices(self, question, labels, multi):
         self.console.show("")
         self.console.show(p.display_text(question, self.language) + (" (choose one or more)" if multi else ""))
         for number, label in enumerate(labels, start=1):
             self.console.show(f"   {number}. {label}")
+        self.console.show(explain_hint(len(labels)))
+
+    def choose_options(self, question, options):
+        labels = [p.option_label(option, self.language) for option in options]
+        english_labels = [p.option_label(option) for option in options]
+        multi = p.is_multi_choice(question)
+        required = p.is_required(question)
+        self.questions_asked += 1
+
+        self.show_choices(question, labels, multi)
 
         while True:
             reply = self.console.ask("   Number(s), or type the patient's words:")
+            if reply == "?":
+                self.explainer.show(p.display_text(question), english_labels)
+                self.show_choices(question, labels, multi)
+                continue
+            number = option_to_explain(reply)
+            if number is not None:
+                if 1 <= number <= len(options):
+                    self.explainer.show_option(english_labels[number - 1], p.display_text(question))
+                    self.show_choices(question, labels, multi)
+                else:
+                    self.console.show(f"   There is no option {number}.")
+                continue
             if reply == "":
                 if required:
                     self.console.show("   This question is required.")
@@ -147,7 +194,6 @@ class Intake:
             if picked is not None:
                 source, words = "tapped", None
             else:
-                english_labels = [p.option_label(option) for option in options]
                 result = self.mapper.map_answer(p.display_text(question), english_labels, reply, multi)
                 picked, dropped = negation.check_picks(english_labels, result["indexes"], reply)
                 self.offer_said_no(question, options, reply, self.mapper.name, skip=picked)
@@ -155,7 +201,8 @@ class Intake:
                     self.console.show("   Not sure what that matches. Please ask again or pick a number.")
                     continue
                 suggestion = ", ".join(labels[i] for i in picked)
-                if not is_yes(self.console.ask(f"   Suggested: {suggestion}. Correct? (y/n)")):
+                picked_labels = [english_labels[i] for i in picked]
+                if not self.confirm(f"   Suggested: {suggestion}. Correct? (y/n)", question, picked_labels):
                     self.note_rejected(question, [options[i] for i in picked], "map answer", reply)
                     continue
                 source, words = self.mapper.name, reply
@@ -180,7 +227,7 @@ class Intake:
                 return False
             self.console.show("")
             self.console.show(p.display_text(question, self.language))
-            if not is_yes(self.console.ask(f"   Patient already said: {value}. Keep? (y/n)")):
+            if not self.confirm(f"   Patient already said: {value}. Keep? (y/n)", question, []):
                 self.note_rejected(question, [], "from story", self.story, value=value)
                 return False
             self.filled_from_story += 1
@@ -198,9 +245,10 @@ class Intake:
         if not multi or any(p.is_exclusive(option) for option in chosen):
             chosen = chosen[:1]
         shown = ", ".join(p.option_label(option, self.language) for option in chosen)
+        chosen_labels = [p.option_label(option) for option in chosen]
         self.console.show("")
         self.console.show(p.display_text(question, self.language))
-        if not is_yes(self.console.ask(f"   Patient already said: {shown}. Keep? (y/n)")):
+        if not self.confirm(f"   Patient already said: {shown}. Keep? (y/n)", question, chosen_labels):
             self.note_rejected(question, chosen, "from story", self.story)
             return False
         self.filled_from_story += 1
@@ -226,7 +274,7 @@ class Intake:
             return
 
         if len(options) == 1 and p.input_type(options[0]) and not p.children(options[0]):
-            value = self.ask_value(options[0], p.display_text(question, self.language))
+            value = self.ask_value(options[0], p.display_text(question, self.language), about=question)
             if value:
                 self.record(question, options, value=value)
             else:

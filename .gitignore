@@ -10,6 +10,9 @@ visit.json
 smoke_visit.json
 *_visit.json
 
+# AI explanations logged when the app runs (review them, then move good ones into explanations.json)
+explanation_log.jsonl
+
 # Old copies of files
 _backup*/
 

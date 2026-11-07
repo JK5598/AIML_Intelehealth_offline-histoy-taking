@@ -5,11 +5,11 @@ import uuid
 
 import protocols as p
 import summary
-from intake import Console, Intake, parse_numbers
+from intake import Console, Intake, explain_hint, option_to_explain, parse_numbers
 from keyword_mapper import KeywordMapper
 
 
-SCHEMA_VERSION = "0.3"
+SCHEMA_VERSION = "0.4"
 
 
 def ask_patient(console):
@@ -25,13 +25,30 @@ def ask_patient(console):
     return {"age": float(age), "sex": sex}
 
 
-def pick_complaint(console, mapper, complaint_names, rejected):
+def show_complaints(console, complaint_names):
     console.show("")
     console.show("Main complaint:")
     for number, name in enumerate(complaint_names, start=1):
         console.show(f"   {number}. {name}")
+    console.show(explain_hint(len(complaint_names)))
+
+
+def pick_complaint(console, mapper, complaint_names, rejected, explainer):
+    show_complaints(console, complaint_names)
     while True:
         reply = console.ask("Number, or type the patient's words:")
+        if reply == "?":
+            explainer.show("Main complaint", complaint_names)
+            show_complaints(console, complaint_names)
+            continue
+        number = option_to_explain(reply)
+        if number is not None:
+            if 1 <= number <= len(complaint_names):
+                explainer.show_option(complaint_names[number - 1], "Main complaint")
+                show_complaints(console, complaint_names)
+            else:
+                console.show(f"   There is no option {number}.")
+            continue
         picked = parse_numbers(reply, len(complaint_names))
         if picked:
             return complaint_names[picked[0]], None
@@ -60,8 +77,9 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False)
     intake = Intake(patient, mapper, console, language)
 
     complaint_names = p.list_complaints(protocol_folder)
-    complaint, first_words = pick_complaint(console, mapper, complaint_names, intake.rejected)
+    complaint, first_words = pick_complaint(console, mapper, complaint_names, intake.rejected, intake.explainer)
     intake.complaint = complaint
+    intake.explainer.complaint = complaint
     protocol = p.load_protocol(protocol_folder, complaint)
 
     more = console.ask("\nIn the patient's own words, tell me more about the problem (Enter to skip):")
@@ -126,6 +144,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False)
             "suggestions_rejected": len(intake.rejected),
             "rejected_suggestions": intake.rejected,
             "ai_timings": getattr(mapper, "timings", []),
+            "ai_explanations": intake.explainer.ai_explanations,
         },
     }
     return visit

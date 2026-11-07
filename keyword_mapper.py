@@ -45,3 +45,6 @@ class KeywordMapper:
 
     def write_summary(self, facts_text):
         return None
+
+    def explain(self, text, kind, question_text="", complaint=""):
+        return None

@@ -15,6 +15,7 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 5. It runs past medical history and family history.
 6. It shows a red-flag alert as soon as a danger sign is recorded, and a softer "possible red flag, please check" when a danger sign only came up next to a "no" or "not".
 7. It prints a summary for the doctor (template, or an AI draft) with the physical-exam steps, and saves the visit as JSON.
+8. Whenever the app is waiting for an answer, the CHW can type `?` to see plain-language explanations of the question and its medical-term options, or `?3` to explain option 3 (see "Simple explanations" below).
 
 ## Files
 
@@ -28,6 +29,9 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `negation.py` | **No-AI negation check**: finds what the patient said "no" to ("no fever", "I have not fainted") |
 | `red_flags.py` | Red-flag rules (**placeholder list**, to be replaced with Intelehealth's or a clinician's criteria) |
 | `summary.py` | Template summary, and a check that red flags appear in the AI summary |
+| `explanations.py` | The `?` help: looks up `explanations.json`, falls back to the AI, and logs every AI explanation |
+| `explanations.json` | Plain-language explanations of questions and medical terms, written or reviewed by the team |
+| `explanation_log.jsonl` | Made when the app runs: every AI explanation, one per line, for the team to review |
 | `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
@@ -61,14 +65,14 @@ python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf
 # Show questions in Hindi (the AI still works in English)
 python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf --language hi
 
-# Quick tests
+# Quick tests (the smoke test also types "?" twice and "?2" once, and checks they are never saved)
 python smoke_test.py "$PROTOCOLS"
 python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
 ```
 
 ## How the main ideas show up in the code
 
-**Protocols lead, AI assists.** `intake.py` decides every question from the protocol tree. The AI is only called in `ai_mapper.py` for three things: matching the complaint, mapping the patient's words to options, and checking whether the story already answered a question. It can also draft the summary.
+**Protocols lead, AI assists.** `intake.py` decides every question from the protocol tree. The AI is only called in `ai_mapper.py` for three things: matching the complaint, mapping the patient's words to options, and checking whether the story already answered a question. It can also draft the summary, and explain a word the team hasn't explained yet when the CHW types `?`.
 
 **Constrained decoding.** Each AI call passes a *grammar* to llama.cpp (`one_number_grammar`, and `YES_NO_GRAMMAR` for the double-check). The grammar only allows replies like `{"answer": 2}`, using 0 or an option number that actually exists for that question, so the model can't invent an answer. The app sends short numbers (1, 2, 3...) instead of the long Intelehealth IDs and converts back to the IDs afterwards. That keeps the reply to about 7–8 tokens.
 
@@ -87,7 +91,46 @@ We say "said_no" rather than "absent" (which reads like "no answer") or "denied"
 
 **CHW always confirms.** Every AI pick is shown as "Suggested: … Correct?" or "Patient already said: … Keep?". Nothing the AI suggests is saved without a yes.
 
-**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.3"):
+**Simple explanations (`?` and `?N`).** Many CHWs don't know words like "Right Hypochondrium", "Epigastric" or "Syncope". Every option list (and the complaint list) ends with the hint line `(Type ? to explain the question, or ?3 to explain option 3.)`. Typed-value prompts end with a shorter hint, for example `Since when have you had this symptom? (duration) (? = explain):`.
+- `?` explains the question, plus only the options that already have an entry in `explanations.json`. It works whenever the app is waiting for an answer: an option list, a typed value, a "Correct? / Keep? / Save as 'No'?" check, or the complaint list.
+- `?N` (for example `?3`) explains just option N. It works on option lists and the complaint list. **This is the only way an option goes to the AI**, so the AI is called at most once for the question and once per option the CHW asks about.
+
+Then the app asks the same question again. `?` and `?N` are never saved as answers.
+
+Where each explanation comes from, in this order:
+
+| Source | When | What the CHW sees |
+|---|---|---|
+| `explanations.json`, `checked_by` filled in | the word or question is in the file and a teammate checked it | the text, no label |
+| `explanations.json`, `checked_by` empty | the word or question is in the file but nobody has checked it yet | the text + `(Draft – not checked yet)` |
+| AI (MedPsy) | not in the file, and a model is loaded | one short sentence + `(AI explanation – not checked)` |
+| nothing | not in the file and no model (keyword mode) | `No explanation available yet.` |
+
+If a word is in the file, the AI is never called for it. The AI call (`AIMapper.explain`) reuses `chat_prompt` with the empty `<think></think>` prefill. It has no grammar because it needs free text, but it is capped at 60 tokens and cut to the first sentence. The prompt starts with the chief complaint ("The patient's main complaint is Headache.") so the model has context, then tells it to explain in everyday words for someone with no medical training, not to give advice, not to guess a diagnosis, and to use one sentence only. On the complaint list there is no complaint yet, so that line is left out. Each text is asked about once per visit.
+
+`explanations.json` has two parts:
+
+```
+terms       {"Right Hypochondrium": {"text": "...", "checked_by": ""}, ...}   answer options
+questions   {"Nature of fever": {"text": "...", "checked_by": ""}, ...}        question texts
+```
+
+Keys are matched without caring about capital letters, extra spaces, `*` or `[` `]`, so "Other [Describe]" and "Other[describe]" are the same. For labels like "Upper (R) - Right Hypochondrium", the part after " - " also works as the key. Use the English label exactly as the app shows it: the app shows an option's `text` from the protocol file, which is sometimes different from its `display` (for example the CHW sees "Postprandial", not "After eating"). Explanations are always looked up and shown in English, even with `--language hi`. An option with no entry is simply left out of the `?` list; the CHW can still ask about it with `?N`.
+
+The file is pre-filled for the three pilot protocols (Abdominal Pain, Fever, Cough), for past medical history and family history (they are asked in every visit), and for the medical words in the complaint list (Syncope, Dyspepsia, Oedema, ...). **All of these were written by the AI assistant (Claude) and have `checked_by` empty**, so they show as drafts until a teammate checks them.
+
+**Reviewing AI explanations.** Every AI explanation is saved in two places:
+- `run_info["ai_explanations"]` in the visit record, and
+- `explanation_log.jsonl` in this folder (one JSON object per line, added to on every run).
+
+Each entry has `created`, `kind` ("question" or "term"), `term` (the word or question explained), `question` (the question it came from), `complaint` (the chief complaint, empty on the complaint list), `text`, `seconds` and `model`. The log file is in `.gitignore`, so it stays on the computer that made it; share it with the team when you review it. To review:
+
+1. Open `explanation_log.jsonl` in a text editor (or `python -c "import json; [print(json.loads(l)['term'], '|', json.loads(l)['text']) for l in open('explanation_log.jsonl')]"`).
+2. For a good explanation, copy it into `explanations.json` under `terms` (or `questions` if `kind` is "question"). Fix the wording if needed.
+3. When a teammate has checked an entry, put their name in `checked_by`. Only then does it show without a label.
+4. You can delete lines from the log once they are handled.
+
+**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.4"; 0.4 added `run_info["ai_explanations"]`):
 
 ```
 schema_version, visit_id, created, synced
@@ -104,8 +147,11 @@ answers            one entry per answered/skipped question:
 red_flags, possible_red_flags, physical_exam_steps
 summary            {template, ai_draft}
 run_info           not patient data: mapper, minutes, questions_asked, filled_from_story,
-                   suggestions_accepted, suggestions_rejected, rejected_suggestions, ai_timings
+                   suggestions_accepted, suggestions_rejected, rejected_suggestions, ai_timings,
+                   ai_explanations (new in 0.4)
 ```
+
+`ai_explanations` lists every AI explanation shown after `?` or `?N` in this visit, one entry each with `created, kind, term, question, complaint, text, seconds, model` (the same entries as in `explanation_log.jsonl`). Explanations that came from `explanations.json` are not listed, because they are already in the file.
 
 `rejected_suggestions` keeps every suggestion the CHW said "no" to (complaint match, mapped answer, story pre-fill, or "save as No"), so we can measure how often the AI is wrong in real use. `suggestions_accepted` counts the ones the CHW kept.
 
@@ -119,6 +165,12 @@ run_info           not patient data: mapper, minutes, questions_asked, filled_fr
 - The AI summary is only checked for red flags, not yet fact by fact.
 - No real syncing; the visit file just has `"synced": false`.
 - This is a laptop terminal app. The Android version comes next.
+- Explanations are English only, even with --language hi.
+- Simple explanations (`?`):
+  - Every entry in `explanations.json` is an unchecked draft written by the AI assistant. A clinician or teammate needs to check them and fill in `checked_by`.
+  - Only the three pilot protocols, past/family history and the complaint list are covered. In other protocols `?` usually explains only the question, and the CHW has to use `?N` for each option.
+  - The AI still gets meanings wrong sometimes. Asked with `?N`, the 1.7B said "Phonophobia means fear of loud sounds" (it means sounds bother or hurt you). No v2 protocol uses that word, so it is not in `explanations.json`. Passing the complaint helped: before, on a Headache question it said "Pain after coughing means when you cough, your chest hurts"; with "Headache" in the prompt it said "coughing makes your head hurt more". This is why AI explanations are labeled and logged.
+  - No pictures yet. The Android version could show images from Intelehealth's `protocols/v2/physicalExamAssets` next to the explanation, for example `abdominalregions9.jpg` for the nine abdomen regions and `jaundiceexample.jpg` for Jaundice.
 
 ## First results (October 29, 2026)
 

@@ -13,6 +13,9 @@ class AutoConsole:
         self.story = story
         self.quiet = quiet
         self.log = []
+        self.help_asked_on_choice = False
+        self.help_asked_on_option = False
+        self.help_asked_on_value = False
 
     def show(self, text=""):
         self.log.append(text)
@@ -30,14 +33,42 @@ class AutoConsole:
             reply = self.story
         elif "Correct?" in prompt or "Keep?" in prompt or "Save as 'No'?" in prompt:
             reply = "y"
+        elif "Number(s)" in prompt and not self.help_asked_on_choice:
+            reply = "?"
+            self.help_asked_on_choice = True
+        elif "Number(s)" in prompt and not self.help_asked_on_option:
+            reply = "?2"
+            self.help_asked_on_option = True
         elif "Number(s)" in prompt:
             reply = "1"
+        elif not self.help_asked_on_value:
+            reply = "?"
+            self.help_asked_on_value = True
         else:
             reply = "3 days"
         self.log.append(prompt + " " + reply)
         if not self.quiet:
             print(prompt, reply)
         return reply
+
+
+def check_help(console, visit):
+    """The CHW typed '?' twice and '?2' once. Explanations must have been shown, and '?' must never be saved."""
+    explanations_shown = 0
+    for line in console.log:
+        if "Simple explanation" in line:
+            explanations_shown += 1
+    saved_question_marks = 0
+    for answer in visit["answers"]:
+        for text in (answer["value"], answer["patient_words"]):
+            if text and text.startswith("?"):
+                saved_question_marks += 1
+    print(f"Help check: '?' or '?2' typed 3 times, explanations shown {explanations_shown} times, "
+          f"'?' saved as an answer {saved_question_marks} times")
+    if explanations_shown != 3 or saved_question_marks != 0:
+        print("Help check FAILED")
+        sys.exit(1)
+    print("Help check OK")
 
 
 if __name__ == "__main__":
@@ -57,5 +88,7 @@ if __name__ == "__main__":
     run_info = dict(visit["run_info"])
     run_info.pop("ai_timings")
     run_info.pop("rejected_suggestions")
+    run_info.pop("ai_explanations")
     print(json.dumps(run_info, indent=2))
     print("Full record saved to smoke_visit.json")
+    check_help(console, visit)
