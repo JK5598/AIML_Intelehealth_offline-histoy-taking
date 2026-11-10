@@ -64,6 +64,7 @@ class Intake:
             "section": self.section,
             "question_id": question.get("id"),
             "question": p.display_text(question),
+            "question_label": question.get("text", "").strip(),
             "answer_ids": [option.get("id") for option in chosen],
             "answers": [option.get("text", "").strip() for option in chosen],
             "value": value,
@@ -92,12 +93,12 @@ class Intake:
             if flag not in self.alerts:
                 self.alerts.append(flag)
                 self.console.show("")
-                self.console.show(f"   !!! RED FLAG: {flag}. Consider urgent referral. !!!")
+                self.console.show(f"   !!! RED FLAG - {red_flags.describe(flag)}. Refer as per level. !!!")
         for flag in possible:
             if flag not in self.alerts and flag not in self.possible_alerts:
                 self.possible_alerts.append(flag)
                 self.console.show("")
-                self.console.show(f"   ?? POSSIBLE RED FLAG: {flag}. It came up next to a 'no' or 'not'. "
+                self.console.show(f"   ?? POSSIBLE RED FLAG - {red_flags.describe(flag)}. It came up next to a 'no' or 'not'. "
                                   f"Please check with the patient. ??")
         still_possible = []
         for flag in self.possible_alerts:
