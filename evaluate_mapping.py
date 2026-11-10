@@ -138,7 +138,9 @@ def check_red_flag_cases(path=RED_FLAG_FILE):
         if said_no_labels:
             answers.append({"answers": said_no_labels, "value": None,
                             "patient_words": case["patient_words"], "status": "said_no"})
-        flags, possible = red_flags.check(case["complaint"], answers)
+        # Optional "age" column (years); blank means a 30-year-old adult.
+        patient = {"age": float(case.get("age") or 30), "sex": case.get("sex") or "female"}
+        flags, possible = red_flags.check(case["complaint"], answers, patient)
         ok = (set(flags) == set(split_list(case["expected_red_flags"]))
               and set(possible) == set(split_list(case["expected_possible"])))
         correct += ok
