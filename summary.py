@@ -4,6 +4,13 @@ def facts_lines(answers):
         labels = [a for a in answer["answers"] if not a.startswith("[")]
         if answer.get("status") == "said_no":
             text = ", ".join(labels) + ": patient said NO"
+        #----- Lia's code: show unsure / not answered (from the multi-question intake follow-ups) -----
+        elif answer.get("status") == "unsure":
+            text = ", ".join(labels + ([str(answer["value"])] if answer["value"] else []))
+            text = (text + " (patient unsure)") if text else "patient unsure"
+        elif answer.get("status") == "not_answered":
+            text = "asked, no answer"
+        #----- end of Lia's code -----
         elif labels and answer["value"]:
             text = ", ".join(labels) + ": " + str(answer["value"])
         elif answer["value"]:

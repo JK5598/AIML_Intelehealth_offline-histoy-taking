@@ -8,6 +8,18 @@ import summary
 from intake import Console, Intake, explain_hint, option_to_explain, parse_numbers
 from keyword_mapper import KeywordMapper
 
+"""
+        ------------------------ Lia's code ------------------------------------------
+"""
+#----- The multi-question intake mode -----
+from followup import CountingConsole
+from intake_group import GroupIntake
+
+# --intake one     = today's app, one question at a time (default, unchanged)
+# --intake group   = multi-question intake: one typed reply fills a group of questions (intake_group.py)
+INTAKE_MODES = {"one": Intake, "group": GroupIntake}
+#----- end of Lia's code -----
+
 
 SCHEMA_VERSION = "0.4"
 
@@ -71,10 +83,19 @@ def pick_complaint(console, mapper, complaint_names, rejected, explainer):
         })
 
 
-def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False):
+def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
+              intake_mode="one", group_size=4):   # Lia's code: intake_mode and group_size added, defaults keep today's app
     started = time.time()
+
+    ##########################################################################
+    #----- Lia's code: count the CHW's inputs, and pick the intake mode -----
+    console = CountingConsole(console)
     patient = ask_patient(console)
-    intake = Intake(patient, mapper, console, language)
+    if intake_mode == "one":
+        intake = Intake(patient, mapper, console, language)
+    else:
+        intake = INTAKE_MODES[intake_mode](patient, mapper, console, language, group_size)
+    #----- end of Lia's code -----
 
     complaint_names = p.list_complaints(protocol_folder)
     complaint, first_words = pick_complaint(console, mapper, complaint_names, intake.rejected, intake.explainer)
@@ -113,7 +134,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False)
     if first_words:
         accepted_suggestions += 1
     for answer in intake.answers:
-        if answer["source"] in (mapper.name, "from story"):
+        if answer["source"] in (mapper.name, "from story", "from group reply"):   # Lia's code: + "from group reply"
             accepted_suggestions += 1
 
     visit = {
@@ -147,6 +168,14 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False)
             "ai_explanations": intake.explainer.ai_explanations,
         },
     }
+
+    ################################################################################################
+    #----- Lia's code: which intake mode ran, how many times the CHW typed, and the follow-ups -----
+    visit["run_info"]["intake_mode"] = intake_mode
+    visit["run_info"]["chw_inputs"] = console.inputs
+    if hasattr(intake, "extra_run_info"):
+        visit["run_info"].update(intake.extra_run_info())
+    #----- end of Lia's code -----
     return visit
 
 
@@ -160,6 +189,16 @@ def main():
     parser.add_argument("--story-check", default="yes_no", choices=["off", "yes_no", "evidence"],
                         help="extra check on single-choice answers taken from the story (AI only)")
     parser.add_argument("--out", default="visit.json")
+
+    ######################################################
+    #----- Lia's code: choose the intake mode -----
+    # Same on Windows and Mac, for example:  python main.py --protocols "$PROTOCOLS" --intake group
+    parser.add_argument("--intake", default="one", choices=list(INTAKE_MODES),
+                        help="one = one question at a time (default), group = multi-question intake")
+    parser.add_argument("--group-size", type=int, default=4, help="questions per group in --intake group")
+    #----- end of Lia's code -----
+    #######################################################
+    
     args = parser.parse_args()
 
     if args.model:
@@ -168,7 +207,8 @@ def main():
     else:
         mapper = KeywordMapper()
 
-    visit = run_visit(Console(), mapper, args.protocols, args.language, args.ai_summary)
+    visit = run_visit(Console(), mapper, args.protocols, args.language, args.ai_summary,
+                      args.intake, args.group_size)   # Lia's code: pass the intake mode
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(visit, f, indent=2, ensure_ascii=False)
     print(f"\nSaved visit to {args.out}")
