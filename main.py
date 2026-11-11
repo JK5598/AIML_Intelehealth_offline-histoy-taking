@@ -21,7 +21,7 @@ INTAKE_MODES = {"one": Intake, "group": GroupIntake}
 #----- end of Lia's code -----
 
 
-SCHEMA_VERSION = "0.4"
+SCHEMA_VERSION = "0.5"
 
 
 def ask_patient(console):

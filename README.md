@@ -39,6 +39,9 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
 | `workload_report.py` | Runs 3 automatic visits with a model (about half the option questions answered in words) and prints AI calls, tokens and seconds per visit, split by task |
+| `intake_group.py` | **Multi-question intake** (`--intake group`): asks a group of questions together, fills them from one typed reply, then follows up |
+| `followup.py` | Follow-up checks used by the multi-question intake: missing answers, vague durations ("a while"), "no"/"yes" disagreements, and saving "unsure" / "not answered" |
+| `compare_intake_modes.py` | Runs the same scripted patients through both intake modes and prints CHW inputs, answers, follow-ups and AI calls side by side |
 | `explanation_results_<model>.csv` | Made by `evaluate_explanations.py`: the AI's sentence next to the expected meaning, with an empty `correct (y/n/partly)` column |
 
 ## Setup
@@ -74,6 +77,11 @@ python smoke_test.py "$PROTOCOLS"
 python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
 python evaluate_explanations.py medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf          # reads explanation_test_cases.csv
 python workload_report.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # AI work per visit
+
+# Multi-question intake (ask several questions at once, then follow up)
+python main.py --protocols "$PROTOCOLS" --intake group --model medpsy-1.7b-q4_k_m-imat.gguf
+python main.py --protocols "$PROTOCOLS" --intake group --group-size 3   # smaller groups
+python compare_intake_modes.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf   # both modes on the same scripted patients
 ```
 
 ## How the main ideas show up in the code
@@ -136,7 +144,7 @@ Each entry has `created`, `kind` ("question" or "term"), `term` (the word or que
 3. When a teammate has checked an entry, put their name in `checked_by`. Only then does it show without a label.
 4. You can delete lines from the log once they are handled.
 
-**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.4"; 0.4 added `run_info["ai_explanations"]`):
+**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.5"; 0.4 added `run_info["ai_explanations"]`; 0.5 added the multi-question intake fields):
 
 ```
 schema_version, visit_id, created, synced
@@ -148,13 +156,17 @@ answers            one entry per answered/skipped question:
     question_id, question
     answer_ids, answers, value
     status         "present" | "said_no" (patient said they don't have it) | "skipped" (CHW skipped an optional question)
-    source         "tapped" | "keyword" | "ai" | "from story" | null for skipped
+                   | "unsure" (patient doesn't know) | "not_answered" (asked, no answer)   (new in 0.5, group mode)
+    source         "tapped" | "keyword" | "ai" | "from story" | "from group reply" (new in 0.5) | null for skipped
     patient_words
 red_flags, possible_red_flags, physical_exam_steps
 summary            {template, ai_draft}
 run_info           not patient data: mapper, minutes, questions_asked, filled_from_story,
                    suggestions_accepted, suggestions_rejected, rejected_suggestions, ai_timings,
-                   ai_explanations (new in 0.4)
+                   ai_explanations (new in 0.4),
+                   intake_mode ("one" or "group") and chw_inputs (times the CHW typed something) (new in 0.5),
+                   group mode only: group_size, groups_asked, follow_ups_asked, saved_unsure,
+                   saved_not_answered, follow_ups (one entry per follow-up with its reason) (new in 0.5)
 ```
 
 `ai_explanations` lists every AI explanation shown after `?` or `?N` in this visit, one entry each with `created, kind, term, question, complaint, text, seconds, model` (the same entries as in `explanation_log.jsonl`). Explanations that came from `explanations.json` are not listed, because they are already in the file.
@@ -172,6 +184,10 @@ run_info           not patient data: mapper, minutes, questions_asked, filled_fr
 - No real syncing; the visit file just has `"synced": false`.
 - This is a laptop terminal app. The Android version comes next.
 - Explanations are English only, even with --language hi.
+- Multi-question intake (`--intake group`):
+  - In the tests below, one group reply filled only about half of the questions; the rest needed a follow-up.
+  - It uses about 50% more AI calls than one-at-a-time, because every question in the group is checked against the reply and every pick gets the yes/no double-check. This matters on a phone.
+  - Tested on only 2 scripted patients, written by us, not checked by a clinician.
 - Simple explanations (`?`):
   - Every entry in `explanations.json` is an unchecked draft written by the AI assistant. A clinician or teammate needs to check them and fill in `checked_by`.
   - Only the three pilot protocols, past/family history and the complaint list are covered. In other protocols `?` usually explains only the question, and the CHW has to use `?N` for each option.
@@ -350,3 +366,33 @@ The slowest word is always the first one: the model reads the rules and the exam
 - Explain calls are few (most Abdominal Pain and Fever words are in `explanations.json`), but each one costs about 620 prompt tokens because of the 7 worked examples. On Headache, which has no entries in the file, all 3 went to the AI.
 - The AI summary (`--ai-summary`) was not turned on, so it is not counted.
 - Seconds are not simply proportional to tokens: llama.cpp reuses the start of the prompt when it matches the previous call.
+
+## Multi-question intake (November 11, 2026)
+
+Written by Lia (branch `lia-code`), following Dr. Soenksen's advice to ask several questions at once and then come back to what is missing or unclear. The default is still one question at a time; `--intake group` turns it on.
+
+**How it works** (`intake_group.py`, groups of 4 questions by default, in the protocol's own order):
+
+1. **Story first:** if the patient's story already answered a question, the CHW confirms it, as in the normal mode.
+2. **Group:** the app lists the rest of the group; the CHW asks them together and types the patient's whole reply once.
+3. **Fill:** the app checks each question against that reply. With a model, the AI uses its own instructions (`GROUP_RULES`), answers by option number only, never against a "no", and every pick gets the yes/no double-check. Without a model, keyword matching and plain code for durations ("3 days").
+4. **Confirm all at once:** the CHW checks all the suggestions with one reply: `y` = all correct, `2` or `1,3` = those are wrong, `u2` = save question 2 as unsure, `n` = none are right.
+5. **Follow up** (`followup.py`): every question still missing, or with a rejected suggestion, is asked once on its own. Vague durations ("a while", "sometimes in a day") and answers that disagree (the story said "no fever", the reply says "maybe fever") are asked again. At a follow-up, `u` saves "unsure" and `x` saves "not answered", so nothing is left blank.
+
+Severity questions and free-text boxes are never filled from a group reply; they are always asked on their own.
+
+**Results** (`compare_intake_modes.py`, 2 scripted patients; run on a 2-core cloud computer, so the seconds are much slower than a laptop):
+
+| Patient | Mode | CHW inputs | Required answered | Filled from group reply | Follow-ups | AI calls | AI seconds |
+|---|---|---|---|---|---|---|---|
+| Abdominal Pain | one | 45 | 17/17 | – | – | 35 | 93 |
+| Abdominal Pain | group | 38 | 17/17 | 8 | 9 | 52 | 144 |
+| Fever | one | 41 | 12/12 | – | – | 22 | 58 |
+| Fever | group | 35 | 12/12 | 7 | 8 | 34 | 98 |
+
+(MedPsy-1.7B. Without a model, group mode cut CHW inputs from 52 to 32 for Abdominal Pain.)
+
+**What we learned**
+- The CHW types about 15% less, and every required question is still answered.
+- The AI works about 50% more. Using the emulator speeds (about 4 s per AI call on the 1.7B), that is roughly 3.5 min of AI time per visit instead of 2.3 min: still well under 20 minutes.
+- One group reply filled about half the questions; the rest were asked as follow-ups.
