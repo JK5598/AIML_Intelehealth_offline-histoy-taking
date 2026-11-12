@@ -88,8 +88,16 @@ class Intake:
             "patient_words": patient_words,
         })
 
+    def red_flag_answers(self):
+        """The saved answers plus the patient's story, so a danger sign the patient only mentioned in
+        their story (e.g. "he had a seizure yesterday") still raises a red flag."""
+        if not self.story:
+            return self.answers
+        story = {"answers": [], "value": None, "patient_words": self.story, "status": "present"}
+        return self.answers + [story]
+
     def check_red_flags(self):
-        flags, possible = red_flags.check(self.complaint, self.answers, self.patient)
+        flags, possible = red_flags.check(self.complaint, self.red_flag_answers(), self.patient)
         for flag in flags:
             if flag not in self.alerts:
                 self.alerts.append(flag)
@@ -116,7 +124,7 @@ class Intake:
             if item["id"] in self.follow_ups_done:
                 continue
             self.follow_ups_done.add(item["id"])
-            if red_flags.follow_up_already_known(item, self.complaint, self.answers):
+            if red_flags.follow_up_already_known(item, self.complaint, self.red_flag_answers()):
                 continue  # already answered earlier in the visit: don't ask twice
             reply = ""
             for _ in range(3):

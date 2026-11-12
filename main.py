@@ -105,6 +105,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
 
     more = console.ask("\nIn the patient's own words, tell me more about the problem (Enter to skip):")
     intake.story = " ".join(part for part in (first_words, more) if part)
+    intake.check_red_flags()   # a danger sign in the story alerts right away
 
     console.show(f"\n--- {complaint} ---")
     intake.run_section(protocol, "hpi", use_story=True)

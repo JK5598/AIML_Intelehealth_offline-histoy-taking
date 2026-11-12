@@ -1,7 +1,6 @@
 import negation
 
-# DRAFT red-flag rules for the 5 evaluation complaints (Abdominal Pain, Chest Discomfort or Pain,
-# Cough, Fever, Headache). Not yet clinician-checked.
+# DRAFT red-flag rules for all 52 complaints (78 rules). Not yet clinician-checked.
 #
 # Sources:
 #   Guidelines = Intelehealth, Clinical Treatment Guidelines for Telemedicine Doctors (288 pages).
