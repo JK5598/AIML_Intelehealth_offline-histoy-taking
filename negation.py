@@ -20,10 +20,55 @@ GENERIC_WORDS = {"pain", "other", "describe", "with", "change", "feeling", "loss
 
 WINDOW = 5
 
+# "No nausea, vomiting, or diarrhea": a "no" in front of a list covers every item in it.
+# After a comma, the "no" carries on only if the rest of the sentence is clearly a list:
+# short items (3 words or fewer each) that ends with "or" / "nor" before the last item.
+# This is strict on purpose. Wrongly marking a symptom as "no" hides it, so these stay as they are:
+#   "no fever, I vomited twice"                      (new sentence part)
+#   "no fever, cough started yesterday and got worse" (no "or", so not clearly a list)
+#   "no fever, cough and cold"                       (could mean the patient HAS cough and cold)
+LIST_ITEM_MAX_WORDS = 3
+LIST_SPLITTERS = {",", "or", "nor", "and"}
+LIST_ENDERS = {"or", "nor"}
+SENTENCE_ENDERS = {".", ";", "!", "?"}
+CLAUSE_STARTERS = {"i", "im", "ive", "id", "he", "she", "it", "its", "we", "they", "you", "my", "his", "her",
+                   "our", "their", "the", "this", "that", "there", "then", "also", "so", "because",
+                   "when", "after", "before", "since", "while"}
+
 
 def tokens(text):
     text = text.lower().replace("'", "").replace("’", "")
     return re.findall(r"[a-z]+|[.,;!?]", text)
+
+
+def list_length(words, comma_position):
+    """If the words after this comma finish a 'no X, Y, or Z' list, returns how many words
+    are left in the list. Otherwise returns 0 (the "no" stops at the comma, as before)."""
+    rest = []
+    for word in words[comma_position + 1:]:
+        if word in SENTENCE_ENDERS:
+            break
+        rest.append(word)
+
+    items = [[]]
+    ends_with_or = False
+    for word in rest:
+        if word in LIST_SPLITTERS:
+            items.append([])
+            if word in LIST_ENDERS:
+                ends_with_or = True
+        else:
+            items[-1].append(word)
+    items = [item for item in items if item]
+
+    if not ends_with_or or not items:
+        return 0
+    for item in items:
+        if len(item) > LIST_ITEM_MAX_WORDS:
+            return 0
+        if item[0] in CLAUSE_STARTERS or item[0] in SCOPE_ENDERS or item[0] in NEGATION_WORDS:
+            return 0
+    return len(rest)
 
 
 def stem(word):
@@ -36,6 +81,7 @@ def split_words(text):
     negated = []
     affirmed = []
     words_left_in_scope = 0
+    in_no_list = False
     unsure = False
 
     for position, word in enumerate(words):
@@ -44,8 +90,11 @@ def split_words(text):
         else:
             next_word = ""
 
-        if word in PUNCTUATION or word in SCOPE_ENDERS:
+        if word == "," and in_no_list and list_length(words, position) > 0:
+            words_left_in_scope = list_length(words, position)
+        elif word in PUNCTUATION or word in SCOPE_ENDERS:
             words_left_in_scope = 0
+            in_no_list = False
             unsure = False
         elif word in UNSURE_WORDS:
             words_left_in_scope = 0
@@ -55,11 +104,13 @@ def split_words(text):
             unsure = True
         elif word in NEGATION_WORDS and not unsure:
             words_left_in_scope = WINDOW
+            in_no_list = True
         elif words_left_in_scope > 0:
             negated.append(word)
             words_left_in_scope -= 1
         else:
             affirmed.append(word)
+            in_no_list = False
     return negated, affirmed
 
 

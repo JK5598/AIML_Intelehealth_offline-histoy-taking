@@ -97,7 +97,7 @@ python compare_intake_modes.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf   # bot
 
 **Best answer first, then "anything else?"** For every question the model may pick only ONE option (or 0). For a multi-choice question it is then asked again with the options it already picked listed as "Already recorded" and 0 meaning "Nothing else", up to 4 rounds. This replaced letting the model pick up to 3 numbers at once, which made it over-pick.
 
-**Negation is plain code, not AI.** `negation.py` looks for words like *no, not, never, without, denies* and treats the next few words (up to 5, stopping at a comma, period, or *but*) as things the patient said no to. If the patient sounds unsure ("not sure", "don't know", "don't think", "maybe"), nothing counts as a no. "Can't" is not treated as a no, because "can't breathe" or "can't stop vomiting" describes a symptom. It is used in three places:
+**Negation is plain code, not AI.** `negation.py` looks for words like *no, not, never, without, denies* and treats the next few words (up to 5, stopping at a comma, period, or *but*) as things the patient said no to. One exception: a "no" in front of a list covers the whole list, so "No nausea, vomiting, or diarrhea" is a no to all three. This only happens when the rest of the sentence is clearly a list (short items, with "or" / "nor" before the last one); "no fever, I vomited twice", "no fever, cough started yesterday and got worse" and "no fever, cough and cold" still stop at the comma, because wrongly marking a symptom as "no" would hide it. If the patient sounds unsure ("not sure", "don't know", "don't think", "maybe"), nothing counts as a no. "Can't" is not treated as a no, because "can't breathe" or "can't stop vomiting" describes a symptom. It is used in three places:
 - **Guard:** if the AI picks an option the patient said no to, the pick is dropped before the CHW sees it.
 - **Saving "No" answers:** on multi-choice questions, the CHW sees the patient's words and is asked "Patient said they do NOT have: Fever. Save as 'No'?" Only on "y" is it saved, with `"status": "said_no"`. It shows as "Fever: patient said NO" in the summary. Questions the patient never mentioned are not saved as "No"; they stay blank.
 - **Red flags:** answers the CHW saved as "No" never raise a red flag. A danger sign that only appears inside a "no ..." phrase in the patient's words is NOT ignored: it is shown as a **possible** red flag ("please check with the patient"), because missing a real red flag is worse than a false alarm.
@@ -423,3 +423,12 @@ Severity questions and free-text boxes are never filled from a group reply; they
 - The CHW types about 15% less, and every required question is still answered.
 - The AI works about 50% more. Using the emulator speeds (about 4 s per AI call on the 1.7B), that is roughly 3.5 min of AI time per visit instead of 2.3 min: still well under 20 minutes.
 - One group reply filled about half the questions; the rest were asked as follow-ups.
+
+## Negation fix for lists (November 12, 2026)
+
+- **Bug:** the comma ended the "no", so "No nausea, vomiting, or diarrhea" (test case TC03) was read as a no to nausea only, and "diarrhea" raised a false URGENT "Ongoing diarrhoea" red flag.
+- **Fix:** `negation.py` now carries a "no" across commas when the rest of the sentence is a short list ending in "or" / "nor". It is strict on purpose, because wrongly marking a symptom as "no" hides it.
+- **New tests:** 7 negation cases in `test_cases.csv` and 2 in `red_flag_cases.csv`, including sentences that must NOT be treated as a list. Results: "said no" 48/48 multi-choice cases (was 41/41); red-flag cases 84/84 (was 82/82). `smoke_test.py` and `compare_intake_modes.py` still pass.
+- **TC03 now:** EMERGENT (chest pain over 50) and IMMEDIATE (pneumonia) as expected; "Ongoing diarrhoea" only shows as a possible flag to ask about. The TC05 "Acute general weakness" false alarm is a red-flag rule question, not negation, and is still open.
+- These cases were written by the AI assistant and are not clinician-checked.
+
