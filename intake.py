@@ -43,6 +43,7 @@ def is_yes(reply):
 class Intake:
     def __init__(self, patient, mapper, console, language="en"):
         self.patient = patient
+        self.follow_ups_done = set()
         self.mapper = mapper
         self.console = console
         self.language = language
@@ -64,6 +65,7 @@ class Intake:
             "section": self.section,
             "question_id": question.get("id"),
             "question": p.display_text(question),
+            "question_label": question.get("text", "").strip(),
             "answer_ids": [option.get("id") for option in chosen],
             "answers": [option.get("text", "").strip() for option in chosen],
             "value": value,
@@ -87,23 +89,50 @@ class Intake:
         })
 
     def check_red_flags(self):
-        flags, possible = red_flags.check(self.complaint, self.answers)
+        flags, possible = red_flags.check(self.complaint, self.answers, self.patient)
         for flag in flags:
             if flag not in self.alerts:
                 self.alerts.append(flag)
                 self.console.show("")
-                self.console.show(f"   !!! RED FLAG: {flag}. Consider urgent referral. !!!")
+                self.console.show(f"   !!! RED FLAG - {red_flags.describe(flag)}. Refer as per level. !!!")
         for flag in possible:
             if flag not in self.alerts and flag not in self.possible_alerts:
                 self.possible_alerts.append(flag)
                 self.console.show("")
-                self.console.show(f"   ?? POSSIBLE RED FLAG: {flag}. It came up next to a 'no' or 'not'. "
+                self.console.show(f"   ?? POSSIBLE RED FLAG - {red_flags.describe(flag)}. It came up next to a 'no' or 'not'. "
                                   f"Please check with the patient. ??")
         still_possible = []
         for flag in self.possible_alerts:
             if flag in possible:
                 still_possible.append(flag)
         self.possible_alerts = still_possible
+        self.ask_red_flag_follow_ups(flags)
+
+    def ask_red_flag_follow_ups(self, flags):
+        """A broad red flag (e.g. headache + fever) fired: ask the yes/no questions that decide
+        whether it is an emergency. Each answer is recorded like any other answer, so the
+        red-flag check runs again and can raise the level."""
+        for item in red_flags.follow_ups_for(flags):
+            if item["id"] in self.follow_ups_done:
+                continue
+            self.follow_ups_done.add(item["id"])
+            if red_flags.follow_up_already_known(item, self.complaint, self.answers):
+                continue  # already answered earlier in the visit: don't ask twice
+            reply = ""
+            for _ in range(3):
+                reply = self.console.ask(f"   RED-FLAG CHECK: {item['question']} (y = yes / n = no / d = don't know):")
+                reply = reply.strip().lower()
+                if reply[:1] in ("y", "n", "d"):
+                    break
+            question = {"id": "follow_up_" + item["id"], "text": item["label"], "display": item["question"]}
+            if reply.startswith("n"):
+                self.record(question, [{"id": item["id"], "text": item["label"]}],
+                            source="red-flag follow-up", status="said_no")
+            elif reply.startswith("y"):
+                self.record(question, [{"id": item["id"], "text": item["label"]}], source="red-flag follow-up")
+            else:  # don't know, or no clear answer: treat as yes so the level is never lowered by doubt
+                self.record(question, [{"id": item["id"], "text": item["label"] + " (not sure)"}],
+                            source="red-flag follow-up")
 
     def confirm(self, prompt, question, option_labels):
         """Asks a yes/no question. Typing '?' shows simple explanations, then asks again."""

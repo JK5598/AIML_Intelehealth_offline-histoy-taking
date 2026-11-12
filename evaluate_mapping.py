@@ -128,11 +128,19 @@ def check_red_flag_cases(path=RED_FLAG_FILE):
     for case in cases:
         answer = {"answers": [], "value": None, "patient_words": case["patient_words"], "status": "present"}
         answers = [answer]
+        # Optional column: options the CHW picked, e.g. "Vomiting; Chest indrawing=Yes"
+        # ("Question=Answer" fills in the question label, for Yes/No sub-questions).
+        for picked in split_list(case.get("answer_labels") or ""):
+            question_label, _, label = picked.rpartition("=")
+            answers.append({"answers": [label], "question_label": question_label, "value": None,
+                            "patient_words": None, "status": "present"})
         said_no_labels = split_list(case["said_no_labels"])
         if said_no_labels:
             answers.append({"answers": said_no_labels, "value": None,
                             "patient_words": case["patient_words"], "status": "said_no"})
-        flags, possible = red_flags.check(case["complaint"], answers)
+        # Optional "age" column (years); blank means a 30-year-old adult.
+        patient = {"age": float(case.get("age") or 30), "sex": case.get("sex") or "female"}
+        flags, possible = red_flags.check(case["complaint"], answers, patient)
         ok = (set(flags) == set(split_list(case["expected_red_flags"]))
               and set(possible) == set(split_list(case["expected_possible"])))
         correct += ok
@@ -156,7 +164,7 @@ if __name__ == "__main__":
     print("Negation check (no AI):")
     check_said_no(folder, cases)
 
-    print("\nRed-flag check (no AI, placeholder rules):")
+    print("\nRed-flag check (no AI, draft guideline rules):")
     check_red_flag_cases()
 
     print("\nNo-AI keyword baseline:")

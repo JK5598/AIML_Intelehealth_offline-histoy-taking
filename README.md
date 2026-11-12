@@ -27,15 +27,15 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `keyword_mapper.py` | **No-AI baseline**: matches the patient's words to options by shared keywords |
 | `ai_mapper.py` | **AI version**: MedPsy through llama.cpp, with constrained JSON output and thinking skipped |
 | `negation.py` | **No-AI negation check**: finds what the patient said "no" to ("no fever", "I have not fainted") |
-| `red_flags.py` | Red-flag rules (**placeholder list**, to be replaced with Intelehealth's or a clinician's criteria) |
-| `summary.py` | Template summary, and a check that red flags appear in the AI summary |
+| `red_flags.py` | Red-flag rules (78) from the Intelehealth Clinical Treatment Guidelines and the WHO Interagency Integrated Triage Tool (IITT), each with a level and a page or chart section; also the red-flag follow-up questions |
+| `summary.py` | Template summary (red flags listed most urgent first, with level and source), and a check that red flags appear in the AI summary |
 | `explanations.py` | The `?` help: looks up `explanations.json`, falls back to the AI, and logs every AI explanation |
 | `explanations.json` | Plain-language explanations of questions and medical terms, written or reviewed by the team |
 | `explanation_log.jsonl` | Made when the app runs: every AI explanation, one per line, for the team to review |
 | `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
-| `red_flag_cases.csv` | Patient sentences with the red flags (and possible red flags) they should raise |
+| `red_flag_cases.csv` | 82 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
 | `workload_report.py` | Runs 3 automatic visits with a model (about half the option questions answered in words) and prints AI calls, tokens and seconds per visit, split by task |
@@ -74,6 +74,7 @@ python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf --lan
 
 # Quick tests (the smoke test also types "?" twice and "?2" once, and checks they are never saved)
 python smoke_test.py "$PROTOCOLS"
+python -c "import evaluate_mapping as e; e.check_red_flag_cases()"   # red-flag rules only, no AI needed
 python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
 python evaluate_explanations.py medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf          # reads explanation_test_cases.csv
 python workload_report.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # AI work per visit
@@ -100,6 +101,19 @@ python compare_intake_modes.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf   # bot
 - **Guard:** if the AI picks an option the patient said no to, the pick is dropped before the CHW sees it.
 - **Saving "No" answers:** on multi-choice questions, the CHW sees the patient's words and is asked "Patient said they do NOT have: Fever. Save as 'No'?" Only on "y" is it saved, with `"status": "said_no"`. It shows as "Fever: patient said NO" in the summary. Questions the patient never mentioned are not saved as "No"; they stay blank.
 - **Red flags:** answers the CHW saved as "No" never raise a red flag. A danger sign that only appears inside a "no ..." phrase in the patient's words is NOT ignored: it is shown as a **possible** red flag ("please check with the patient"), because missing a real red flag is worse than a false alarm.
+
+**Red flags are plain code, from two published sources.** Every rule in `red_flags.py` cites where it comes from, and the alert shows it, for example `IMMEDIATE: Suspected appendicitis (Guidelines p. 269)`. There are four levels, most urgent first:
+
+| Level | Comes from |
+|---|---|
+| Emergent | IITT red ("move to high acuity area immediately") |
+| Immediate | Intelehealth guidelines say "refer immediately" |
+| Urgent | IITT yellow ("seen soon"), or the guidelines say "urgently" |
+| Refer | The guidelines say "refer" with no urgency word |
+
+Rules read the answers the protocols already collect (copying the protocol's own option wording), so covering all 52 complaints adds no questions. Rules can use the patient's age, because IITT has separate charts for age 12+ and under 12. Keywords wrapped in bars, like `| black |`, only match a whole answer. A "Yes" answer also carries its question (`chest indrawing: yes`), so Yes/No sub-questions can raise flags.
+
+**Red-flag follow-up questions.** Some flags need one or two facts the protocol never asks. When such a rule fires, the app asks a few yes/no questions right away (`RED-FLAG CHECK: ...`), taken from the IITT red criteria: meningitis signs (stiff neck, confusion, seizure) after headache + fever, breathing distress after any breathing difficulty, shock signs after bleeding, and dehydration signs after diarrhoea or vomiting everything. A "yes" raises the level, and "don't know" counts as yes, so doubt never lowers it. Each question is asked once, only when its rule fires, and skipped if the visit already has the answer.
 
 We say "said_no" rather than "absent" (which reads like "no answer") or "denied" (the Intelehealth history files use "Denied" to mean the patient *refused to answer*).
 
@@ -175,9 +189,11 @@ run_info           not patient data: mapper, minutes, questions_asked, filled_fr
 
 ## Not done yet
 
-- Red-flag rules are placeholders.
+- Red-flag rules are not clinician-checked yet, and some literal IITT rules will cause false alarms (any diarrhoea, any child's headache, and general weakness are Urgent).
+- Red-flag gaps: chest pain with heart-attack features under 50, ectopic pregnancy unless pregnancy status is "Yes", bowel obstruction, and scorpion stings. Vital signs are not used.
 - Negation only understands English words and simple patterns.
-- The placeholder red-flag rules match exact phrases, so they miss other wordings (e.g. "vomited blood" is not caught, only "vomiting blood"). One case in `red_flag_cases.csv` fails on purpose to show this.
+- Red-flag keywords still match phrases, so an unusual wording in the patient's own words can be missed. Answers picked from the protocol options are matched reliably.
+- The red-flag follow-up questions are asked right away; they may move into the multi-question follow-up round later.
 - No ROS checklist yet (waiting to hear from Intelehealth).
 - Photo steps (`camera`) are skipped.
 - The AI summary is only checked for red flags, not yet fact by fact.
@@ -366,6 +382,16 @@ The slowest word is always the first one: the model reads the rules and the exam
 - Explain calls are few (most Abdominal Pain and Fever words are in `explanations.json`), but each one costs about 620 prompt tokens because of the 7 worked examples. On Headache, which has no entries in the file, all 3 went to the AI.
 - The AI summary (`--ai-summary`) was not turned on, so it is not counted.
 - Seconds are not simply proportional to tokens: llama.cpp reuses the start of the prompt when it matches the previous call.
+
+## Red-flag rules from the guidelines and WHO IITT (November 9 to 12, 2026)
+
+- **Placeholder rules replaced** with 78 rules from two sources: the Intelehealth *Clinical Treatment Guidelines for Telemedicine Doctors* (shared by Dr. Verma) and the WHO / ICRC / MSF *Interagency Integrated Triage Tool* (age 12+ chart, age under 12 chart, reference card). IITT replaces ETAT, because it covers adults too.
+- **All 52 complaints checked.** Every answer option in the 52 protocols was compared with the danger signs in both sources. 49 complaints can now raise at least one flag from their own answers. Follow up visit, Other and Weight gain have no danger-sign answers, so only the general rules (convulsions, unresponsive, severe pain, and so on) apply there.
+- **Levels follow the source wording literally**, even where it looks low (vomiting blood is "Refer" in the guidelines) or high. When a guideline section uses two words ("urgently" and "immediately" for pneumonia), the stronger one is used. One planned exception: IITT makes headache + fever red; we made it Urgent plus the meningitis follow-up questions, so every case is still flagged but Emergent is kept for real danger signs.
+- **Left out on purpose:** routine "refer all" cases that are not danger signs (dental caries, chronic ear discharge, osteoarthritis), and "no response to treatment in X days", which can't be known at a first visit.
+- **Bugs fixed while testing:** "ill-fitting" (clothes) matched the seizure word "fitting"; "clear discharge" (eye) matched "ear discharge"; and a "No" to "Does the child make a wheezing sound?" put "wheezing" in the text. Keywords can now match whole answers only, and only "Yes" answers carry their question.
+- **Code changes:** `intake.py` saves which question a Yes/No answer belongs to, passes the patient's age to the red-flag check, and asks the follow-up questions. `summary.py` lists flags most urgent first with level and source. `evaluate_mapping.py` reads two new optional columns in `red_flag_cases.csv`: `age` and `answer_labels` (options the CHW picked, with `Question=Answer` for Yes/No sub-questions).
+- **Results:** 82/82 red-flag cases pass, including cases that should NOT raise a flag and cases that show known gaps. Full scripted visits checked every follow-up path (no, yes, don't know). These cases were drafted with an AI assistant and are not clinician-checked; the expected red flags for the teaching-case evaluation should be labeled by someone who has not seen the rules.
 
 ## Multi-question intake (November 11, 2026)
 

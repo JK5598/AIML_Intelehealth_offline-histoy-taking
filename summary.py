@@ -1,3 +1,6 @@
+import red_flags as rf
+
+
 def facts_lines(answers):
     lines = []
     for answer in answers:
@@ -25,10 +28,11 @@ def facts_lines(answers):
 def template_summary(patient, complaint, answers, red_flags, possible_red_flags, exam_steps, story=""):
     lines = []
     if red_flags:
-        lines.append("RED FLAGS: " + "; ".join(red_flags))
+        lines.append("RED FLAGS (most urgent first):")
+        lines.extend("  - " + rf.describe(flag) for flag in rf.sort_by_level(red_flags))
     if possible_red_flags:
         lines.append("POSSIBLE RED FLAGS (came up next to 'no' or 'not', please check): "
-                     + "; ".join(possible_red_flags))
+                     + "; ".join(rf.describe(flag) for flag in rf.sort_by_level(possible_red_flags)))
     if red_flags or possible_red_flags:
         lines.append("")
     lines.append(f"Patient: {patient['age']:g}-year-old {patient['sex']}")
