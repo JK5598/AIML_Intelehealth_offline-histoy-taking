@@ -116,6 +116,8 @@ class Intake:
             if item["id"] in self.follow_ups_done:
                 continue
             self.follow_ups_done.add(item["id"])
+            if red_flags.follow_up_already_known(item, self.complaint, self.answers):
+                continue  # already answered earlier in the visit: don't ask twice
             reply = ""
             for _ in range(3):
                 reply = self.console.ask(f"   RED-FLAG CHECK: {item['question']} (y = yes / n = no / d = don't know):")
