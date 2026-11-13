@@ -47,6 +47,7 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `sim_patient.py` | The simulated patient (Claude, answering only from the case story) and the simulated CHW (plain code that reads the app's screen and types the patient's words) |
 | `judge.py` | Scores one visit: key-fact recall, wrong facts, dangerous content, diagnosis reachable (judge), plus red flags and time (plain code) |
 | `claude_api.py` | Small helper for the Claude calls the evaluation loop makes (the app itself never calls Claude) |
+| `local_llm.py` | Free option for the evaluation loop: a bigger model on the laptop (Qwen3-8B, llama.cpp) plays the patient and the judge instead of Claude |
 | `eval_cases.json` | The 5 test cases (TC01–TC05): age, sex, complaint, the patient's story, exam findings (judge only) and the expected red flags |
 | `eval_key_facts.csv` | Copy of the key-facts file from the Test Case folder (Yuqi's facts, fixed Nov 12); only rows with "Include in History Score? = Yes" are scored |
 
@@ -461,7 +462,16 @@ Severity questions and free-text boxes are never filled from a group reply; they
 
 Recall is also shown for only the facts the protocol can ask ("Askable by protocol?" = Yes or Partly), so a missed fact the protocol never asks about isn't blamed on the AI.
 
-**How to run** (Mac Terminal, project folder)
+**Free option (no API key, no cost): a bigger model on your laptop.** `--local-llm` makes Qwen3-8B (Q4_K_M, 5.0 GB, [Qwen/Qwen3-8B-GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF)) play the patient and the judge through llama.cpp, the same way MedPsy runs. It needs about 10 GB of free memory together with MedPsy. A local 8B judge is weaker than Claude, so read the transcripts and spot-check its scores.
+```
+curl -L -o ../../downloads/model/Qwen3-8B-Q4_K_M.gguf https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/main/Qwen3-8B-Q4_K_M.gguf
+PROTOCOLS="../../downloads/intelehealth-ayu-protocols/protocols/v2/All Protocols (JSON)"
+MODEL="../../downloads/model/medpsy-1.7b-q4_k_m-imat.gguf"
+JUDGE="../../downloads/model/Qwen3-8B-Q4_K_M.gguf"
+python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --local-llm "$JUDGE" --only TC01
+```
+
+**With Claude instead** (better patient and judge; costs a little, needs an API key)
 ```
 pip install anthropic
 export ANTHROPIC_API_KEY="sk-ant-..."        # from console.anthropic.com
@@ -482,5 +492,5 @@ The report prints the Claude cost of the run (an estimate from the prices in `cl
 **Known limits**
 - The simulated patient is not a real patient: it may answer more neatly than a real one, and it reads the option list when the CHW does.
 - The time is an estimate from assumed seconds per input, not a measured visit.
-- Tested so far with an offline stand-in and a fake Claude (the loop runs end to end, in both intake modes); the first real run with Claude is still to do.
+- Tested so far with an offline stand-in, a fake Claude, and a tiny local Qwen3-0.6B (the loop runs end to end, in both intake modes); the first real run with Qwen3-8B or Claude is still to do.
 

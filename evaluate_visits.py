@@ -6,6 +6,7 @@ types the patient's words into the app, and a judge (Claude) compares the app's 
 How to run (from the project folder, Mac Terminal):
     PROTOCOLS="../intelehealth-ayu-protocols/protocols/v2/All Protocols (JSON)"
     python evaluate_visits.py "$PROTOCOLS" --offline                      (free test of the loop itself)
+    python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --local-llm "$JUDGE"   (free: local Qwen3-8B patient + judge)
     python evaluate_visits.py "$PROTOCOLS"                                (keyword app, Claude patient + judge)
     python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf
     python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf --only TC01
@@ -125,7 +126,9 @@ def write_report(rows, summary, args, judge_name, cost, out_folder):
     if args.offline:
         lines.append("")
         lines.append("**Offline run: this only tests that the loop works. The scores are not real.**")
-    if cost is not None:
+    if args.local_llm:
+        lines.append("Patient and judge ran on this laptop: free. Spot-check the judge, a local model is weaker than Claude.")
+    elif cost is not None:
         lines.append(f"Claude cost for this run: about ${cost} (estimate, see PRICES in claude_api.py).")
     lines.append("")
 
@@ -221,6 +224,7 @@ def main():
     parser.add_argument("--intake", default="one", choices=["one", "group"])
     parser.add_argument("--accept-all", action="store_true", help="stress test: the CHW accepts every suggestion")
     parser.add_argument("--offline", action="store_true", help="no Claude: stand-in patient and judge (tests the loop only)")
+    parser.add_argument("--local-llm", help="free: a bigger .gguf model (e.g. Qwen3-8B) on this laptop plays the patient and the judge")
     parser.add_argument("--patient-model", default=None)
     parser.add_argument("--judge-model", default=None)
     parser.add_argument("--out", default=None)
@@ -234,6 +238,12 @@ def main():
     claude = None
     if args.offline:
         judge = j.WordJudge()
+    elif args.local_llm:
+        from local_llm import LocalLLM
+        claude = LocalLLM(args.local_llm)
+        args.patient_model = "local " + claude.name
+        judge = j.ClaudeJudge(claude, claude.name)
+        judge.name = "local " + claude.name
     else:
         import claude_api
         claude = claude_api.Claude()
@@ -262,7 +272,9 @@ def main():
         print(f"   {'OK ' if met else 'NO '} {name}: {result} (target {target})")
     if args.offline:
         print("   (offline run: tests the loop only, scores are not real)")
-    if cost is not None:
+    if args.local_llm:
+        print(f"   Patient + judge on this laptop: free ({claude.seconds / 60:.1f} min of model time)")
+    elif cost is not None:
         print(f"   Claude cost: about ${cost}")
     print(f"\nFull report: {os.path.join(out_folder, 'report.md')}")
 
