@@ -131,6 +131,9 @@ def write_report(rows, summary, args, judge_name, cost, out_folder):
 
     n = summary["cases"]
     false_alarm_share = summary["false_alarm_cases"] / n if n else 0
+    if n == 0:
+        lines.append("**No case finished, so nothing was measured. See the errors below.**")
+        lines.append("")
     checks = [
         ("Key-fact recall (average)", percent(summary["recall"]), "≥ 85%",
          summary["recall"] is not None and summary["recall"] >= TARGETS["recall"]),
@@ -146,6 +149,8 @@ def write_report(rows, summary, args, judge_name, cost, out_folder):
          summary["longest_ai"] <= TARGETS["ai_minutes_phone"]),
     ]
     lines += ["## Against the targets", "", "| Metric | Result | Target | Met? |", "| --- | --- | --- | --- |"]
+    if n == 0:
+        checks = [(name, result, target, False) for name, result, target, met in checks]
     for name, result, target, met in checks:
         lines.append(f"| {name} | {result} | {target} | {'yes' if met else 'NO'} |")
 
@@ -251,6 +256,8 @@ def main():
     write_csv(rows, out_folder)
 
     print("\n========== Against the targets ==========")
+    if summary["cases"] == 0:
+        print("   No case finished, so nothing was measured. Fix the ERROR above and run again.")
     for name, result, target, met in checks:
         print(f"   {'OK ' if met else 'NO '} {name}: {result} (target {target})")
     if args.offline:
