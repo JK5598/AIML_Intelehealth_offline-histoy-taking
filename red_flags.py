@@ -433,7 +433,13 @@ def visit_text(complaint, answers, keep_no_phrases):
             continue
         pieces.extend(answer_pieces(answer))
         if answer["value"]:
-            pieces.append(str(answer["value"]))
+            # Typed values (e.g. "Additional information") get the same 'no' check as the patient's words,
+            # so "No nausea, vomiting or diarrhea" doesn't raise a diarrhoea flag.
+            value = str(answer["value"])
+            if keep_no_phrases or not negation.split_words(value)[0]:
+                pieces.append(value)
+            else:
+                pieces.append(negation.remove_negated(value))
         if answer["patient_words"]:
             if keep_no_phrases:
                 pieces.append(answer["patient_words"])

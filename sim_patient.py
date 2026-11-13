@@ -78,7 +78,7 @@ class ClaudePatient:
         numbers = [n for n in re.findall(r"\d+", reply) if 1 <= int(n) <= len(options)]
         return ",".join(numbers)
 
-    def check(self, statement):
+    def check(self, statement, **details):
         """The CHW checks one statement with the patient. Returns 'yes', 'no' or 'unsure'."""
         reply = self.say(f"The CHW checks with you: \"{statement}\" Is that right?\n"
                          "Reply with exactly one word: yes, no, or unsure.", 10)
@@ -142,7 +142,7 @@ class ScriptedPatient:
                 numbers.append(str(number))
         return ",".join(numbers)
 
-    def check(self, statement):
+    def check(self, statement, **details):
         return "yes" if self.best_sentences(statement) else "unsure"
 
     def yes_no(self, question):
@@ -150,6 +150,80 @@ class ScriptedPatient:
 
     def observe(self, question):
         return self.yes_no(question)
+
+
+class SheetPatient:
+    """A patient whose answers were written in advance, one per question (eval_patient_answers.json).
+    The same answers every run, so two versions of the app can be compared fairly, and teammates can
+    read and correct them. Each question has:
+      "say": the patient's own words,  "has": the option labels that are true,  "not": labels the patient denies,
+      "accept": for typed values, words that a correct value contains (e.g. ["2 day", "two day"]).
+    Questions missing from the sheet are collected in self.missing so they can be added."""
+
+    def __init__(self, case, sheet):
+        self.case = case
+        self.sheet = sheet
+        self.questions = sheet["questions"]
+        self.missing = []
+
+    def entry(self, question):
+        if question in self.questions:
+            return self.questions[question]
+        if question not in self.missing:
+            self.missing.append(question)
+        return {}
+
+    def opening(self):
+        return self.sheet["opening"]
+
+    def answer(self, question, options):
+        return self.entry(question).get("say", "I'm not sure.")
+
+    def answer_group(self, questions):
+        return " ".join(self.entry(q).get("say", "") for q in questions).strip() or "I'm not sure."
+
+    def choose(self, question, options):
+        has = self.entry(question).get("has", [])
+        return ",".join(str(n) for n, label in enumerate(options, start=1) if label in has)
+
+    def check(self, statement, question=None, shown=None, kind="has", **details):
+        entry = self.entry(question) if question else {}
+        if kind == "not":
+            labels = set(entry.get("not", [])) | set(self.sheet.get("denies", []))
+        else:
+            labels = set(entry.get("has", []))
+        if shown is None:
+            return "unsure"
+        if entry.get("accept") and kind == "has":
+            return "yes" if any(word.lower() in shown.lower() for word in entry["accept"]) else "no"
+        if covered_by(shown, labels):
+            return "yes"
+        return "no"
+
+    def yes_no(self, question):
+        checks = self.sheet.get("checks", {})
+        if question in checks:
+            return checks[question]
+        if question.startswith("Do you have ") and question.endswith("?"):
+            label = question[len("Do you have "):-1]
+            if any(label in e.get("has", []) for e in self.questions.values()):
+                return "yes"
+            if label in self.sheet.get("denies", []) or any(label in e.get("not", []) for e in self.questions.values()):
+                return "no"
+        if question not in self.missing:
+            self.missing.append(question)
+        return "unsure"
+
+    def observe(self, question):
+        return self.yes_no(question)
+
+
+def covered_by(shown, labels):
+    """True if the shown text is made only of these labels (labels may contain commas themselves)."""
+    rest = shown
+    for label in sorted(labels, key=len, reverse=True):
+        rest = rest.replace(label, "")
+    return bool(labels) and rest.replace(",", "").strip() == "" and rest != shown
 
 
 class SimulatedCHW:
@@ -170,6 +244,7 @@ class SimulatedCHW:
         self.number_tries = 0     # how often the CHW picked numbers itself for this question
         self.group = []
         self.prompts = 0
+        self.multi = True
         self.forced_pick = False
         self.notes = {"confirmations": 0, "chw_picked_numbers": 0, "skipped": 0, "checks_said_no": 0}
 
@@ -206,6 +281,7 @@ class SimulatedCHW:
                     question = previous_text(self.screen, position)
                 options.append(match.group(2).strip())
         if options:
+            self.multi = question.endswith("(choose one or more)")
             self.new_question(question.replace(" (choose one or more)", ""), options)
             return
         groups = [GROUP_LINE.match(line) for line in self.screen]
@@ -241,10 +317,10 @@ class SimulatedCHW:
             return {"yes": "y", "no": "n"}.get(self.patient.observe(question), "d")
         if prompt.startswith("Suggested:") or prompt.startswith("Patient already said:"):
             shown = prompt.split(":", 1)[1].rsplit(". ", 1)[0].strip()
-            return self.check(f"For \"{self.question}\", the answer is: {shown}.")
+            return self.check(f"For \"{self.question}\", the answer is: {shown}.", self.question, shown, "has")
         if prompt.startswith("Patient said they do NOT have:"):
             shown = prompt.split(":", 1)[1].split(". Save as")[0].strip()
-            return self.check(f"You do NOT have: {shown}.")
+            return self.check(f"You do NOT have: {shown}.", self.question, shown, "not")
         if prompt.startswith("Number(s), or type the patient's words"):
             return self.answer_choices()
         if prompt.startswith("Type the patient's reply to these questions"):
@@ -278,7 +354,10 @@ class SimulatedCHW:
         self.number_tries += 1
         if self.number_tries == 1:
             self.notes["chw_picked_numbers"] += 1
-            return self.patient.choose(self.question, self.options)
+            picked = self.patient.choose(self.question, self.options)
+            if not self.multi:
+                picked = picked.split(",")[0]   # single-choice question: only the first
+            return picked
         # The app says the question is required and nothing the patient said fits. The CHW has to pick
         # something: "unknown" if there is one, else "none"/"no", else "other", else the first option.
         # These picks come from the simulation, not the app, so they are marked for the judge.
@@ -295,11 +374,11 @@ class SimulatedCHW:
         self.last_words = self.patient.answer(question, [])
         return self.last_words or "not sure"
 
-    def check(self, statement):
+    def check(self, statement, question=None, shown=None, kind="has"):
         self.notes["confirmations"] += 1
         if not self.careful:
             return "y"
-        answer = self.patient.check(statement)
+        answer = self.patient.check(statement, question=question, shown=shown, kind=kind)
         if answer != "yes":
             self.notes["checks_said_no"] += 1
         return "y" if answer == "yes" else "n"
@@ -312,7 +391,8 @@ class SimulatedCHW:
             return "y"
         wrong = []
         for position, question, shown in checks:
-            if self.patient.check(f"For \"{question}\", the answer is: {shown}.") != "yes":
+            if self.patient.check(f"For \"{question}\", the answer is: {shown}.",
+                                  question=question, shown=shown, kind="has") != "yes":
                 wrong.append(position)
         self.notes["checks_said_no"] += len(wrong)
         if not wrong:

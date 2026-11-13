@@ -20,7 +20,7 @@ import time
 
 from main import run_visit
 from keyword_mapper import KeywordMapper
-from sim_patient import ClaudePatient, ScriptedPatient, SimulatedCHW
+from sim_patient import ClaudePatient, ScriptedPatient, SheetPatient, SimulatedCHW
 import judge as j
 
 TARGETS = {
@@ -50,7 +50,10 @@ def make_mapper(model_path):
 
 
 def run_case(case, facts, args, mapper, claude, judge, out_folder):
-    if args.offline:
+    if args.sheet:
+        with open(args.sheet, encoding="utf-8") as f:
+            patient = SheetPatient(case, json.load(f)[case["id"]])
+    elif args.offline:
         patient = ScriptedPatient(case)
     else:
         patient = ClaudePatient(case, claude, args.patient_model)
@@ -73,7 +76,17 @@ def run_case(case, facts, args, mapper, claude, judge, out_folder):
         f.write("\n".join(chw.transcript))
     with open(os.path.join(case_folder, "judge.json"), "w", encoding="utf-8") as f:
         json.dump(verdict, f, indent=2, ensure_ascii=False)
+    missing = getattr(patient, "missing", [])
+    if missing:
+        print(f"   {len(missing)} question(s) not in the answer sheet: see {case['id']}/missing_questions.json")
+        with open(os.path.join(case_folder, "missing_questions.json"), "w", encoding="utf-8") as f:
+            json.dump(missing, f, indent=2, ensure_ascii=False)
 
+    return make_row(case, facts, visit, verdict, chw.notes, missing, args)
+
+
+def make_row(case, facts, visit, verdict, notes, missing, args):
+    """One case's scores, from the saved visit and the judge's verdict."""
     app_wrong = [w for w in verdict["wrong_facts"] if not w.get("from_simulation")]
     simulation_wrong = [w for w in verdict["wrong_facts"] if w.get("from_simulation")]
     results = {item["id"]: item["result"] for item in verdict["facts"]}
@@ -88,17 +101,40 @@ def run_case(case, facts, args, mapper, claude, judge, out_folder):
         "simulation_wrong_facts": simulation_wrong,
         "unsupported": verdict["unsupported"],
         "dangerous": verdict["dangerous"],
+        "app_problems": verdict.get("app_problems", []),
         "sufficient": verdict["diagnostic_sufficiency"]["enough"],
         "sufficient_why": verdict["diagnostic_sufficiency"]["why"],
         "red_flags": j.score_red_flags(case, visit),
-        "time": j.score_time(visit, chw.notes["confirmations"]),
+        "time": j.score_time(visit, notes.get("confirmations", 0), os.path.basename(args.model or "")),
+        "missing_questions": len(missing),
         "suggestions_rejected": visit["run_info"]["suggestions_rejected"],
-        "chw_notes": chw.notes,
+        "chw_notes": notes,
     }
 
 
-def percent(value):
-    return "-" if value is None else f"{value * 100:.0f}%"
+CONFIRM_PROMPTS = ("Correct? (y/n)", "Keep? (y/n)", "Save as 'No'? (y/n)", "Save these?")
+
+
+def rescore_case(case, facts, args, folder):
+    """--rescore: rebuild one case's row from a finished run folder (visit.json + judge.json + transcript.txt),
+    for example after a person or Claude in chat wrote the judge.json files of a --judge none run."""
+    case_folder = os.path.join(folder, case["id"])
+    with open(os.path.join(case_folder, "visit.json"), encoding="utf-8") as f:
+        visit = json.load(f)
+    with open(os.path.join(case_folder, "judge.json"), encoding="utf-8") as f:
+        verdict = json.load(f)
+    with open(os.path.join(case_folder, "transcript.txt"), encoding="utf-8") as f:
+        typed = [line for line in f.read().split("\n") if ">>>" in line]
+    notes = {"confirmations": sum(1 for line in typed if any(p in line for p in CONFIRM_PROMPTS))}
+    missing = []
+    if os.path.exists(os.path.join(case_folder, "missing_questions.json")):
+        with open(os.path.join(case_folder, "missing_questions.json"), encoding="utf-8") as f:
+            missing = json.load(f)
+    return make_row(case, facts, visit, verdict, notes, missing, args)
+
+
+def percent(value, decimals=0):
+    return "-" if value is None else f"{value * 100:.{decimals}f}%"
 
 
 def overall(rows):
@@ -120,10 +156,11 @@ def overall(rows):
 
 def write_report(rows, summary, args, judge_name, cost, out_folder):
     lines = ["# Evaluation report", ""]
+    patient_name = args.patient_model or ("offline stand-in" if args.offline else "")
     lines.append(f"Run {time.strftime('%Y-%m-%d %H:%M')}. App: {'MedPsy ' + os.path.basename(args.model) if args.model else 'keyword (no AI)'}, "
                  f"intake {args.intake}, CHW {'accepts every suggestion' if args.accept_all else 'checks every suggestion with the patient'}. "
-                 f"Patient: {'offline stand-in' if args.offline else args.patient_model}. Judge: {judge_name}.")
-    if args.offline:
+                 f"Patient: {patient_name}. Judge: {judge_name}.")
+    if args.offline and not args.sheet:
         lines.append("")
         lines.append("**Offline run: this only tests that the loop works. The scores are not real.**")
     if args.local_llm:
@@ -138,7 +175,7 @@ def write_report(rows, summary, args, judge_name, cost, out_folder):
         lines.append("**No case finished, so nothing was measured. See the errors below.**")
         lines.append("")
     checks = [
-        ("Key-fact recall (average)", percent(summary["recall"]), "≥ 85%",
+        ("Key-fact recall (average)", percent(summary["recall"], 1), "≥ 85%",
          summary["recall"] is not None and summary["recall"] >= TARGETS["recall"]),
         ("Diagnosis reachable", percent(summary["sufficiency"]), "≥ 80% of cases",
          summary["sufficiency"] is not None and summary["sufficiency"] >= TARGETS["sufficiency"]),
@@ -187,10 +224,12 @@ def write_report(rows, summary, args, judge_name, cost, out_folder):
                              ("Dangerous", r["dangerous"]), ("Unsupported (not counted)", r["unsupported"])):
             for item in items:
                 lines.append(f"- {title}: {item['statement']} ({item['why']})")
+        for problem in r.get("app_problems", []):
+            lines.append(f"- App problem noted by the judge: {problem}")
         lines.append(f"- AI suggestions the CHW rejected: {r['suggestions_rejected']}; CHW notes: {r['chw_notes']}")
 
     lines += ["", f"Time estimates: {j.SECONDS_PER_QUESTION} s per CHW input, {j.SECONDS_PER_CONFIRMATION} s per y/n check, "
-              f"plus laptop AI time × {j.PHONE_SLOWDOWN} (emulated phone, Nov 10). "
+              f"plus AI time on the emulated phone from the tokens read and written (Nov 10 speeds). "
               "Recall: captured = 1, partly = 0.5. False alarm: an Urgent-or-higher red flag not expected for the case."]
     with open(os.path.join(out_folder, "report.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
@@ -225,18 +264,45 @@ def main():
     parser.add_argument("--accept-all", action="store_true", help="stress test: the CHW accepts every suggestion")
     parser.add_argument("--offline", action="store_true", help="no Claude: stand-in patient and judge (tests the loop only)")
     parser.add_argument("--local-llm", help="free: a bigger .gguf model (e.g. Qwen3-8B) on this laptop plays the patient and the judge")
+    parser.add_argument("--sheet", help="free: the patient answers from a written answer sheet (eval_patient_answers.json)")
+    parser.add_argument("--judge-name", default="by hand", help="with --rescore: who judged, shown in the report")
+    parser.add_argument("--judge", default="auto", choices=["auto", "none"],
+                        help="none: save the records only and judge them by hand (or with Claude in chat)")
     parser.add_argument("--patient-model", default=None)
     parser.add_argument("--judge-model", default=None)
     parser.add_argument("--out", default=None)
+    parser.add_argument("--rescore", help="rebuild the report of a finished run folder from its saved visit.json and "
+                                          "judge.json files (e.g. after judging a --judge none run by hand)")
     args = parser.parse_args()
 
     cases = load_cases(args.cases, args.only)
     facts = j.load_key_facts(args.facts)
+
+    if args.sheet:
+        args.patient_model = "answer sheet " + os.path.basename(args.sheet)
+    if args.rescore:
+        rows = []
+        for case in cases:
+            try:
+                rows.append(rescore_case(case, facts.get(case["id"], []), args, args.rescore))
+            except FileNotFoundError as error:
+                rows.append({"id": case["id"], "error": str(error)})
+        summary = overall(rows)
+        checks = write_report(rows, summary, args, args.judge_name, None, args.rescore)
+        write_csv(rows, args.rescore)
+        for name, result, target, met in checks:
+            print(f"   {'OK ' if met else 'NO '} {name}: {result} (target {target})")
+        print(f"\nFull report: {os.path.join(args.rescore, 'report.md')}")
+        return
     out_folder = args.out or os.path.join("eval_results", time.strftime("%Y-%m-%d_%H%M"))
     os.makedirs(out_folder, exist_ok=True)
 
     claude = None
-    if args.offline:
+    if args.sheet:
+        args.patient_model = "answer sheet " + os.path.basename(args.sheet)
+    if args.judge == "none":
+        judge = j.NoJudge()
+    elif args.offline:
         judge = j.WordJudge()
     elif args.local_llm:
         from local_llm import LocalLLM
@@ -270,7 +336,7 @@ def main():
         print("   No case finished, so nothing was measured. Fix the ERROR above and run again.")
     for name, result, target, met in checks:
         print(f"   {'OK ' if met else 'NO '} {name}: {result} (target {target})")
-    if args.offline:
+    if args.offline and not args.sheet:
         print("   (offline run: tests the loop only, scores are not real)")
     if args.local_llm:
         print(f"   Patient + judge on this laptop: free ({claude.seconds / 60:.1f} min of model time)")

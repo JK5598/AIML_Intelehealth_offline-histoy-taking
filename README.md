@@ -35,7 +35,7 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
-| `red_flag_cases.csv` | 84 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
+| `red_flag_cases.csv` | 87 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
 | `workload_report.py` | Runs 3 automatic visits with a model (about half the option questions answered in words) and prints AI calls, tokens and seconds per visit, split by task |
@@ -49,6 +49,8 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `claude_api.py` | Small helper for the Claude calls the evaluation loop makes (the app itself never calls Claude) |
 | `local_llm.py` | Free option for the evaluation loop: a bigger model on the laptop (Qwen3-8B, llama.cpp) plays the patient and the judge instead of Claude |
 | `eval_cases.json` | The 5 test cases (TC01–TC05): age, sex, complaint, the patient's story, exam findings (judge only) and the expected red flags |
+| `eval_patient_answers.json` | The free simulated patient: written answers for TC01–TC05 (patient's words, what is true, what the patient denies, red-flag checks), built by `make_patient_answers.py` |
+| `make_patient_answers.py` | Builds `eval_patient_answers.json`; correct an answer here and run it again |
 | `eval_key_facts.csv` | Copy of the key-facts file from the Test Case folder (Yuqi's facts, fixed Nov 12); only rows with "Include in History Score? = Yes" are scored |
 
 ## Setup
@@ -471,6 +473,14 @@ JUDGE="../../downloads/model/Qwen3-8B-Q4_K_M.gguf"
 python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --local-llm "$JUDGE" --only TC01
 ```
 
+**Free, used for the first results: answer sheet + judging by hand.** `--sheet eval_patient_answers.json` makes the patient answer from written answers (the same every run, so app versions compare fairly). `--judge none` saves the records; a person, or Claude in chat, writes each case's `judge.json`; then `--rescore` builds the report from the saved files.
+```
+python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --sheet eval_patient_answers.json --judge none --out eval_results/my_run
+#   ...write eval_results/my_run/TC01/judge.json etc. (same format as judge.py asks for)...
+python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --sheet eval_patient_answers.json --rescore eval_results/my_run --judge-name "June"
+```
+Answer-sheet rules: symptoms only from the story ("I'm not sure" otherwise); personal history the story leaves out (smoking, alcohol, allergies) is the plain "no", listed under `assumed`; red-flag exam checks are answered from the exam findings, and a sign not written down counts as normal. A required question the patient can't answer forces the simulated CHW to pick something (`unknown`/`none` if the question has it); the judge does not count those as app errors.
+
 **With Claude instead** (better patient and judge; costs a little, needs an API key)
 ```
 pip install anthropic
@@ -493,4 +503,26 @@ The report prints the Claude cost of the run (an estimate from the prices in `cl
 - The simulated patient is not a real patient: it may answer more neatly than a real one, and it reads the option list when the CHW does.
 - The time is an estimate from assumed seconds per input, not a measured visit.
 - Tested so far with an offline stand-in, a fake Claude, and a tiny local Qwen3-0.6B (the loop runs end to end, in both intake modes); the first real run with Qwen3-8B or Claude is still to do.
+
+## First evaluation results (November 13, 2026)
+
+MedPsy-1.7B, one question at a time, answer-sheet patient, judged by Claude in chat against Yuqi's key facts. Full report: `eval_results/2026-11-13_medpsy-1.7b_answer-sheet/report.md` (not on GitHub; results are gitignored).
+
+| Metric | Result | Target |
+| --- | --- | --- |
+| Key-fact recall (average) | 84.6% (TC01 69%, TC02 83%, TC03 94%, TC04 76%, TC05 100%) | ≥ 85% (just missed) |
+| Diagnosis reachable | 5 of 5 | ≥ 80% |
+| Wrong facts caused by the app | 0 | 0 |
+| Emergent/Immediate red flags | all caught (TC01, TC03) | 100% |
+| False alarms | 0 of 5 cases | ≤ 1 in 5 |
+| Visit time (estimate) | 12.5–17.5 min; TC04 26.3 min (84 CHW inputs) | < 20 min (TC04 misses) |
+| AI time on the phone (estimate, from tokens) | 1.7–2.9 min | ≤ 10 min |
+
+What the run found:
+- **Story pre-fill stops a question too early.** If the patient's opening words mention part of a multi-choice answer ("Nausea"), the CHW keeps it and the question is never asked, so the rest (vomiting, no appetite, "no fever") is lost. This caused most missed facts in TC01, TC04 and TC05. Fix to try: after a kept pre-fill on a multi-choice question, still ask "anything else?" with the remaining options.
+- **The AI often picks one option when the patient named several** (TC03: chest pain saved, fever not; high cholesterol not added).
+- **Required questions without an "unknown" option** (pain severity, menstrual history, exercise severity) force a guess when the patient doesn't know.
+- **"No appetite" is read as a denial** ("patient said NO to Change in appetite").
+- **Fixed in this run:** typed values (Additional information) skipped the "no" filter in `red_flags.py`, so "No nausea, vomiting or diarrhea" raised an Urgent diarrhoea flag and "No weight loss" a weight-loss flag. Now they only give a possible flag. 3 new rows in `red_flag_cases.csv` (new `typed_value` column); 87/87 pass.
+- Limits: the answer sheets and the judging are by the same AI assistant, not clinician-checked; the patient's Additional information answers are complete, which a real patient's may not be; visit time assumes 20 s per question and 8 s per y/n check.
 

@@ -16,7 +16,9 @@ URGENT_OR_HIGHER = ("Emergent", "Immediate", "Urgent")
 # slower MedPsy ran on the emulated phone than on the laptop (Nov 10 test). Change these if you measure better ones.
 SECONDS_PER_QUESTION = 20       # ask the patient, listen, type the answer
 SECONDS_PER_CONFIRMATION = 8    # read a suggestion back to the patient, type y or n
-PHONE_SLOWDOWN = 6
+PHONE_SLOWDOWN = 6              # only used when token counts are missing
+# Emulated phone speeds (Nov 10, PocketPal): tokens read per second, tokens written per second.
+PHONE_SPEEDS = {"1.7b": (66.5, 9.4), "4b": (28.5, 4.3)}
 
 
 def load_key_facts(path):
@@ -54,19 +56,36 @@ def score_red_flags(case, visit):
     }
 
 
-def score_time(visit, confirmations):
+def phone_ai_minutes(timings, model_name):
+    """AI time on the emulated phone, from the tokens each AI call read and wrote."""
+    speeds = None
+    for size, pair in PHONE_SPEEDS.items():
+        if size in (model_name or "").lower():
+            speeds = pair
+    if speeds is None or any("prompt_tokens" not in t for t in timings):
+        return sum(t["seconds"] for t in timings) * PHONE_SLOWDOWN / 60
+    read = sum(t["prompt_tokens"] for t in timings)
+    written = sum(t["output_tokens"] for t in timings)
+    return (read / speeds[0] + written / speeds[1]) / 60
+
+
+def score_time(visit, confirmations, model_name=None):
     run_info = visit["run_info"]
-    ai_seconds = sum(t["seconds"] for t in run_info.get("ai_timings", []))
-    phone_ai_minutes = ai_seconds * PHONE_SLOWDOWN / 60
+    timings = run_info.get("ai_timings", [])
+    ai_seconds = sum(t["seconds"] for t in timings)
+    phone_minutes = phone_ai_minutes(timings, model_name)
     questions = run_info["chw_inputs"] - confirmations
     chw_minutes = (questions * SECONDS_PER_QUESTION + confirmations * SECONDS_PER_CONFIRMATION) / 60
+    phone_ai_minutes_value = phone_minutes
     return {
         "chw_inputs": run_info["chw_inputs"],
         "confirmations": confirmations,
         "ai_calls": len(run_info.get("ai_timings", [])),
         "ai_seconds_laptop": round(ai_seconds, 1),
-        "ai_minutes_phone_estimate": round(phone_ai_minutes, 1),
-        "visit_minutes_estimate": round(chw_minutes + phone_ai_minutes, 1),
+        "ai_tokens_read": sum(t.get("prompt_tokens", 0) for t in timings),
+        "ai_tokens_written": sum(t.get("output_tokens", 0) for t in timings),
+        "ai_minutes_phone_estimate": round(phone_ai_minutes_value, 1),
+        "visit_minutes_estimate": round(chw_minutes + phone_ai_minutes_value, 1),
     }
 
 
@@ -113,7 +132,8 @@ JSON format:
   "wrong_facts": [{{"statement": "...", "why": "...", "from_simulation": false}}],
   "unsupported": [{{"statement": "...", "why": "..."}}],
   "dangerous": [{{"statement": "...", "why": "..."}}],
-  "diagnostic_sufficiency": {{"enough": true, "why": "..."}}}}"""
+  "diagnostic_sufficiency": {{"enough": true, "why": "..."}},
+  "app_problems": ["short notes on what the app did badly, e.g. a symptom the patient said that never got saved"]}}"""
 
 
 class ClaudeJudge:
@@ -125,6 +145,15 @@ class ClaudeJudge:
 
     def judge(self, case, facts, visit, transcript):
         return self.claude.ask_json(self.model, JUDGE_SYSTEM, judge_prompt(case, facts, visit, transcript))
+
+
+class NoJudge:
+    """--judge none: save the records only; a person (or Claude in chat) judges them afterwards."""
+    name = "none (records saved for a person to judge)"
+
+    def judge(self, case, facts, visit, transcript):
+        return {"facts": [], "wrong_facts": [], "unsupported": [], "dangerous": [],
+                "diagnostic_sufficiency": {"enough": None, "why": "not judged yet"}}
 
 
 class WordJudge:
@@ -151,6 +180,8 @@ class WordJudge:
 
 def recall(facts, verdict, only_askable=False):
     """Captured = 1, partly = 0.5, missed = 0. Returns a fraction, or None if no facts count."""
+    if not verdict["facts"]:
+        return None   # not judged
     results = {item["id"]: item["result"] for item in verdict["facts"]}
     points = 0.0
     counted = 0

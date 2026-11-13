@@ -134,6 +134,9 @@ def check_red_flag_cases(path=RED_FLAG_FILE):
             question_label, _, label = picked.rpartition("=")
             answers.append({"answers": [label], "question_label": question_label, "value": None,
                             "patient_words": None, "status": "present"})
+        # Optional column: a typed value, e.g. what the CHW typed for "Additional information".
+        if case.get("typed_value"):
+            answers.append({"answers": [], "value": case["typed_value"], "patient_words": None, "status": "present"})
         said_no_labels = split_list(case["said_no_labels"])
         if said_no_labels:
             answers.append({"answers": said_no_labels, "value": None,
