@@ -167,6 +167,8 @@ class SheetPatient:
         self.missing = []
 
     def entry(self, question):
+        if "doesn't say how long" in question:   # group mode's follow-up for a vague duration
+            question = "How long, in days / weeks / months"
         if question in self.questions:
             return self.questions[question]
         if question not in self.missing:
@@ -187,7 +189,10 @@ class SheetPatient:
         return ",".join(str(n) for n, label in enumerate(options, start=1) if label in has)
 
     def check(self, statement, question=None, shown=None, kind="has", **details):
-        entry = self.entry(question) if question else {}
+        if kind == "not":   # a 'no' is checked against everything the patient denies, so no question is needed
+            entry = self.questions.get(question, {})
+        else:
+            entry = self.entry(question) if question else {}
         if kind == "not":
             labels = set(entry.get("not", [])) | set(self.sheet.get("denies", []))
         else:

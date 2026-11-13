@@ -136,6 +136,9 @@
         "has": [
           "None"
         ]
+      },
+      "How long, in days / weeks / months": {
+        "say": "Less than two days."
       }
     },
     "denies": [
@@ -299,6 +302,9 @@
         "has": [
           "None"
         ]
+      },
+      "How long, in days / weeks / months": {
+        "say": "About six months."
       }
     },
     "denies": [
@@ -442,6 +448,9 @@
       },
       "Other [Describe]": {
         "say": "High cholesterol."
+      },
+      "How long, in days / weeks / months": {
+        "say": "About four days."
       }
     },
     "denies": [
@@ -687,6 +696,9 @@
       },
       "Other": {
         "say": "Brother has a food allergy."
+      },
+      "How long, in days / weeks / months": {
+        "say": "A few years. I can't say exactly."
       }
     },
     "denies": [
@@ -823,6 +835,9 @@
         "has": [
           "None"
         ]
+      },
+      "How long, in days / weeks / months": {
+        "say": "I'm not sure exactly. It started recently."
       }
     },
     "denies": [],

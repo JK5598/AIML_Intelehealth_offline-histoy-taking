@@ -268,6 +268,14 @@ sheets["TC04"]["checks"].update({
     "Are the lips or tongue blue or grey?": "no",
 })
 
+# Group mode asks again when a duration is vague ("a few years"): the patient can only repeat what the story says.
+HOW_LONG = "How long, in days / weeks / months"
+sheets["TC01"]["questions"][HOW_LONG] = {"say": "Less than two days."}
+sheets["TC02"]["questions"][HOW_LONG] = {"say": "About six months."}
+sheets["TC03"]["questions"][HOW_LONG] = {"say": "About four days."}
+sheets["TC04"]["questions"][HOW_LONG] = {"say": "A few years. I can't say exactly."}
+sheets["TC05"]["questions"][HOW_LONG] = {"say": "I'm not sure exactly. It started recently."}
+
 # The opening: the first paragraph of each story, as the patient says it when asked to tell more.
 with open("eval_cases.json", encoding="utf-8") as f:
     cases = {c["id"]: c for c in json.load(f)["cases"]}
