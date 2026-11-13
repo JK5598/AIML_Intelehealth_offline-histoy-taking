@@ -7,6 +7,8 @@ NEGATION_WORDS = {"no", "not", "never", "without", "denies", "denied", "none", "
 
 # "not sure", "don't know", "can't remember", "don't think": the patient is unsure, not saying no
 UNSURE_AFTER_NEGATION = {"sure", "know", "certain", "remember", "think", "recall"}
+# "No appetite", "no energy", "no sleep": here "no" describes a symptom, it is not a denial.
+SYMPTOM_AFTER_NO = {"appetite", "energy", "strength", "sleep", "taste", "smell", "hunger"}
 
 # "maybe", "might": the patient is unsure, so nothing after it counts as a no
 UNSURE_WORDS = {"maybe", "might", "perhaps", "possibly", "unsure", "probably"}
@@ -99,6 +101,8 @@ def split_words(text):
         elif word in UNSURE_WORDS:
             words_left_in_scope = 0
             unsure = True
+        elif word in NEGATION_WORDS and next_word in SYMPTOM_AFTER_NO:
+            words_left_in_scope = 0   # the symptom word that follows stays an affirmed word
         elif word in NEGATION_WORDS and next_word in UNSURE_AFTER_NEGATION:
             words_left_in_scope = 0
             unsure = True

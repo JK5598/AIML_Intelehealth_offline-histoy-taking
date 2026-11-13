@@ -524,5 +524,10 @@ What the run found:
 - **Required questions without an "unknown" option** (pain severity, menstrual history, exercise severity) force a guess when the patient doesn't know.
 - **"No appetite" is read as a denial** ("patient said NO to Change in appetite").
 - **Fixed in this run:** typed values (Additional information) skipped the "no" filter in `red_flags.py`, so "No nausea, vomiting or diarrhea" raised an Urgent diarrhoea flag and "No weight loss" a weight-loss flag. Now they only give a possible flag. 3 new rows in `red_flag_cases.csv` (new `typed_value` column); 87/87 pass.
+- **Fixed after the run, and run again (same patient, same cases):**
+  - **"Anything else?" after a story pre-fill** (`intake.py`, `ask_anything_else`): when the CHW keeps a story answer for a multi-choice question, the remaining options are shown once; Enter = nothing else.
+  - **"No appetite", "no energy", "no sleep" are symptoms, not denials** (`negation.py`, `SYMPTOM_AFTER_NO`). Before, "I have no appetite. No diarrhea, no constipation, and no fever." offered "said NO to Change in appetite" in the same yes/no as the real "no"s, so the CHW had to reject all of them. 2 new rows in `test_cases.csv` ("said no" 50/50).
+  - Result (`eval_results/2026-11-13_medpsy-1.7b_answer-sheet_after-fix/report.md`): **key-fact recall 84.6% → 90.6%** (TC01 69% → 92%, TC04 76% → 83%; others unchanged), still 0 wrong facts, all Emergent/Immediate flags caught, 0 false alarms, AI time 1.9–3.0 min. Visit time: TC01 16.9, TC02 18.4, TC03 15.8, TC04 27.5, TC05 13.2 min (estimate); TC04 still over 20 min (88 CHW inputs).
+  - Still open: the AI often saves one answer when the patient named several (TC03 fever, high cholesterol; TC01 anorexia); required questions without "unknown"; long visits (TC04).
 - Limits: the answer sheets and the judging are by the same AI assistant, not clinician-checked; the patient's Additional information answers are complete, which a real patient's may not be; visit time assumes 20 s per question and 8 s per y/n check.
 

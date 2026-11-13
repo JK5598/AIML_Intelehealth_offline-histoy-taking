@@ -198,11 +198,12 @@ class Intake:
             self.console.show(f"   {number}. {label}")
         self.console.show(explain_hint(len(labels)))
 
-    def choose_options(self, question, options):
+    def choose_options(self, question, options, optional=False):
+        """optional=True: Enter is allowed even on a required question (used for "anything else?")."""
         labels = [p.option_label(option, self.language) for option in options]
         english_labels = [p.option_label(option) for option in options]
         multi = p.is_multi_choice(question)
-        required = p.is_required(question)
+        required = p.is_required(question) and not optional
         self.questions_asked += 1
 
         self.show_choices(question, labels, multi)
@@ -290,7 +291,27 @@ class Intake:
             return False
         self.filled_from_story += 1
         self.follow_up(question, chosen, "from story", self.story)
+        if multi and not any(p.is_exclusive(option) for option in chosen):
+            self.ask_anything_else(question, options, chosen)
         return True
+
+    def ask_anything_else(self, question, options, chosen):
+        """The story answered only part of a multi-choice question (e.g. "Nausea"). Before moving on,
+        show the other options once, so the rest (vomiting, "no fever") isn't lost. Enter = nothing else."""
+        remaining = []
+        for option in options:
+            if option in chosen or p.is_exclusive(option):
+                continue
+            if (question.get("id"), option.get("id")) in self.said_no_ids:
+                continue
+            remaining.append(option)
+        if not remaining:
+            return
+        self.console.show("")
+        self.console.show("   Anything else for this question? Ask the patient (Enter = nothing else).")
+        more, source, words = self.choose_options(question, remaining, optional=True)
+        if more:
+            self.follow_up(question, more, source, words)
 
     def ask_question(self, question):
         if not p.applies_to_patient(question, self.patient):
