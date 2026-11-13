@@ -1,0 +1,107 @@
+{
+  "about": "Evaluation cases for evaluate_visits.py. Stories: Yuqi's fixed patient descriptions (Nov 12). Expected red flags: labeled from the Intelehealth guidelines and WHO IITT (Nov 12). Never put Dr. Verma's 10 unseen cases in this public file - see README.",
+  "cases": [
+    {
+      "id": "TC01",
+      "source_case": "Infect55 (Verma N., 190 teaching cases)",
+      "diagnosis": "Appendicitis",
+      "age": 25,
+      "sex": "female",
+      "complaint": "Abdominal Pain",
+      "story": [
+        "Hi doctor, so it started less than two days ago. I've had no appetite at all, and I've been feeling sick to my stomach — I've been throwing up too. The weird thing is, the vomiting always comes after the belly pain starts, not before.",
+        "At first the pain was around my belly button, kind of up in the middle area. Then it moved down to the lower right side. And it's gotten worse over time — it's really starting to bother me now.",
+        "When it hurts, I just want to lie down with my knees drawn up and not move, because moving around makes the pain worse.",
+        "I haven't had any diarrhea or constipation — nothing like that. And I don't have a fever."
+      ],
+      "only_if_asked": "not sexually active; no past medical problems; nothing runs in the family.",
+      "exam_findings_not_for_patient": "rebound tenderness in the right lower abdomen.",
+      "expected_red_flags": [
+        {
+          "name": "Suspected appendicitis",
+          "level": "Immediate"
+        }
+      ]
+    },
+    {
+      "id": "TC02",
+      "source_case": "GI7 (Verma N., 190 teaching cases)",
+      "diagnosis": "Gall bladder stones",
+      "age": 41,
+      "sex": "female",
+      "complaint": "Abdominal Pain",
+      "story": [
+        "Hi doctor. So over the past six months or so, I've had this pain in my upper right belly — it's happened three times now, and the last time was about two weeks ago.",
+        "All three episodes were pretty much the same. The last one started as a steady discomfort in the upper right part of my belly. It was mild at first, but it quickly turned into a steady pain — not crampy or colicky, just constant. It lasted about five hours, and then it gradually eased off. I do remember the pain spreading to my back and my chest. I felt like I might have had a bit of a fever, but I didn't have any shaking chills. I didn't notice any yellowing of my skin or eyes, and I only threw up once.",
+        "I haven't really noticed any connection between the pain and eating or any particular food. And changing position or moving around doesn't seem to make it better or worse either.",
+        "I've had a bit of a sensitive stomach in the past — things like cabbage, okra, and beets tend to bother me, but that's always just been bloating and gas, never actual pain. I haven't tried eating those again recently. I've also always avoided greasy, fried, and spicy foods, though I can't really say exactly why.",
+        "I've never had heartburn, reflux, or a burning feeling in my upper belly. No weight loss, no change in my bowel habits, and no black stools."
+      ],
+      "only_if_asked": "",
+      "exam_findings_not_for_patient": "",
+      "expected_red_flags": []
+    },
+    {
+      "id": "TC03",
+      "source_case": "Infect52 (Verma N., 190 teaching cases)",
+      "diagnosis": "Community-acquired pneumonia",
+      "age": 66,
+      "sex": "male",
+      "complaint": "Cough",
+      "story": [
+        "Hi doctor. So I've had this cough for about four days now. At first it was dry, but then I started coughing up this rusty-colored phlegm. Then last night, all of a sudden, I got the chills and felt feverish and just generally unwell and run-down. At first I figured it was just a cold, but it's been getting worse instead of better. I barely slept last night because I was coughing so much.",
+        "I don't feel short of breath exactly, but I think I might be breathing a little faster than usual. And on the way here, after one long coughing fit, I got this sharp pain in the right side of my chest. I haven't had any swelling in my legs, and it doesn't get worse when I lie flat. No pain on the left side or in the middle of my chest. And no stomach issues — no nausea, vomiting, or diarrhea.",
+        "As for my history, I have high blood pressure and high cholesterol. I haven't taken any antibiotics in the past three months."
+      ],
+      "only_if_asked": "",
+      "exam_findings_not_for_patient": "temperature 101.3°F, HR 102, RR 24, SpO₂ 94%, dullness to percussion and decreased breath sounds at the right lower lung base.",
+      "expected_red_flags": [
+        {
+          "name": "Chest or abdominal pain over age 50",
+          "level": "Emergent"
+        },
+        {
+          "name": "Suspected pneumonia",
+          "level": "Immediate"
+        }
+      ]
+    },
+    {
+      "id": "TC04",
+      "source_case": "Resp2 (Verma N., 190 teaching cases)",
+      "diagnosis": "Bronchial asthma",
+      "age": 50,
+      "sex": "male",
+      "complaint": "Difficulty breathing",
+      "story": [
+        "Hi doctor. So I've been having trouble breathing, a cough, some wheezing, and chest tightness for a few years now. In the beginning, it came and went — mostly in the winter — and I'd be totally fine in between. But over the last few years, it's been there pretty much all the time, and every now and then it gets worse. The breathing is worse at night, and sometimes during the day too. Cold air, dust, and any kind of activity make it worse. I don't have to prop myself up to breathe at night, and I don't wake up gasping — nothing like that.",
+        "The cough is usually dry, though sometimes I bring up a little bit of phlegm. No blood. I cough both day and night, and it's worse when I'm around dust or cold air. The wheezing and chest tightness come along with the cough. In fact, I've been hospitalized twice in the last two months because the breathing and coughing got so bad.",
+        "Now that you mention it, I do sometimes get a runny nose and sneezing, especially around dust. No chest pain, no weight loss, no fever. My bowels and urination are normal. Nothing that points to a heart problem or reflux that I know of. My brother has asthma and a food allergy.",
+        "As for my habits, I've smoked about 10 to 15 cigarettes a day for the past 10 years. I've never worked around cotton or coal dust. Right now I'm on a bronchodilator and a steroid inhaler, and in the past I've taken aminophylline, ketotifen, and montelukast."
+      ],
+      "only_if_asked": "I don't have high blood pressure or diabetes.",
+      "exam_findings_not_for_patient": "breathless and sitting propped up, nasal polyps on both sides, pulse 120/min, BP 120/70 mm Hg, RR 24/min; otherwise no abnormal general findings.",
+      "expected_red_flags": [
+        {
+          "name": "Wheezing",
+          "level": "Urgent"
+        }
+      ]
+    },
+    {
+      "id": "TC05",
+      "source_case": "Infect59 (Verma N., 190 teaching cases)",
+      "diagnosis": "Malaria",
+      "age": 20,
+      "sex": "female",
+      "complaint": "Fever",
+      "story": [
+        "Hi doctor. So I've been getting these high fevers recently. They come and go — I'll get chills and shivering with them. I tried some over-the-counter antibiotics on my own, but they didn't help at all.",
+        "I've noticed the fever tends to get worse in the evening, and it seems to hit every other day. When it comes on, I feel just awful — generally unwell, no appetite, and kind of nauseous."
+      ],
+      "only_if_asked": "",
+      "exam_findings_not_for_patient": "looks thin, weak and pale; enlarged spleen.",
+      "expected_red_flags": []
+    }
+  ]
+}

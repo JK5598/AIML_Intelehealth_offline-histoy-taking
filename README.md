@@ -35,7 +35,7 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
-| `red_flag_cases.csv` | 82 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
+| `red_flag_cases.csv` | 84 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
 | `workload_report.py` | Runs 3 automatic visits with a model (about half the option questions answered in words) and prints AI calls, tokens and seconds per visit, split by task |
@@ -43,6 +43,12 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `followup.py` | Follow-up checks used by the multi-question intake: missing answers, vague durations ("a while"), "no"/"yes" disagreements, and saving "unsure" / "not answered" |
 | `compare_intake_modes.py` | Runs the same scripted patients through both intake modes and prints CHW inputs, answers, follow-ups and AI calls side by side |
 | `explanation_results_<model>.csv` | Made by `evaluate_explanations.py`: the AI's sentence next to the expected meaning, with an empty `correct (y/n/partly)` column |
+| `evaluate_visits.py` | **Evaluation loop**: plays every test case through the app (simulated patient + simulated CHW), has a judge score the record, and writes `eval_results/<date-time>/report.md` against Dr. Verma's targets |
+| `sim_patient.py` | The simulated patient (Claude, answering only from the case story) and the simulated CHW (plain code that reads the app's screen and types the patient's words) |
+| `judge.py` | Scores one visit: key-fact recall, wrong facts, dangerous content, diagnosis reachable (judge), plus red flags and time (plain code) |
+| `claude_api.py` | Small helper for the Claude calls the evaluation loop makes (the app itself never calls Claude) |
+| `eval_cases.json` | The 5 test cases (TC01–TC05): age, sex, complaint, the patient's story, exam findings (judge only) and the expected red flags |
+| `eval_key_facts.csv` | Copy of the key-facts file from the Test Case folder (Yuqi's facts, fixed Nov 12); only rows with "Include in History Score? = Yes" are scored |
 
 ## Setup
 
@@ -431,4 +437,50 @@ Severity questions and free-text boxes are never filled from a group reply; they
 - **New tests:** 7 negation cases in `test_cases.csv` and 2 in `red_flag_cases.csv`, including sentences that must NOT be treated as a list. Results: "said no" 48/48 multi-choice cases (was 41/41); red-flag cases 84/84 (was 82/82). `smoke_test.py` and `compare_intake_modes.py` still pass.
 - **TC03 now:** EMERGENT (chest pain over 50) and IMMEDIATE (pneumonia) as expected; "Ongoing diarrhoea" only shows as a possible flag to ask about. The TC05 "Acute general weakness" false alarm is a red-flag rule question, not negation, and is still open.
 - These cases were written by the AI assistant and are not clinician-checked.
+
+## Evaluation loop (November 13, 2026)
+
+`evaluate_visits.py` measures the app against the targets Dr. Verma approved, without a person typing. This follows Dr. Soenksen's suggestion: a simulated patient (a bigger AI) + our app + an AI judge.
+
+**How one case runs**
+1. The **simulated CHW** (plain code in `sim_patient.py`) reads what the app shows. It enters age and sex, picks the complaint by number, and asks the patient each question.
+2. The **simulated patient** (Claude, `claude-haiku-5-5`) knows only the case story. It answers in everyday words and says "I'm not sure" when the story doesn't say. It never sees the diagnosis or the exam findings.
+3. The CHW types the patient's words into the app, so the app's AI (or the keyword baseline) does the matching, exactly as in a real visit. Every suggestion is checked with the patient before it is saved (the app's design). If the app can't use the words, the CHW picks the numbers.
+4. **Red-flag checks** that are exam steps (sunken eyes, skin pinch) are answered from the case's exam findings; anything not written down counts as normal, as in teaching cases.
+5. The **judge** (Claude, `claude-sonnet-5-5`) compares the app's doctor summary with the true case and the key facts.
+
+**What it reports** (`eval_results/<date-time>/report.md`, plus `results.csv` and, per case, `visit.json`, `transcript.txt` and `judge.json`)
+
+| Metric | How it is measured | Target |
+| --- | --- | --- |
+| Key-fact recall | judge: captured = 1, partly = 0.5, missed = 0, over the scored facts | ≥ 85% average |
+| Diagnosis reachable | judge: could a doctor reach the diagnosis from the record + an exam? | ≥ 80% of cases |
+| Wrong facts | judge: record contradicts the case; errors the simulated patient caused (or a forced pick) are listed but not counted | 0 |
+| Red flags | plain code: expected flags raised; false alarm = an Urgent-or-higher flag not expected for the case | all Emergent/Immediate caught; false alarm in ≤ 1 of 5 cases |
+| Time | estimate: 20 s per CHW question, 8 s per y/n check, plus laptop AI time × 6 (emulated phone, Nov 10) | visit < 20 min, AI ≤ 10 min |
+
+Recall is also shown for only the facts the protocol can ask ("Askable by protocol?" = Yes or Partly), so a missed fact the protocol never asks about isn't blamed on the AI.
+
+**How to run** (Mac Terminal, project folder)
+```
+pip install anthropic
+export ANTHROPIC_API_KEY="sk-ant-..."        # from console.anthropic.com
+PROTOCOLS="../intelehealth-ayu-protocols/protocols/v2/All Protocols (JSON)"
+python evaluate_visits.py "$PROTOCOLS" --offline                                   # free: tests the loop only, scores not real
+python evaluate_visits.py "$PROTOCOLS" --only TC01                                 # one case, keyword app
+python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf        # all 5 cases with MedPsy
+python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf --intake group
+python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf --accept-all   # stress test: CHW accepts every suggestion
+```
+The report prints the Claude cost of the run (an estimate from the prices in `claude_api.py`).
+
+**Rules**
+- Read the transcripts and spot-check the judge before trusting a number; the judge is an AI too.
+- Dr. Verma's 10 unseen cases: put them in a file named `eval_cases_private.json` (and `eval_key_facts_private.csv`), which `.gitignore` keeps off GitHub. Run them once, after the app is frozen: `python evaluate_visits.py "$PROTOCOLS" --model ... --cases eval_cases_private.json --facts eval_key_facts_private.csv`.
+- Never train or tune prompts on the test cases.
+
+**Known limits**
+- The simulated patient is not a real patient: it may answer more neatly than a real one, and it reads the option list when the CHW does.
+- The time is an estimate from assumed seconds per input, not a measured visit.
+- Tested so far with an offline stand-in and a fake Claude (the loop runs end to end, in both intake modes); the first real run with Claude is still to do.
 
