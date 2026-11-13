@@ -81,7 +81,7 @@ class ClaudePatient:
     def check(self, statement):
         """The CHW checks one statement with the patient. Returns 'yes', 'no' or 'unsure'."""
         reply = self.say(f"The CHW checks with you: \"{statement}\" Is that right?\n"
-                         "Reply with exactly one word: yes, no, or unsure.", 5)
+                         "Reply with exactly one word: yes, no, or unsure.", 10)
         return first_word(reply)
 
     def yes_no(self, question):

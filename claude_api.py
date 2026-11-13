@@ -26,19 +26,28 @@ class Claude:
             raise SystemExit("ANTHROPIC_API_KEY is not set. See the top of claude_api.py, or use --offline.")
         self.client = anthropic.Anthropic()
         self.tokens = {}   # model -> {"input": n, "output": n}
+        self.can_turn_off_thinking = True
 
-    def ask(self, model, system, prompt, max_tokens=300):
+    def ask(self, model, system, prompt, max_tokens=300, think=False):
+        """think=False: answer straight away (the patient's short answers). think=True: the model may
+        think first (the judge). Only network problems and busy servers are retried."""
+        import anthropic
+        request = {"model": model, "max_tokens": max_tokens, "system": system,
+                   "messages": [{"role": "user", "content": prompt}]}
+        if not think and self.can_turn_off_thinking:
+            request["thinking"] = {"type": "disabled"}
         for attempt in range(4):
             try:
-                response = self.client.messages.create(
-                    model=model,
-                    max_tokens=max_tokens,
-                    temperature=0,
-                    system=system,
-                    messages=[{"role": "user", "content": prompt}],
-                )
+                response = self.client.messages.create(**request)
                 break
-            except Exception as error:   # network hiccup or rate limit: wait and try again
+            except anthropic.BadRequestError as error:
+                if "thinking" in str(error) and "thinking" in request:
+                    self.can_turn_off_thinking = False   # this model can't turn thinking off: just leave it
+                    request.pop("thinking")
+                    request["max_tokens"] = max(max_tokens, 1000)
+                    continue
+                raise
+            except (anthropic.APIConnectionError, anthropic.RateLimitError, anthropic.InternalServerError) as error:
                 if attempt == 3:
                     raise
                 print(f"   (Claude call failed: {error}. Trying again in {5 * (attempt + 1)} s)")
@@ -52,10 +61,10 @@ class Claude:
                 text += block.text
         return text.strip()
 
-    def ask_json(self, model, system, prompt, max_tokens=4000):
+    def ask_json(self, model, system, prompt, max_tokens=16000):
         """Asks for a JSON answer and reads it. Tries once more if the reply is not valid JSON."""
         for attempt in range(2):
-            text = self.ask(model, system, prompt, max_tokens)
+            text = self.ask(model, system, prompt, max_tokens, think=True)
             start = text.find("{")
             end = text.rfind("}")
             if start != -1 and end != -1:
