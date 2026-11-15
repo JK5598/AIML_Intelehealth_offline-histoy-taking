@@ -4,6 +4,7 @@ import explanations
 import negation
 import protocols as p
 import red_flags
+import repeated_questions
 
 
 class Console:
@@ -58,6 +59,8 @@ class Intake:
         self.said_no_ids = set()
         self.section = ""
         self.rejected = []
+        self.asked = {}       # complaint question -> the answers saved for it and its follow-ups
+        self.earlier = None   # an earlier answer the current history question repeats
         self.explainer = explanations.Explainer(mapper, console)
 
     def record(self, question, chosen, value=None, source="tapped", patient_words=None, status="present"):
@@ -254,29 +257,34 @@ class Intake:
                 continue
             return chosen, source, words
 
-    def try_story(self, question, options):
-        """If the patient already mentioned this in their own words, confirm instead of asking."""
+    def try_story(self, question, options, story=None, source="from story", picked=None):
+        """If the patient already mentioned this in their own words, confirm instead of asking.
+        story: the text to fill from (default: the opening story; or an earlier answer, see repeated_questions.py).
+        picked: options already chosen by plain code (default: the AI picks them from the text)."""
+        if story is None:
+            story = self.story
         question_text = p.display_text(question)
         single_input = len(options) == 1 and p.input_type(options[0]) and not p.children(options[0])
 
         if single_input:
-            value = self.mapper.value_from_story(question_text, self.story)
+            value = self.mapper.value_from_story(question_text, story)
             if not value:
                 return False
-            self.console.show("")
-            self.console.show(p.display_text(question, self.language))
+            self.show_prefilled_question(question, story, source)
             if not self.confirm(f"   Patient already said: {value}. Keep? (y/n)", question, []):
-                self.note_rejected(question, [], "from story", self.story, value=value)
+                self.note_rejected(question, [], source, story, value=value)
                 return False
-            self.filled_from_story += 1
-            self.record(question, options, value=value, source="from story", patient_words=self.story)
+            if source == "from story":
+                self.filled_from_story += 1
+            self.record(question, options, value=value, source=source, patient_words=story)
             return True
 
         labels = [p.option_label(option) for option in options]
         multi = p.is_multi_choice(question)
-        picked = self.mapper.answer_from_story(question_text, labels, self.story, multi)
-        picked, dropped = negation.check_picks(labels, picked, self.story)
-        self.offer_said_no(question, options, self.story, "from story", skip=picked)
+        if picked is None:
+            picked = self.mapper.answer_from_story(question_text, labels, story, multi)
+        picked, dropped = negation.check_picks(labels, picked, story)
+        self.offer_said_no(question, options, story, source, skip=picked)
         if not picked:
             return False
         chosen = [options[i] for i in picked]
@@ -284,16 +292,22 @@ class Intake:
             chosen = chosen[:1]
         shown = ", ".join(p.option_label(option, self.language) for option in chosen)
         chosen_labels = [p.option_label(option) for option in chosen]
-        self.console.show("")
-        self.console.show(p.display_text(question, self.language))
+        self.show_prefilled_question(question, story, source)
         if not self.confirm(f"   Patient already said: {shown}. Keep? (y/n)", question, chosen_labels):
-            self.note_rejected(question, chosen, "from story", self.story)
+            self.note_rejected(question, chosen, source, story)
             return False
-        self.filled_from_story += 1
-        self.follow_up(question, chosen, "from story", self.story)
+        if source == "from story":
+            self.filled_from_story += 1
+        self.follow_up(question, chosen, source, story)
         if multi and not any(p.is_exclusive(option) for option in chosen):
             self.ask_anything_else(question, options, chosen)
         return True
+
+    def show_prefilled_question(self, question, story, source):
+        self.console.show("")
+        self.console.show(p.display_text(question, self.language))
+        if source == "from earlier answer":   # so the CHW knows which answer this comes from
+            self.console.show(f"   (From the earlier answer: {story})")
 
     def ask_anything_else(self, question, options, chosen):
         """The story answered only part of a multi-choice question (e.g. "Nausea"). Before moving on,
@@ -314,13 +328,29 @@ class Intake:
             self.follow_up(question, more, source, words)
 
     def ask_question(self, question):
+        first_answer = len(self.answers)
+        self.ask_and_save(question)
+        if self.section == "hpi":   # kept so a later history question that repeats it can reuse the answer
+            self.asked[p.display_text(question)] = self.answers[first_answer:]
+
+    def ask_and_save(self, question):
         if not p.applies_to_patient(question, self.patient):
             return
 
         options = [o for o in p.children(question) if p.applies_to_patient(o, self.patient)]
 
-        if (self.use_story and self.story and options and p.story_prefill_allowed(question)
-                and self.try_story(question, options)):
+        story, source, picked = "", "from story", None
+        if self.use_story and self.story:
+            story = self.story
+        elif self.earlier and question.get("id") in self.earlier["ids"]:
+            story, source = self.earlier["text"], "from earlier answer"
+            if question.get("id") == self.earlier["question_id"]:
+                # the option comes from the table in repeated_questions.py, not from the AI
+                picked = [i for i, option in enumerate(options) if p.option_label(option) in self.earlier["options"]]
+                if not picked:
+                    story = ""
+        if (story and options and p.story_prefill_allowed(question)
+                and self.try_story(question, options, story, source, picked)):
             return
 
         if p.input_type(question) and not options:
@@ -368,9 +398,34 @@ class Intake:
                 self.ask_question(follow_up)
         self.use_story = use_story
 
+    def earlier_answer_for(self, question):
+        """A history question the complaint questions already asked (see repeated_questions.py).
+        'ids' are the question and the follow-ups that may be filled from the earlier answer: only those
+        under the matching option, so e.g. Diabetes' follow-ups are never filled from a hospital stay."""
+        text, options = repeated_questions.find_earlier_answer(p.display_text(question), self.asked)
+        if not text:
+            return None
+        if None in options:   # the earlier answer doesn't say which option: fill the follow-ups of any
+            roots = [question]
+        else:
+            roots = [option for option in p.children(question) if p.option_label(option) in options]
+        ids = {question.get("id")}
+        for root in roots:
+            ids |= node_ids(root)
+        return {"text": text, "ids": ids, "question_id": question.get("id"), "options": options}
+
     def run_section(self, protocol, section, use_story=False):
         self.section = section
         self.use_story = use_story
         for question in p.children(protocol):
+            self.earlier = self.earlier_answer_for(question) if section != "hpi" else None
             self.ask_question(question)
+        self.earlier = None
         self.use_story = False
+
+
+def node_ids(node):
+    ids = {node.get("id")}
+    for child in p.children(node):
+        ids |= node_ids(child)
+    return ids

@@ -135,7 +135,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
     if first_words:
         accepted_suggestions += 1
     for answer in intake.answers:
-        if answer["source"] in (mapper.name, "from story", "from group reply"):   # Lia's code: + "from group reply"
+        if answer["source"] in (mapper.name, "from story", "from group reply", "from earlier answer"):   # Lia's code: + "from group reply"
             accepted_suggestions += 1
 
     visit = {
