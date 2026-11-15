@@ -570,3 +570,15 @@ What the run found:
 
 - TC03: Smoking history is filled as Never-smoker from the Cough answer (one confirmation instead of the list).
 - **TC04 got worse (+5 inputs, +1 min).** Hospitalization is filled and confirmed, but: the answer sheet has no `accept` words for the new "Patient already said: <value>" prompts (When did it occur?, Reason, How many cigarettes per day do you smoke?), so the simulated patient rejects three correct values (+3); the AI's "Since" was the whole sentence, not "10 years" (+1); and "Anything else?" on the history list costs a step (+1). Smoking history itself is still asked, because "Yes, 10 to 15 a day" doesn't say current or ex-smoker.
+- **Rerun with accept words (November 15, 2026, later).** The answer sheet had no `accept` words for TC04's four new "Patient already said: <value>" prompts, so the simulated patient rejected correct values. `make_patient_answers.py` now adds them, using only the patient's own words: When did it occur? `two month`, Reason `breathing`, `cough`, How many cigarettes per day do you smoke? `10 to 15`, Since `10 year`. Nothing else in the sheet changed. Old and new code were run again on the new sheet (the old code's results are unchanged):
+
+| Case | CHW inputs old | new | Visit min old | new |
+| --- | --- | --- | --- | --- |
+| TC01 | 55 | 55 | 16.7 | 16.7 |
+| TC02 | 61 | 61 | 18.4 | 18.4 |
+| TC03 | 52 | 51 | 15.8 | 15.4 |
+| TC04 | 89 | 90 | 27.6 | 27.2 |
+| TC05 | 43 | 43 | 13.2 | 13.2 |
+
+- TC04: Hospitalization, When, Reason, Since and cigarettes per day are now confirmed with "y" instead of typed. One more input than the old code (the "Anything else?" step), but 0.4 min shorter, because a y/n check is quicker than a typed answer. No fact lost, but the saved Since value is now the AI's whole sentence ("Yes, about 10 to 15 cigarettes a day for the past 10 years.") instead of "10 years": the accept word "10 year" is in it, so the check passes. It is not wrong, but it is untidy; the AI's "Since" from a smoking answer is still weak.
+- TC04's saved values changed wording (When, Reason, cigarettes, Since), so its judgement was not copied; TC01–03 and TC05 keep the Nov 15 judgements (`eval_results/2026-11-15_dedupe/report.md`; the 92.4% average recall there covers those 4 cases only).

@@ -625,7 +625,11 @@
         "say": "I'm not sure."
       },
       "Reason": {
-        "say": "My breathing and coughing got very bad."
+        "say": "My breathing and coughing got very bad.",
+        "accept": [
+          "breathing",
+          "cough"
+        ]
       },
       "Any known allergies to food/insects/latex": {
         "say": "Not that I know of. My brother has a food allergy.",
@@ -656,7 +660,10 @@
         ]
       },
       "When did it occur?": {
-        "say": "In the last two months."
+        "say": "In the last two months.",
+        "accept": [
+          "two month"
+        ]
       },
       "How long were you hospitalized?": {
         "say": "I'm not sure."
@@ -680,10 +687,16 @@
         "say": "I'm not sure."
       },
       "Since": {
-        "say": "10 years."
+        "say": "10 years.",
+        "accept": [
+          "10 year"
+        ]
       },
       "How many cigarettes per day do you smoke?": {
-        "say": "10 to 15."
+        "say": "10 to 15.",
+        "accept": [
+          "10 to 15"
+        ]
       },
       "Asthma": {
         "say": "My brother.",

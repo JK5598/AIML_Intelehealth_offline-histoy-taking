@@ -185,7 +185,7 @@ q.update({
         "has": ["Yes"]},
     "When": {"say": "In the last two months."},
     "How long": UNSURE,
-    "Reason": {"say": "My breathing and coughing got very bad."},
+    "Reason": {"say": "My breathing and coughing got very bad.", "accept": ["breathing", "cough"]},
     "Any known allergies to food/insects/latex": {"say": "Not that I know of. My brother has a food allergy.", "has": ["No"]},
     "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
         "say": "Yes. I use a bronchodilator and a steroid inhaler, and before that I took aminophylline, ketotifen and montelukast.",
@@ -199,7 +199,7 @@ q.update({
     "Do you have a history of any of the following?": {
         "say": "I've been in the hospital twice in the last two months for my breathing. I don't have high blood pressure or diabetes.",
         "has": ["Hospitalization"], "not": ["High Blood Pressure", "Diabetes"]},
-    "When did it occur?": {"say": "In the last two months."},
+    "When did it occur?": {"say": "In the last two months.", "accept": ["two month"]},
     "How long were you hospitalized?": UNSURE,
     "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
         "say": "Yes, I use a bronchodilator and a steroid inhaler.", "has": ["Yes"]},
@@ -209,8 +209,8 @@ q.update({
     "To": UNSURE,
     "How often do you have trouble taking medicines the way you have been told to take them?": UNSURE,
     "Smoking history": {"say": "I smoke 10 to 15 cigarettes a day, for the past 10 years.", "has": ["Current-smoker"]},
-    "Since": {"say": "10 years."},
-    "How many cigarettes per day do you smoke?": {"say": "10 to 15."},
+    "Since": {"say": "10 years.", "accept": ["10 year"]},
+    "How many cigarettes per day do you smoke?": {"say": "10 to 15.", "accept": ["10 to 15"]},
     "Do you have a family history of any of the following?": {
         "say": "My brother has asthma and a food allergy.", "has": ["Asthma", "Other"]},
     "Asthma": {"say": "My brother.", "has": ["Brother"]},
