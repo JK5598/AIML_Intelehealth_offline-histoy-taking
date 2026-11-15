@@ -123,7 +123,27 @@ def label_stems(label):
     return {stem(w) for w in words if len(w) > 3 and w not in GENERIC_WORDS}
 
 
+NEGATIVE_ANSWER_STARTS = {"no", "not", "never", "none", "denied", "dont", "doesnt", "hasnt", "isnt"}
+NEGATIVE_ANSWER_VERBS = {"do", "does", "has", "is"}   # "Do not Chew", "Does not move", "Has not started ..."
+
+
+def is_negative_answer(label):
+    """'No', 'No known allergies', 'Do not Chew', 'Never-smoker', 'Does not move':
+    these options ARE the patient's 'no', so a 'no' in the patient's words supports them."""
+    words = tokens(label)
+    if not words:
+        return False
+    if words[:2] == ["no", "."]:   # "No. of drinks": here "No." means number
+        return False
+    # "No mood to work" also counts. It is a symptom, but the patient saying "no mood" means they have it,
+    # so keeping the AI's pick is right there too.
+    return (words[0] in NEGATIVE_ANSWER_STARTS
+            or len(words) > 1 and words[0] in NEGATIVE_ANSWER_VERBS and words[1] == "not")
+
+
 def is_negated(label, text):
+    if is_negative_answer(label):
+        return False
     negated, affirmed = split_words(text)
     stems = label_stems(label)
     negated_hits = stems & {stem(w) for w in negated}

@@ -532,3 +532,22 @@ What the run found:
 - **Group mode (`--intake group`), same 5 cases, after the fixes** (`eval_results/2026-11-13_medpsy-1.7b_answer-sheet_group-mode/report.md`): the records hold the same facts, so recall stays 90.6%, with 0 wrong facts, 0 false alarms and all serious flags caught. CHW inputs barely change (TC01 54 → 51, TC02 59 → 58, TC03 50 → 46, TC04 88 → 90, TC05 41 → 37), but AI calls go up by about half (e.g. TC04 48 → 76), so AI time on the phone rises to 3.1–5.1 min and the estimated visit gets slightly longer in every case (TC04 27.5 → 30.3 min; TC02 18.4 → 20.1 min). With these cases, group mode does not fix visit length; cutting questions in the long past-history branches is the next thing to try.
 - Limits: the answer sheets and the judging are by the same AI assistant, not clinician-checked; the patient's Additional information answers are complete, which a real patient's may not be; visit time assumes 20 s per question and 8 s per y/n check.
 
+
+## Fix: options that mean "no" (November 15, 2026)
+
+- **Bug:** the "no" check (`negation.check_picks`) dropped correct AI picks when the option itself is the "no" answer. "No, no allergies." → "No known allergies" was dropped because the patient's "no" sits in front of "allergies", which is also in the label. The same happened with "I've never smoked." → Never-smoker and "No, I don't chew tobacco." → Do not Chew. The CHW then saw "Not sure what that matches" and had to type the number. The same options were also offered as "patient said NO to ...".
+- **Fix:** `negation.py`, `is_negative_answer`. A label that starts with No, Not, Never, None, Denied, Do not / Don't, Does not / Doesn't, Has not / Hasn't, or Is not / Isn't is never dropped and never offered as "said NO". "No. of drinks" (number) is not counted. "No mood to work" does count; it is a symptom, but the patient saying "no mood" means they have it, so keeping the pick is right. Nothing else in negation changed.
+- **Tests:** `check_negative_options` in `evaluate_mapping.py`, 6 cases with real protocol labels: No known allergies, Do not Chew, Never-smoker and Does not move kept; "no fever" → Fever and "No nausea, vomiting, or diarrhea" → Vomiting still dropped. The old code passes 2/6, the new code 6/6. "Said no" 50/50, red-flag cases 87/87, `smoke_test.py` OK (all unchanged).
+- **Evaluation** (same 5 cases, MedPsy-1.7B, answer-sheet patient; `eval_results/2026-11-15_fix-negative-options/report.md`):
+
+| Case | CHW inputs Nov 13 | Old code today | Fixed code | Visit min Nov 13 | Old code today | Fixed code |
+| --- | --- | --- | --- | --- | --- | --- |
+| TC01 | 54 | 55 | 55 | 16.9 | 17.1 | 16.7 |
+| TC02 | 59 | 61 | 61 | 18.4 | 18.8 | 18.4 |
+| TC03 | 50 | 52 | 52 | 15.8 | 16.2 | 15.8 |
+| TC04 | 88 | 89 | 89 | 27.5 | 27.8 | 27.6 |
+| TC05 | 41 | 43 | 43 | 13.2 | 13.6 | 13.2 |
+
+- What changed: allergies and smoking are now AI suggestions the CHW confirms with "y", instead of "Not sure" and typing the number. The number of inputs stays the same (a "y" replaces the number), but a y/n check is quicker, so each visit is about 0.2–0.4 min shorter than the old code run the same day.
+- The +1/+2 inputs against Nov 13 are not from the fix: the old code gives the same counts today. The model's suggestions differ a little from run to run, even at temperature 0. Today it suggests "Denied answer" for "No, I don't chew tobacco." (the CHW says n and types 1), plus one or two other wrong suggestions the CHW rejects (TC02 Medications, TC03 Wheezing, TC05 Other).
+- The saved answers hold the same facts as Nov 13 in all 5 cases (TC02's duration now reads "6 months" instead of "six months"), so the Nov 13 judgements were copied: recall 90.6%, 0 wrong facts, all Emergent/Immediate flags caught, 0 false alarms. TC04 is still over 20 min.

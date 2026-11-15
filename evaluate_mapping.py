@@ -120,6 +120,39 @@ def check_said_no(folder, cases):
     print(f"   'said no' options found correctly: {correct}/{total} multi-choice cases")
 
 
+# (protocol, question starts with, patient words, option the AI picked, should the pick be kept?)
+NEGATIVE_OPTION_CASES = [
+    ("patHist", "Do you have any allergies", "No, no allergies.", "No known allergies", True),
+    ("patHist", "Do you chew", "No, I don't chew tobacco.", "Do not Chew", True),
+    ("patHist", "Smoking history", "I've never smoked.", "Never-smoker", True),
+    ("Abdominal Pain", "Does the pain move", "It doesn't move anywhere.", "Does not move", True),
+    ("Cough", "Do you have", "I have a cough but no fever.", "Fever", False),
+    ("Abdominal Pain", "Do you have", "No nausea, vomiting, or diarrhea.", "Vomiting", False),
+]
+
+
+def check_negative_options(folder):
+    """Options that ARE a 'no' answer must survive the 'no' check, and never be offered as 'said NO to'.
+    A real contradiction ('no fever' -> Fever) must still be dropped."""
+    correct = 0
+    for complaint, question_start, words, pick, should_keep in NEGATIVE_OPTION_CASES:
+        question = find_question(p.load_protocol(folder, complaint), question_start)
+        labels = [p.option_label(o) for o in p.children(question)]
+        index = find_label_indexes(labels, [pick])[0]
+        kept, dropped = negation.check_picks(labels, [index], words)
+        said_no = negation.find_negated(labels, words)
+        if should_keep:
+            ok = kept == [index] and index not in said_no
+        else:
+            ok = dropped == [index]
+        correct += ok
+        mark = "OK " if ok else "X  "
+        result = "kept" if kept else "dropped"
+        print(f"   {mark} {words[:35]:35} AI picked {pick[:25]:25} -> {result}"
+              f"{', offered as said NO' if index in said_no else ''}")
+    print(f"   negative-answer option cases correct: {correct}/{len(NEGATIVE_OPTION_CASES)}")
+
+
 def check_red_flag_cases(path=RED_FLAG_FILE):
     """Red flags are plain code too. Each case is one sentence from the patient."""
     with open(path, encoding="utf-8") as f:
@@ -166,6 +199,7 @@ if __name__ == "__main__":
 
     print("Negation check (no AI):")
     check_said_no(folder, cases)
+    check_negative_options(folder)
 
     print("\nRed-flag check (no AI, draft guideline rules):")
     check_red_flag_cases()
