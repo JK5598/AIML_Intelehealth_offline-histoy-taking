@@ -73,7 +73,15 @@ def list_length(words, comma_position):
     return len(rest)
 
 
+# Most words match on their first 5 letters ("vomiting" / "vomited" / "Vomitting", "diarrhea" / "diarrhoea").
+# Words starting with these 5 letters need 7, or different words match:
+# "no constipation" must not count as "no Constant", "intermittent" is not "intercourse".
+LONGER_STEM_STARTS = {"const", "inter"}
+
+
 def stem(word):
+    if word[:5] in LONGER_STEM_STARTS:
+        return word[:7]
     return word[:5]
 
 

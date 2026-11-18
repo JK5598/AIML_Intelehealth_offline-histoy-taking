@@ -582,3 +582,50 @@ What the run found:
 
 - TC04: Hospitalization, When, Reason, Since and cigarettes per day are now confirmed with "y" instead of typed. One more input than the old code (the "Anything else?" step), but 0.4 min shorter, because a y/n check is quicker than a typed answer. No fact lost, but the saved Since value is now the AI's whole sentence ("Yes, about 10 to 15 cigarettes a day for the past 10 years.") instead of "10 years": the accept word "10 year" is in it, so the check passes. It is not wrong, but it is untidy; the AI's "Since" from a smoking answer is still weak.
 - TC04's saved values changed wording (When, Reason, cigarettes, Since), so its judgement was not copied; TC01–03 and TC05 keep the Nov 15 judgements (`eval_results/2026-11-15_dedupe/report.md`; the 92.4% average recall there covers those 4 cases only).
+
+## Android app (November 16 to 17, 2026)
+
+`android/` is a real Android app (Kotlin + [Chaquopy](https://chaquo.com/chaquopy/) for Python). It runs the
+same Python files as the laptop version: the build copies `main.py`, `intake.py`, `ai_mapper.py` and the rest
+into the app, so a fix here is in the app at the next build. MedPsy runs inside the app with llama.cpp
+(tag b12447, built by `app/src/main/cpp/CMakeLists.txt`). `app/src/main/python/llama_cpp/` is a small stand-in
+for llama-cpp-python, so `ai_mapper.py` runs unchanged. The app is fully offline.
+
+```bash
+# 1. Android Studio: open android/, install NDK 30.0.16248370 and CMake 4.1.2 (SDK Manager).
+# 2. android/local.properties (not on GitHub), add:
+#      protocols.dir=<path to "All Protocols (JSON)">
+#      python.build=<a Python 3.14 on this computer>
+# 3. Run the app once (first build ~5-10 min: it compiles llama.cpp). Without a model it uses keywords.
+# 4. Copy MedPsy to the phone/emulator (debug build), then run the app again:
+ADB=~/Library/Android/sdk/platform-tools/adb
+$ADB push medpsy-1.7b-q4_k_m-imat.gguf /data/local/tmp/
+$ADB shell run-as com.example.intakeapp mkdir -p files/models
+$ADB shell run-as com.example.intakeapp cp /data/local/tmp/medpsy-1.7b-q4_k_m-imat.gguf files/models/
+$ADB shell rm /data/local/tmp/medpsy-1.7b-q4_k_m-imat.gguf
+# Visits are saved on the phone in files/visits/. To copy one to the laptop:
+$ADB shell run-as com.example.intakeapp cat files/visits/<visit file>.json > my_visit.json
+```
+
+Engine check: on the laptop, the engine gave the same answer as llama-cpp-python on 45 of 46 AI calls of a
+TC01 visit (the one difference was a pick that also changes between llama-cpp-python runs).
+
+First visit on the emulator (TC01, appendicitis, typed by hand from the answer sheet; emulator AIML_Phone,
+arm64, 4 cores, 6 GB, on an Apple-silicon Mac):
+
+| | Result |
+| --- | --- |
+| Model load | 2.6 s |
+| AI time for the visit | 41.5 s (28 calls, 1.5 s each on average; 7547 tokens read, 194 written) |
+| Whole visit (by the clock) | about 11 min |
+| Red flag | IMMEDIATE: Suspected appendicitis, raised right after the story |
+| AI suggestions the CHW rejected | Colicky pain, Leaning forward, an Additional-information summary that said "no GI symptoms" |
+
+The emulator runs close to the Mac's own speed, so a low-cost phone will be slower; the estimate from the
+evaluation (up to ~3 min of AI per visit) is still the number to plan with.
+
+Two bugs found in this visit, fixed:
+- "no constipation" made the app offer "Constant" as a said-no option (both start with "const"). Words that
+  start with "const" or "inter" now need 7 matching letters (`negation.LONGER_STEM_STARTS`).
+- Typing only "y" or "n" on a numbered question was sent to the AI as the patient's words ("n" became "Yes"
+  for pregnancy). The app now asks for the option number instead.

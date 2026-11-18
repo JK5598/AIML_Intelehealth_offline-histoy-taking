@@ -230,6 +230,9 @@ class Intake:
                     self.console.show("   This question is required.")
                     continue
                 return [], None, None
+            if reply.lower() in ("y", "n"):
+                self.console.show("   Please type the option number. (y / n only answer the 'Keep?' and 'Correct?' questions.)")
+                continue
 
             picked = parse_numbers(reply, len(options))
             if picked is not None:
