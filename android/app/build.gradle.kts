@@ -100,6 +100,8 @@ val appPythonFiles = listOf(
     "main.py", "intake.py", "intake_group.py", "followup.py", "protocols.py", "negation.py",
     "red_flags.py", "repeated_questions.py", "summary.py", "explanations.py", "explanations.json",
     "keyword_mapper.py", "ai_mapper.py",
+    // for the "Run test cases" button: the evaluation's simulated patient and CHW, and the 5 test cases
+    "sim_patient.py", "judge.py", "eval_cases.json", "eval_patient_answers.json",
 )
 val copyPythonCode = tasks.register<Sync>("copyPythonCode") {
     from(rootProject.file("..")) { include(appPythonFiles) }

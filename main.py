@@ -174,6 +174,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
     #----- Lia's code: which intake mode ran, how many times the CHW typed, and the follow-ups -----
     visit["run_info"]["intake_mode"] = intake_mode
     visit["run_info"]["chw_inputs"] = console.inputs
+    visit["run_info"]["unsure_answers"] = sum(1 for a in visit["answers"] if a.get("status") == "unsure")
     if hasattr(intake, "extra_run_info"):
         visit["run_info"].update(intake.extra_run_info())
     #----- end of Lia's code -----

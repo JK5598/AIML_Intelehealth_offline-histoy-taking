@@ -1,6 +1,7 @@
 package com.example.intakeapp
 
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -20,7 +21,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var logScroll: ScrollView
     private lateinit var prompt: TextView
     private lateinit var input: EditText
+    private lateinit var homeButtons: View
     private lateinit var bridge: PyObject
+    private lateinit var protocolFolder: File
     private var waitingForAnswer = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         logScroll = findViewById(R.id.logScroll)
         prompt = findViewById(R.id.prompt)
         input = findViewById(R.id.input)
+        homeButtons = findViewById(R.id.homeButtons)
+        findViewById<Button>(R.id.newVisitButton).setOnClickListener { startVisit("run_visit") }
+        findViewById<Button>(R.id.testCasesButton).setOnClickListener { startVisit("run_test_cases") }
 
         findViewById<Button>(R.id.sendButton).setOnClickListener { sendAnswer(input.text.toString()) }
         findViewById<Button>(R.id.yesButton).setOnClickListener { sendAnswer("y") }
@@ -53,11 +59,18 @@ class MainActivity : AppCompatActivity() {
             Python.start(AndroidPlatform(this))
         }
         bridge = Python.getInstance().getModule("app_bridge")
-        startVisit()
+        protocolFolder = copyProtocolsToPhone()
+        prompt.text = "New visit: a patient visit, typed by you.\n" +
+            "Run test cases: the phone plays TC01-TC05 from the answer sheet by itself (a few minutes)."
+        homeButtons.visibility = View.VISIBLE
     }
 
-    private fun startVisit() {
-        val protocolFolder = copyProtocolsToPhone()
+    // pythonFunction: "run_visit" (a real visit) or "run_test_cases" (the phone plays the test cases itself)
+    private fun startVisit(pythonFunction: String) {
+        homeButtons.visibility = View.GONE
+        waitingForAnswer = false
+        log.text = ""
+        prompt.text = "Starting..."
         val saveFolder = File(filesDir, "visits")
         // The adb commands in the README copy MedPsy here. Without it the app uses keyword matching.
         val modelFile = File(filesDir, "models/medpsy-1.7b-q4_k_m-imat.gguf")
@@ -70,10 +83,13 @@ class MainActivity : AppCompatActivity() {
                     LlmEngine.backendDir = applicationInfo.nativeLibraryDir
                     LlmEngine.threads = minOf(4, Runtime.getRuntime().availableProcessors())
                 }
-                bridge.callAttr("run_visit", screen, protocolFolder.absolutePath, saveFolder.absolutePath,
+                bridge.callAttr(pythonFunction, screen, protocolFolder.absolutePath, saveFolder.absolutePath,
                     modelFile.absolutePath)
             } catch (error: Throwable) {
-                runOnUiThread { addToLog("\nSomething went wrong:\n$error") }
+                runOnUiThread {
+                    addToLog("\nSomething went wrong:\n$error")
+                    homeButtons.visibility = View.VISIBLE
+                }
             }
         }, "visit", 64L * 1024 * 1024).start()
     }
@@ -109,7 +125,8 @@ class MainActivity : AppCompatActivity() {
 
         fun finished(savedPath: String) {
             runOnUiThread {
-                prompt.text = "Visit finished. Saved on the phone:\n$savedPath"
+                prompt.text = "Finished. Saved on the phone:\n$savedPath"
+                homeButtons.visibility = View.VISIBLE
             }
         }
     }

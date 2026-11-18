@@ -41,6 +41,19 @@ def is_yes(reply):
     return reply.strip().lower() in ("y", "yes")
 
 
+PATIENT_NOT_SURE = "patient not sure"
+UNSURE_LABEL_WORDS = ("unknown", "don't know", "dont know", "not sure", "unsure")
+
+
+def unsure_option_number(labels):
+    """The number of an option like "Don't know/Unsure" or "Unknown", if the question has one."""
+    for number, label in enumerate(labels, start=1):
+        text = label.lower()
+        if any(word in text for word in UNSURE_LABEL_WORDS):
+            return number
+    return None
+
+
 class Intake:
     def __init__(self, patient, mapper, console, language="en"):
         self.patient = patient
@@ -226,10 +239,18 @@ class Intake:
                     self.console.show(f"   There is no option {number}.")
                 continue
             if reply == "":
-                if required:
-                    self.console.show("   This question is required.")
+                if not required:
+                    return [], None, None
+                unsure_number = unsure_option_number(english_labels)
+                if unsure_number is not None:
+                    self.console.show(f"   This question is required. If the patient is not sure, "
+                                      f"pick {unsure_number}. {labels[unsure_number - 1]}.")
                     continue
-                return [], None, None
+                # No "don't know" option in the protocol: let the CHW save "patient not sure" instead of guessing.
+                if is_yes(self.console.ask("   This question is required. Patient not sure? "
+                                           "(y = save 'patient not sure', n = ask again)")):
+                    return [], PATIENT_NOT_SURE, None
+                continue
             if reply.lower() in ("y", "n"):
                 self.console.show("   Please type the option number. (y / n only answer the 'Keep?' and 'Correct?' questions.)")
                 continue
@@ -375,6 +396,8 @@ class Intake:
         chosen, source, words = self.choose_options(question, options)
         if chosen:
             self.follow_up(question, chosen, source, words)
+        elif source == PATIENT_NOT_SURE:
+            self.record(question, [], source=None, status="unsure")
         else:
             self.record(question, [], source=None, status="skipped")
 

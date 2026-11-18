@@ -2,6 +2,23 @@
 
 A Python prototype of the history-taking module. It runs in a terminal on a laptop, fully offline once the files are downloaded. The goal is to get the logic and the AI prompts right on a laptop first, then port them to Android.
 
+## Team and who did what
+
+Group 6, AI-ML for Global Health (Dr. Luis Soenksen), Intelehealth design challenge (Dr. Neha Verma).
+
+| Person | Main work |
+|---|---|
+| **Junewoo Koo** (June) | Laptop prototype: protocol walker (`intake.py`, `main.py`), MedPsy matching and story pre-fill (`ai_mapper.py`), "no" detection (`negation.py`), `?` explanations for CHWs (`explanations.py`), repeated history questions (`repeated_questions.py`). Evaluation loop (`evaluate_visits.py`, `sim_patient.py`, `judge.py`, answer sheets), red-flag labels for the test cases, merging everyone's code. Android app (`android/`, MedPsy on the phone). Project log. |
+| **Tuyet Nhu Tran Le** (Lia) | Model research (MedPsy, MedGemma, OctoMed). Multi-question intake (`intake_group.py`, `followup.py`, `--intake group`), comparing intake modes (`compare_intake_modes.py`), counting CHW inputs, "unsure / not answered" answers in the summary. Drafted Project Update 2. Independent spot-check of the evaluation judging (TC02, TC04). |
+| **Charles Creech** (Morrison) | Red-flag rules (`red_flags.py`): 78 rules from the Intelehealth Clinical Treatment Guidelines and WHO IITT, 4 urgency levels with sources, and the yes/no follow-up questions. |
+| **Yuqi Zhang** | The 5 test cases (TC01-TC05) chosen from the 190 teaching cases and their key-fact lists. Planned: physical-exam / ROS walk-through. |
+
+Sections in a shared file that a teammate wrote are marked in the code (for example `#----- Lia's code ... -----`).
+
+**AI assistance:** much of the code and the evaluation judging was done with Claude (Anthropic) under June's
+direction; every change was reviewed and tested before it was committed. Judging by Claude is not independent,
+which is why a teammate spot-checks it.
+
 ## What it does
 
 1. The CHW enters age and sex.
@@ -629,3 +646,47 @@ Two bugs found in this visit, fixed:
   start with "const" or "inter" now need 7 matching letters (`negation.LONGER_STEM_STARTS`).
 - Typing only "y" or "n" on a numbered question was sent to the AI as the patient's words ("n" became "Yes"
   for pregnancy). The app now asks for the option number instead.
+
+App buttons (added November 17): the app opens on two buttons. **New visit** is a visit typed by the CHW.
+**Run test cases** lets the phone play TC01-TC05 by itself with the evaluation's answer-sheet patient and
+simulated CHW (`sim_patient.py`), and shows the real AI time on the phone for each case. The visits,
+transcripts and a `results.csv` are saved on the phone in `files/visits/test_runs/<time>/`. MedPsy stays
+loaded between visits. Copy a run to the laptop with:
+```bash
+$ADB shell run-as com.example.intakeapp tar cf - files/visits/test_runs > phone_test_runs.tar
+```
+
+Keyword app vs MedPsy app, same day (November 17, answer-sheet patient, records only, see
+`eval_results/2026-11-17_keyword-vs-medpsy/comparison.md`): simple cases take 11-18 min in both, the complex
+case (TC04) 25-27 min. MedPsy cuts how often the CHW reads an option list and picks a number by more than half (56 -> 23 over 5 cases, not counting age and complaint)
+but doubles the y/n checks (54 -> 111), so the 20 s / 8 s estimate comes out about even. A timed visit is
+needed to show a real time saving.
+
+## "Patient not sure" on required questions (November 18, 2026)
+
+Some required protocol questions (pain severity, menstrual history, what aggravates the cough, ...) have no
+"unknown" option, so a CHW whose patient didn't know had to guess. Now pressing Enter (Skip on the phone) on a
+required question asks "Patient not sure? (y/n)"; y saves the answer with status `unsure`, which the doctor
+summary shows as "patient unsure". If the question has its own "Don't know/Unsure" option, the app points to it
+instead. `run_info.unsure_answers` counts them per visit, so overuse is visible. The simulated CHW uses it
+instead of a forced pick. Same 5 cases (keyword app): the 9 forced guesses (e.g. "Mild" pain and "Has not
+started menstruation" for TC01/TC02) are now "patient unsure"; CHW inputs and visit times unchanged. MedPsy
+check on TC01-TC02: same inputs, same red flags.
+
+## Patient's own words in the doctor summary (November 18, 2026)
+
+In the Nov 15 judged run, all 11 facts the app missed (or only partly recorded) were said by the patient in reply
+to a question, and the words were already saved in visit.json (`patient_words`), but the doctor summary only
+listed the chosen options. When the protocol has no option for a fact (pain spreading to the back, no jaundice,
+high cholesterol, "hospitalized twice"), it never reached the doctor.
+
+Now `summary.facts_lines` adds the patient's words under an answer when they say more than the chosen option:
+`Pain radiates to: Chest (patient said: "To my back and my chest.")`. Plain code, no AI, no extra CHW input.
+Left out: the opening story (shown at the top already), words reused from an earlier answer, replies that only
+restate the answer ("No, I don't drink."), and the same reply twice (shown on the "has" answer, not the "said no"
+one). Red flags are unchanged (they already read the saved words).
+
+Re-scored the Nov 15 records with the new summary (eval_results/2026-11-18_patient-words): key-fact recall
+90.6% -> 99.0% (TC01-TC03 and TC05 100%, TC04 95%). Still partly: TC04's sputum colour (the patient didn't know
+it) and "chest tightness" saved as "Chest pain/discomfort". The recovered facts are quotes, not structured
+answers, and the re-score was done by Claude, so a fresh run and a teammate's check should confirm it.

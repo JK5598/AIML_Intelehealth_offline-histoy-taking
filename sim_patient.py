@@ -328,6 +328,9 @@ class SimulatedCHW:
             return self.check(f"You do NOT have: {shown}.", self.question, shown, "not")
         if prompt.startswith("Number(s), or type the patient's words"):
             return self.answer_choices()
+        if prompt.startswith("This question is required. Patient not sure?"):
+            self.notes["unsure"] = self.notes.get("unsure", 0) + 1
+            return "y"   # the patient gave no usable answer: save "patient not sure" rather than guess
         if prompt.startswith("Type the patient's reply to these questions"):
             self.last_words = self.patient.answer_group(self.group)
             return self.last_words
@@ -363,9 +366,15 @@ class SimulatedCHW:
             if not self.multi:
                 picked = picked.split(",")[0]   # single-choice question: only the first
             return picked
-        # The app says the question is required and nothing the patient said fits. The CHW has to pick
-        # something: "unknown" if there is one, else "none"/"no", else "other", else the first option.
-        # These picks come from the simulation, not the app, so they are marked for the judge.
+        # The app says the question is required and nothing the patient said fits. If the question has an
+        # "unknown" option the CHW picks it; otherwise the CHW presses Enter and the app offers
+        # "patient not sure" (answered above). The old forced pick stays only as a fallback.
+        for number, label in enumerate(self.options, start=1):
+            text = label.lower() + " "
+            if any(text.startswith(word) or f" {word}" in f" {text}" for word in ("unknown", "not sure", "don't know")):
+                return str(number)
+        if self.number_tries == 2:
+            return ""
         self.notes["forced_picks"] = self.notes.get("forced_picks", 0) + 1
         self.forced_pick = True
         for words in (("unknown", "not sure", "don't know"), ("none", "never", "no "), ("other",)):
