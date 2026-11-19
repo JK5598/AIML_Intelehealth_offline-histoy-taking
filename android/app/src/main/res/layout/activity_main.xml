@@ -56,6 +56,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Run test cases" />
+
+        <Button
+            android:id="@+id/loadModelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Load model" />
     </LinearLayout>
 
     <EditText
