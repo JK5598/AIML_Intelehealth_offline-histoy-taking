@@ -1,5 +1,6 @@
 package com.example.intakeapp
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -12,12 +13,18 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class MainActivity : AppCompatActivity() {
     private lateinit var log: TextView
@@ -56,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.newVisitButton).setOnClickListener { startVisit("run_visit") }
         findViewById<Button>(R.id.testCasesButton).setOnClickListener { startVisit("run_test_cases") }
         findViewById<Button>(R.id.loadModelButton).setOnClickListener { pickModel.launch(arrayOf("*/*")) }
+        findViewById<Button>(R.id.shareButton).setOnClickListener { shareVisits() }
 
         findViewById<Button>(R.id.sendButton).setOnClickListener { sendAnswer(input.text.toString()) }
         findViewById<Button>(R.id.yesButton).setOnClickListener { sendAnswer("y") }
@@ -128,6 +136,37 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread { showHome("Could not copy the model: $error") }
             }
         }.start()
+    }
+
+    // Puts every saved visit (and every test-case run) into one .zip and opens the phone's share menu,
+    // so the records can be emailed or saved to Drive without a computer.
+    private fun shareVisits() {
+        val visits = File(filesDir, "visits")
+        val files = visits.walkTopDown().filter { it.isFile }.toList()
+        if (files.isEmpty()) {
+            showHome("No visits saved yet. Do a visit or run the test cases first.")
+            return
+        }
+        val shareFolder = File(cacheDir, "share")
+        shareFolder.deleteRecursively()
+        shareFolder.mkdirs()
+        val time = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val zip = File(shareFolder, "intake_visits_$time.zip")
+        ZipOutputStream(zip.outputStream()).use { out ->
+            for (file in files) {
+                out.putNextEntry(ZipEntry(file.relativeTo(visits).path))
+                file.inputStream().use { it.copyTo(out) }
+                out.closeEntry()
+            }
+        }
+        val uri = FileProvider.getUriForFile(this, "$packageName.files", zip)
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = "application/zip"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_SUBJECT, "IntakeApp visits ($time)")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(send, "Share visit files (${files.size} files)"))
     }
 
     private fun fileName(uri: Uri): String {
