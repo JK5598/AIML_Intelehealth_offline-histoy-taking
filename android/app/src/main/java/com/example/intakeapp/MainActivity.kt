@@ -4,6 +4,22 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+//----- Lia's code: imports for the styled lines and the option buttons -----
+import android.graphics.Color
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.text.InputType
+import android.widget.PopupMenu
+import androidx.appcompat.app.AlertDialog
+import android.widget.LinearLayout
+import org.json.JSONArray
+//----- end of Lia's code -----
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -35,6 +51,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bridge: PyObject
     private lateinit var protocolFolder: File
     private var waitingForAnswer = false
+    //----- Lia's code: the area with one button per option (or Yes / No / Don't know) -----
+    private lateinit var choiceScroll: ScrollView
+    private lateinit var choiceBox: LinearLayout
+    private lateinit var yesButton: Button
+    private lateinit var noButton: Button
+    private val pickedNumbers = mutableListOf<String>()   // multi-choice: numbers tapped so far
+    private var running: String? = null    // "run_visit", "run_test_cases", or null when nothing runs
+    //----- end of Lia's code -----
 
     // MedPsy lives here. "Load model" copies it in from a file the user picked (e.g. from Downloads).
     // Without it the app uses keyword matching.
@@ -60,6 +84,27 @@ class MainActivity : AppCompatActivity() {
         prompt = findViewById(R.id.prompt)
         input = findViewById(R.id.input)
         homeButtons = findViewById(R.id.homeButtons)
+        //----- Lia's code: find the option-button area; the old fixed Yes / No buttons start hidden -----
+        choiceScroll = findViewById(R.id.choiceScroll)
+        choiceBox = findViewById(R.id.choiceBox)
+        yesButton = findViewById(R.id.yesButton)
+        noButton = findViewById(R.id.noButton)
+        yesButton.visibility = View.GONE
+        noButton.visibility = View.GONE
+        // A taller answer box: always 2 lines, grows to 5, long answers wrap so the CHW can read them back.
+        // The keyboard still shows Send (not a new-line key), so Send on the keyboard still sends.
+        input.setSingleLine(false)
+        input.minLines = 2
+        input.maxLines = 5
+        input.setHorizontallyScrolling(false)
+        input.imeOptions = EditorInfo.IME_ACTION_SEND
+        input.setRawInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
+        //----- end of Lia's code -----
+        //----- Lia's code: the menu (top left) and the Back button (round 2) -----
+        findViewById<TextView>(R.id.appTitle).text = applicationInfo.loadLabel(packageManager)
+        findViewById<Button>(R.id.menuButton).setOnClickListener { showMenu(it) }
+        findViewById<Button>(R.id.backButton).setOnClickListener { goBack() }
+        //----- end of Lia's code -----
         findViewById<Button>(R.id.newVisitButton).setOnClickListener { startVisit("run_visit") }
         findViewById<Button>(R.id.testCasesButton).setOnClickListener { startVisit("run_test_cases") }
         findViewById<Button>(R.id.loadModelButton).setOnClickListener { pickModel.launch(arrayOf("*/*")) }
@@ -180,6 +225,9 @@ class MainActivity : AppCompatActivity() {
 
     // pythonFunction: "run_visit" (a real visit) or "run_test_cases" (the phone plays the test cases itself)
     private fun startVisit(pythonFunction: String) {
+        //----- Lia's code: remember what is running, for the menu -----
+        running = pythonFunction
+        //----- end of Lia's code -----
         homeButtons.visibility = View.GONE
         waitingForAnswer = false
         log.text = ""
@@ -198,6 +246,9 @@ class MainActivity : AppCompatActivity() {
                     modelFile.absolutePath)
             } catch (error: Throwable) {
                 runOnUiThread {
+                    //----- Lia's code: nothing runs any more -----
+                    running = null
+                    //----- end of Lia's code -----
                     addToLog("\nSomething went wrong:\n$error")
                     homeButtons.visibility = View.VISIBLE
                 }
@@ -213,6 +264,9 @@ class MainActivity : AppCompatActivity() {
         addToLog(">> " + prompt.text + "  " + text)
         input.setText("")
         prompt.text = ""
+        //----- Lia's code: clear the buttons once an answer is sent -----
+        clearChoices()
+        //----- end of Lia's code -----
         bridge.callAttr("answer", text)
     }
 
@@ -221,11 +275,191 @@ class MainActivity : AppCompatActivity() {
         logScroll.post { logScroll.fullScroll(ScrollView.FOCUS_DOWN) }
     }
 
+    //----- Lia's code: styled lines in the visit log, and buttons that fit each question -----
+    // style comes from screen_ui.line_style(): "section", "question", "red_flag", "summary" or "plain".
+    private fun addStyledToLog(text: String, style: String) {
+        val line = SpannableString(text + "\n")
+        val end = text.length
+        if (end > 0) {
+            when (style) {
+                "section" -> {    // e.g. "--- Past medical history ---": dark blue, bold, bigger
+                    line.setSpan(StyleSpan(Typeface.BOLD), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    line.setSpan(RelativeSizeSpan(1.2f), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    line.setSpan(ForegroundColorSpan(Color.parseColor("#1A237E")), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                "question" -> {   // every question title: purple and bold, so it stands out from the options
+                    line.setSpan(StyleSpan(Typeface.BOLD), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    line.setSpan(RelativeSizeSpan(1.1f), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    line.setSpan(ForegroundColorSpan(Color.parseColor("#6A1B9A")), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                "red_flag" -> {
+                    line.setSpan(StyleSpan(Typeface.BOLD), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    line.setSpan(ForegroundColorSpan(Color.parseColor("#B71C1C")), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                "summary" -> line.setSpan(StyleSpan(Typeface.BOLD), 0, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+        log.append(line)
+        logScroll.post { logScroll.fullScroll(ScrollView.FOCUS_DOWN) }
+    }
+
+    private fun clearChoices() {
+        choiceBox.removeAllViews()
+        choiceScroll.visibility = View.GONE
+        pickedNumbers.clear()
+    }
+
+    // kind: "options" (one button per option), "yes_no", "red_flag" (Yes / No / Don't know),
+    // "choice" (female / male) or "text" (typing only). Each button sends exactly what a CHW would type.
+    private fun showChoices(kind: String, buttonsJson: String, multi: Boolean) {
+        clearChoices()
+        val buttons = JSONArray(buttonsJson)
+        input.hint = when (kind) {
+            "options" -> if (multi) "Tap all that apply, then Send, or type the patient's words"
+                         else "Tap an option, or type the patient's words"
+            "yes_no", "red_flag", "choice" -> "Tap a button"
+            else -> "Type here, then Send"
+        }
+        if (buttons.length() == 0) {
+            return
+        }
+        // Options go one per row (labels can be long); Yes / No style buttons go side by side.
+        choiceBox.orientation = if (kind == "options") LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+        for (i in 0 until buttons.length()) {
+            val pair = buttons.getJSONArray(i)
+            val sendText = pair.getString(0)
+            val label = pair.getString(1)
+            val button = Button(this)
+            button.isAllCaps = false
+            button.text = if (kind == "options") "$sendText. $label" else label
+            if (kind == "options") {
+                button.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT)
+            } else {
+                button.layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+            }
+            button.setOnClickListener {
+                if (kind == "options" && multi) {
+                    // Multi-choice: tapping adds or removes the number; Send sends them all ("2,9").
+                    if (pickedNumbers.contains(sendText)) {
+                        pickedNumbers.remove(sendText)
+                        button.alpha = 1.0f
+                    } else {
+                        pickedNumbers.add(sendText)
+                        button.alpha = 0.5f
+                    }
+                    input.setText(pickedNumbers.joinToString(","))
+                } else {
+                    sendAnswer(sendText)
+                }
+            }
+            choiceBox.addView(button)
+        }
+        choiceScroll.visibility = View.VISIBLE
+        // Long lists (e.g. 52 complaints) scroll inside a box of at most about a third of the screen.
+        choiceScroll.post {
+            input.requestFocus()    // keep the cursor in the answer box after the buttons are drawn
+            val maxHeight = resources.displayMetrics.heightPixels / 3
+            val params = choiceScroll.layoutParams
+            params.height = if (choiceBox.height > maxHeight) maxHeight else ViewGroup.LayoutParams.WRAP_CONTENT
+            choiceScroll.layoutParams = params
+            choiceScroll.scrollTo(0, 0)
+        }
+    }
+
+    // Back: undo the last answer. The Python side replays the visit without it (visit_replay.py).
+    private fun goBack() {
+        if (!waitingForAnswer || running != "run_visit") {
+            return
+        }
+        waitingForAnswer = false
+        clearChoices()
+        input.setText("")
+        prompt.text = "Going back..."
+        bridge.callAttr("answer", "[[back]]")
+    }
+
+    // The menu (top left). During a visit: End this visit. Otherwise: New visit, Run test cases,
+    // Load model, Share visit files (the same as the big buttons on the start screen).
+    private fun showMenu(anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        when (running) {
+            "run_visit" -> popup.menu.add(0, 1, 0, "End this visit")
+            "run_test_cases" -> popup.menu.add(0, 0, 0, "Test cases are running...").isEnabled = false
+            else -> {
+                popup.menu.add(0, 2, 0, "New visit")
+                popup.menu.add(0, 3, 1, "Run test cases")
+                popup.menu.add(0, 4, 2, "Load model")
+                popup.menu.add(0, 5, 3, "Share visit files")
+            }
+        }
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> confirmEndVisit()
+                2 -> startVisit("run_visit")
+                3 -> startVisit("run_test_cases")
+                4 -> pickModel.launch(arrayOf("*/*"))
+                5 -> shareVisits()
+            }
+            true
+        }
+        popup.show()
+    }
+
+    private fun confirmEndVisit() {
+        AlertDialog.Builder(this)
+            .setTitle("End this visit?")
+            .setMessage("The answers so far will not be saved.")
+            .setPositiveButton("End visit") { _, _ ->
+                waitingForAnswer = false
+                clearChoices()
+                input.setText("")
+                prompt.text = "Ending the visit..."
+                bridge.callAttr("answer", "[[end]]")
+            }
+            .setNegativeButton("Keep going", null)
+            .show()
+    }
+    //----- end of Lia's code -----
+
     // The Python code calls these three functions from its background thread.
     inner class Screen {
         fun show(text: String) {
             runOnUiThread { addToLog(text) }
         }
+
+        //----- Lia's code: show one line with its style, and ask with the buttons that fit the question -----
+        fun showStyled(text: String, style: String) {
+            runOnUiThread { addStyledToLog(text, style) }
+        }
+
+        fun clearLog() {
+            runOnUiThread { log.text = "" }
+        }
+
+        fun ended(message: String) {
+            runOnUiThread {
+                running = null
+                clearChoices()
+                showHome(message)
+            }
+        }
+
+        fun askWith(question: String, kind: String, buttonsJson: String, multi: Boolean) {
+            runOnUiThread {
+                prompt.text = question.trim()
+                showChoices(kind, buttonsJson, multi)
+                waitingForAnswer = true
+                // The cursor is always in the answer box, so the CHW can type without tapping it first.
+                input.requestFocus()
+                if (kind == "text") {
+                    // Typing questions (the patient's words, a duration, a name): open the keyboard too.
+                    val keyboard = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    keyboard.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+                }
+            }
+        }
+        //----- end of Lia's code -----
 
         fun ask(question: String) {
             runOnUiThread {
@@ -236,6 +470,10 @@ class MainActivity : AppCompatActivity() {
 
         fun finished(savedPath: String) {
             runOnUiThread {
+                //----- Lia's code: no buttons left over after the visit; nothing runs any more -----
+                clearChoices()
+                running = null
+                //----- end of Lia's code -----
                 prompt.text = "Finished. Saved on the phone:\n$savedPath"
                 homeButtons.visibility = View.VISIBLE
             }

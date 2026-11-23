@@ -13,6 +13,10 @@ import judge
 import main
 from keyword_mapper import KeywordMapper
 from sim_patient import SheetPatient, SimulatedCHW
+#----- Lia's code: screen rules for the round 1 UI fixes, and Back / End this visit (round 2) -----
+import screen_ui
+from visit_replay import BACK, END, AnswerMemory, EndVisit, GoBack
+#----- end of Lia's code -----
 
 
 
@@ -20,13 +24,47 @@ class PhoneConsole:
     def __init__(self, screen):
         self.screen = screen            # the Kotlin side (MainActivity's Screen)
         self.answers = queue.Queue()    # answers typed on the phone wait here
+        #----- Lia's code: remember the options on screen, so the phone can show the right buttons -----
+        self.state = screen_ui.ScreenState()
+        #----- end of Lia's code -----
+        #----- Lia's code: remember every answer, so Back can replay the visit without the last one -----
+        self.history = []      # every answer the CHW sent in this visit, in order
+        self.replay = []       # answers still to give back during a replay after Back
+        self.back_presses = 0
+        #----- end of Lia's code -----
 
     def show(self, text=""):
-        self.screen.show(text)
+        #----- Lia's code: send each line with its style (section / question / red flag / plain) -----
+        self.state.saw(text)
+        for line in text.split("\n"):
+            self.screen.showStyled(line, screen_ui.line_style(line))
+        #----- end of Lia's code -----
 
     def ask(self, prompt):
-        self.screen.ask(prompt)
-        return self.answers.get().strip()   # wait until the CHW taps Send / Yes / No / Skip
+        #----- Lia's code: replay after Back: give the remembered answer back straight away -----
+        if self.replay:
+            reply = self.replay.pop(0)
+            self.screen.showStyled(">> " + prompt.strip() + "  " + reply, "plain")
+            return reply
+        #----- end of Lia's code -----
+        while True:
+            #----- Lia's code: send the buttons that fit this question (options, Yes/No, or none for typing) -----
+            kind, buttons, multi = self.state.buttons_for(prompt)
+            self.screen.askWith(prompt, kind, json.dumps(buttons), multi)
+            #----- end of Lia's code -----
+            reply = self.answers.get().strip()   # wait until the CHW taps Send / Skip / an option button
+            #----- Lia's code: Back removes the last answer and starts the replay; End stops the visit -----
+            if reply == END:
+                raise EndVisit()
+            if reply == BACK:
+                if not self.history:
+                    continue            # nothing to undo yet: ask the same question again
+                self.history.pop()
+                self.back_presses += 1
+                raise GoBack()
+            self.history.append(reply)
+            #----- end of Lia's code -----
+            return reply
 
 
 current_console = None
@@ -85,7 +123,28 @@ def run_visit(screen, protocol_folder, save_folder, model_path):
                 f"{len(terms)} terms, {len(questions)} questions.")
     mapper = make_mapper(screen, model_path)
 
-    visit = main.run_visit(current_console, mapper, protocol_folder)
+    #----- Lia's code: Back = start the visit again and replay the answers; End = stop without saving -----
+    first_start = time.time()
+    memory = AnswerMemory(mapper)
+    try:
+        while True:
+            current_console.replay = list(current_console.history)
+            current_console.state = screen_ui.ScreenState()
+            try:
+                visit = main.run_visit(current_console, mapper, protocol_folder)
+                break
+            except GoBack:
+                screen.clearLog()
+                screen.show("(Back: the last answer was removed. Replaying the earlier answers...)")
+    except EndVisit:
+        screen.ended("Visit ended. Nothing was saved.")
+        return
+    finally:
+        memory.stop()
+    # The replay restarts main.run_visit's clock, so use the real start; count Back taps too.
+    visit["run_info"]["minutes"] = round((time.time() - first_start) / 60, 2)
+    visit["run_info"]["back_presses"] = current_console.back_presses
+    #----- end of Lia's code -----
 
     report = ai_time_report(mapper)
     if report:
