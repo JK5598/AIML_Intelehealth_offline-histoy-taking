@@ -120,6 +120,39 @@ def check_said_no(folder, cases):
     print(f"   'said no' options found correctly: {correct}/{total} multi-choice cases")
 
 
+# (protocol, question starts with, patient words, option the AI picked, should the pick be kept?)
+NEGATIVE_OPTION_CASES = [
+    ("patHist", "Do you have any allergies", "No, no allergies.", "No known allergies", True),
+    ("patHist", "Do you chew", "No, I don't chew tobacco.", "Do not Chew", True),
+    ("patHist", "Smoking history", "I've never smoked.", "Never-smoker", True),
+    ("Abdominal Pain", "Does the pain move", "It doesn't move anywhere.", "Does not move", True),
+    ("Cough", "Do you have", "I have a cough but no fever.", "Fever", False),
+    ("Abdominal Pain", "Do you have", "No nausea, vomiting, or diarrhea.", "Vomiting", False),
+]
+
+
+def check_negative_options(folder):
+    """Options that ARE a 'no' answer must survive the 'no' check, and never be offered as 'said NO to'.
+    A real contradiction ('no fever' -> Fever) must still be dropped."""
+    correct = 0
+    for complaint, question_start, words, pick, should_keep in NEGATIVE_OPTION_CASES:
+        question = find_question(p.load_protocol(folder, complaint), question_start)
+        labels = [p.option_label(o) for o in p.children(question)]
+        index = find_label_indexes(labels, [pick])[0]
+        kept, dropped = negation.check_picks(labels, [index], words)
+        said_no = negation.find_negated(labels, words)
+        if should_keep:
+            ok = kept == [index] and index not in said_no
+        else:
+            ok = dropped == [index]
+        correct += ok
+        mark = "OK " if ok else "X  "
+        result = "kept" if kept else "dropped"
+        print(f"   {mark} {words[:35]:35} AI picked {pick[:25]:25} -> {result}"
+              f"{', offered as said NO' if index in said_no else ''}")
+    print(f"   negative-answer option cases correct: {correct}/{len(NEGATIVE_OPTION_CASES)}")
+
+
 def check_red_flag_cases(path=RED_FLAG_FILE):
     """Red flags are plain code too. Each case is one sentence from the patient."""
     with open(path, encoding="utf-8") as f:
@@ -128,11 +161,22 @@ def check_red_flag_cases(path=RED_FLAG_FILE):
     for case in cases:
         answer = {"answers": [], "value": None, "patient_words": case["patient_words"], "status": "present"}
         answers = [answer]
+        # Optional column: options the CHW picked, e.g. "Vomiting; Chest indrawing=Yes"
+        # ("Question=Answer" fills in the question label, for Yes/No sub-questions).
+        for picked in split_list(case.get("answer_labels") or ""):
+            question_label, _, label = picked.rpartition("=")
+            answers.append({"answers": [label], "question_label": question_label, "value": None,
+                            "patient_words": None, "status": "present"})
+        # Optional column: a typed value, e.g. what the CHW typed for "Additional information".
+        if case.get("typed_value"):
+            answers.append({"answers": [], "value": case["typed_value"], "patient_words": None, "status": "present"})
         said_no_labels = split_list(case["said_no_labels"])
         if said_no_labels:
             answers.append({"answers": said_no_labels, "value": None,
                             "patient_words": case["patient_words"], "status": "said_no"})
-        flags, possible = red_flags.check(case["complaint"], answers)
+        # Optional "age" column (years); blank means a 30-year-old adult.
+        patient = {"age": float(case.get("age") or 30), "sex": case.get("sex") or "female"}
+        flags, possible = red_flags.check(case["complaint"], answers, patient)
         ok = (set(flags) == set(split_list(case["expected_red_flags"]))
               and set(possible) == set(split_list(case["expected_possible"])))
         correct += ok
@@ -155,8 +199,9 @@ if __name__ == "__main__":
 
     print("Negation check (no AI):")
     check_said_no(folder, cases)
+    check_negative_options(folder)
 
-    print("\nRed-flag check (no AI, placeholder rules):")
+    print("\nRed-flag check (no AI, draft guideline rules):")
     check_red_flag_cases()
 
     print("\nNo-AI keyword baseline:")

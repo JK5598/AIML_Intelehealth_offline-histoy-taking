@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Share visit files" puts one .zip here and hands it to the app the user picks (Gmail, Drive, ...). -->
+<paths>
+    <cache-path name="share" path="share/" />
+</paths>

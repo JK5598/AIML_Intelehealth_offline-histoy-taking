@@ -2,6 +2,23 @@
 
 A Python prototype of the history-taking module. It runs in a terminal on a laptop, fully offline once the files are downloaded. The goal is to get the logic and the AI prompts right on a laptop first, then port them to Android.
 
+## Team and who did what
+
+Group 6, AI-ML for Global Health (Dr. Luis Soenksen), Intelehealth design challenge (Dr. Neha Verma).
+
+| Person | Main work |
+|---|---|
+| **Junewoo Koo** (June) | Laptop prototype: protocol walker (`intake.py`, `main.py`), MedPsy matching and story pre-fill (`ai_mapper.py`), "no" detection (`negation.py`), `?` explanations for CHWs (`explanations.py`), repeated history questions (`repeated_questions.py`). Evaluation loop (`evaluate_visits.py`, `sim_patient.py`, `judge.py`, answer sheets), red-flag labels for the test cases, merging everyone's code. Android app (`android/`, MedPsy on the phone). Project log. |
+| **Tuyet Nhu Tran Le** (Lia) | Model research (MedPsy, MedGemma, OctoMed). Multi-question intake (`intake_group.py`, `followup.py`, `--intake group`), comparing intake modes (`compare_intake_modes.py`), counting CHW inputs, "unsure / not answered" answers in the summary. Drafted Project Update 2. Independent spot-check of the evaluation judging (TC02, TC04). |
+| **Charles Creech** (Morrison) | Red-flag rules (`red_flags.py`): 78 rules from the Intelehealth Clinical Treatment Guidelines and WHO IITT, 4 urgency levels with sources, and the yes/no follow-up questions. |
+| **Yuqi Zhang** | The 5 test cases (TC01-TC05) chosen from the 190 teaching cases and their key-fact lists. Planned: physical-exam / ROS walk-through. |
+
+Sections in a shared file that a teammate wrote are marked in the code (for example `#----- Lia's code ... -----`).
+
+**AI assistance:** much of the code and the evaluation judging was done with Claude (Anthropic) under June's
+direction; every change was reviewed and tested before it was committed. Judging by Claude is not independent,
+which is why a teammate spot-checks it.
+
 ## What it does
 
 1. The CHW enters age and sex.
@@ -27,19 +44,31 @@ A Python prototype of the history-taking module. It runs in a terminal on a lapt
 | `keyword_mapper.py` | **No-AI baseline**: matches the patient's words to options by shared keywords |
 | `ai_mapper.py` | **AI version**: MedPsy through llama.cpp, with constrained JSON output and thinking skipped |
 | `negation.py` | **No-AI negation check**: finds what the patient said "no" to ("no fever", "I have not fainted") |
-| `red_flags.py` | Red-flag rules (**placeholder list**, to be replaced with Intelehealth's or a clinician's criteria) |
-| `summary.py` | Template summary, and a check that red flags appear in the AI summary |
+| `red_flags.py` | Red-flag rules (78) from the Intelehealth Clinical Treatment Guidelines and the WHO Interagency Integrated Triage Tool (IITT), each with a level and a page or chart section; also the red-flag follow-up questions |
+| `summary.py` | Template summary (red flags listed most urgent first, with level and source), and a check that red flags appear in the AI summary |
 | `explanations.py` | The `?` help: looks up `explanations.json`, falls back to the AI, and logs every AI explanation |
 | `explanations.json` | Plain-language explanations of questions and medical terms, written or reviewed by the team |
 | `explanation_log.jsonl` | Made when the app runs: every AI explanation, one per line, for the team to review |
 | `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
-| `red_flag_cases.csv` | Patient sentences with the red flags (and possible red flags) they should raise |
+| `red_flag_cases.csv` | 87 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
 | `workload_report.py` | Runs 3 automatic visits with a model (about half the option questions answered in words) and prints AI calls, tokens and seconds per visit, split by task |
+| `intake_group.py` | **Multi-question intake** (`--intake group`): asks a group of questions together, fills them from one typed reply, then follows up |
+| `followup.py` | Follow-up checks used by the multi-question intake: missing answers, vague durations ("a while"), "no"/"yes" disagreements, and saving "unsure" / "not answered" |
+| `compare_intake_modes.py` | Runs the same scripted patients through both intake modes and prints CHW inputs, answers, follow-ups and AI calls side by side |
 | `explanation_results_<model>.csv` | Made by `evaluate_explanations.py`: the AI's sentence next to the expected meaning, with an empty `correct (y/n/partly)` column |
+| `evaluate_visits.py` | **Evaluation loop**: plays every test case through the app (simulated patient + simulated CHW), has a judge score the record, and writes `eval_results/<date-time>/report.md` against Dr. Verma's targets |
+| `sim_patient.py` | The simulated patient (Claude, answering only from the case story) and the simulated CHW (plain code that reads the app's screen and types the patient's words) |
+| `judge.py` | Scores one visit: key-fact recall, wrong facts, dangerous content, diagnosis reachable (judge), plus red flags and time (plain code) |
+| `claude_api.py` | Small helper for the Claude calls the evaluation loop makes (the app itself never calls Claude) |
+| `local_llm.py` | Free option for the evaluation loop: a bigger model on the laptop (Qwen3-8B, llama.cpp) plays the patient and the judge instead of Claude |
+| `eval_cases.json` | The 5 test cases (TC01–TC05): age, sex, complaint, the patient's story, exam findings (judge only) and the expected red flags |
+| `eval_patient_answers.json` | The free simulated patient: written answers for TC01–TC05 (patient's words, what is true, what the patient denies, red-flag checks), built by `make_patient_answers.py` |
+| `make_patient_answers.py` | Builds `eval_patient_answers.json`; correct an answer here and run it again |
+| `eval_key_facts.csv` | Copy of the key-facts file from the Test Case folder (Yuqi's facts, fixed Nov 12); only rows with "Include in History Score? = Yes" are scored |
 
 ## Setup
 
@@ -71,9 +100,15 @@ python main.py --protocols "$PROTOCOLS" --model medpsy-4b-q4_k_m-imat.gguf --lan
 
 # Quick tests (the smoke test also types "?" twice and "?2" once, and checks they are never saved)
 python smoke_test.py "$PROTOCOLS"
+python -c "import evaluate_mapping as e; e.check_red_flag_cases()"   # red-flag rules only, no AI needed
 python evaluate_mapping.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # run from this folder; reads test_cases.csv
 python evaluate_explanations.py medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf          # reads explanation_test_cases.csv
 python workload_report.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4_k_m-imat.gguf   # AI work per visit
+
+# Multi-question intake (ask several questions at once, then follow up)
+python main.py --protocols "$PROTOCOLS" --intake group --model medpsy-1.7b-q4_k_m-imat.gguf
+python main.py --protocols "$PROTOCOLS" --intake group --group-size 3   # smaller groups
+python compare_intake_modes.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf   # both modes on the same scripted patients
 ```
 
 ## How the main ideas show up in the code
@@ -88,10 +123,23 @@ python workload_report.py "$PROTOCOLS" medpsy-1.7b-q4_k_m-imat.gguf medpsy-4b-q4
 
 **Best answer first, then "anything else?"** For every question the model may pick only ONE option (or 0). For a multi-choice question it is then asked again with the options it already picked listed as "Already recorded" and 0 meaning "Nothing else", up to 4 rounds. This replaced letting the model pick up to 3 numbers at once, which made it over-pick.
 
-**Negation is plain code, not AI.** `negation.py` looks for words like *no, not, never, without, denies* and treats the next few words (up to 5, stopping at a comma, period, or *but*) as things the patient said no to. If the patient sounds unsure ("not sure", "don't know", "don't think", "maybe"), nothing counts as a no. "Can't" is not treated as a no, because "can't breathe" or "can't stop vomiting" describes a symptom. It is used in three places:
+**Negation is plain code, not AI.** `negation.py` looks for words like *no, not, never, without, denies* and treats the next few words (up to 5, stopping at a comma, period, or *but*) as things the patient said no to. One exception: a "no" in front of a list covers the whole list, so "No nausea, vomiting, or diarrhea" is a no to all three. This only happens when the rest of the sentence is clearly a list (short items, with "or" / "nor" before the last one); "no fever, I vomited twice", "no fever, cough started yesterday and got worse" and "no fever, cough and cold" still stop at the comma, because wrongly marking a symptom as "no" would hide it. If the patient sounds unsure ("not sure", "don't know", "don't think", "maybe"), nothing counts as a no. "Can't" is not treated as a no, because "can't breathe" or "can't stop vomiting" describes a symptom. It is used in three places:
 - **Guard:** if the AI picks an option the patient said no to, the pick is dropped before the CHW sees it.
 - **Saving "No" answers:** on multi-choice questions, the CHW sees the patient's words and is asked "Patient said they do NOT have: Fever. Save as 'No'?" Only on "y" is it saved, with `"status": "said_no"`. It shows as "Fever: patient said NO" in the summary. Questions the patient never mentioned are not saved as "No"; they stay blank.
 - **Red flags:** answers the CHW saved as "No" never raise a red flag. A danger sign that only appears inside a "no ..." phrase in the patient's words is NOT ignored: it is shown as a **possible** red flag ("please check with the patient"), because missing a real red flag is worse than a false alarm.
+
+**Red flags are plain code, from two published sources.** Every rule in `red_flags.py` cites where it comes from, and the alert shows it, for example `IMMEDIATE: Suspected appendicitis (Guidelines p. 269)`. There are four levels, most urgent first:
+
+| Level | Comes from |
+|---|---|
+| Emergent | IITT red ("move to high acuity area immediately") |
+| Immediate | Intelehealth guidelines say "refer immediately" |
+| Urgent | IITT yellow ("seen soon"), or the guidelines say "urgently" |
+| Refer | The guidelines say "refer" with no urgency word |
+
+Rules read the patient's story and the answers the protocols already collect (copying the protocol's own option wording), so covering all 52 complaints adds no questions. Rules can use the patient's age, because IITT has separate charts for age 12+ and under 12. Keywords wrapped in bars, like `| black |`, only match a whole answer. A "Yes" answer also carries its question (`chest indrawing: yes`), so Yes/No sub-questions can raise flags.
+
+**Red-flag follow-up questions.** Some flags need one or two facts the protocol never asks. When such a rule fires, the app asks a few yes/no questions right away (`RED-FLAG CHECK: ...`), taken from the IITT red criteria: meningitis signs (stiff neck, confusion, seizure) after headache + fever, breathing distress after any breathing difficulty, shock signs after bleeding, and dehydration signs after diarrhoea or vomiting everything. A "yes" raises the level, and "don't know" counts as yes, so doubt never lowers it. Each question is asked once, only when its rule fires, and skipped if the visit already has the answer.
 
 We say "said_no" rather than "absent" (which reads like "no answer") or "denied" (the Intelehealth history files use "Denied" to mean the patient *refused to answer*).
 
@@ -136,7 +184,7 @@ Each entry has `created`, `kind` ("question" or "term"), `term` (the word or que
 3. When a teammate has checked an entry, put their name in `checked_by`. Only then does it show without a label.
 4. You can delete lines from the log once they are handled.
 
-**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.4"; 0.4 added `run_info["ai_explanations"]`):
+**What gets saved (the visit record).** The model never writes the record. Plain code builds `visit.json` from answers the CHW confirmed, so it can only contain real protocol IDs. The summary is made *from* this record, not the other way round. Format (`schema_version` "0.5"; 0.4 added `run_info["ai_explanations"]`; 0.5 added the multi-question intake fields):
 
 ```
 schema_version, visit_id, created, synced
@@ -148,13 +196,17 @@ answers            one entry per answered/skipped question:
     question_id, question
     answer_ids, answers, value
     status         "present" | "said_no" (patient said they don't have it) | "skipped" (CHW skipped an optional question)
-    source         "tapped" | "keyword" | "ai" | "from story" | null for skipped
+                   | "unsure" (patient doesn't know) | "not_answered" (asked, no answer)   (new in 0.5, group mode)
+    source         "tapped" | "keyword" | "ai" | "from story" | "from group reply" (new in 0.5) | null for skipped
     patient_words
 red_flags, possible_red_flags, physical_exam_steps
 summary            {template, ai_draft}
 run_info           not patient data: mapper, minutes, questions_asked, filled_from_story,
                    suggestions_accepted, suggestions_rejected, rejected_suggestions, ai_timings,
-                   ai_explanations (new in 0.4)
+                   ai_explanations (new in 0.4),
+                   intake_mode ("one" or "group") and chw_inputs (times the CHW typed something) (new in 0.5),
+                   group mode only: group_size, groups_asked, follow_ups_asked, saved_unsure,
+                   saved_not_answered, follow_ups (one entry per follow-up with its reason) (new in 0.5)
 ```
 
 `ai_explanations` lists every AI explanation shown after `?` or `?N` in this visit, one entry each with `created, kind, term, question, complaint, text, seconds, model` (the same entries as in `explanation_log.jsonl`). Explanations that came from `explanations.json` are not listed, because they are already in the file.
@@ -163,15 +215,21 @@ run_info           not patient data: mapper, minutes, questions_asked, filled_fr
 
 ## Not done yet
 
-- Red-flag rules are placeholders.
+- Red-flag rules are not clinician-checked yet, and some literal IITT rules will cause false alarms (any diarrhoea, any child's headache, and general weakness are Urgent).
+- Red-flag gaps: chest pain with heart-attack features under 50, ectopic pregnancy unless pregnancy status is "Yes", bowel obstruction, and scorpion stings. Vital signs are not used.
 - Negation only understands English words and simple patterns.
-- The placeholder red-flag rules match exact phrases, so they miss other wordings (e.g. "vomited blood" is not caught, only "vomiting blood"). One case in `red_flag_cases.csv` fails on purpose to show this.
+- Red-flag keywords still match phrases, so an unusual wording in the patient's own words can be missed. Answers picked from the protocol options are matched reliably.
+- The red-flag follow-up questions are asked right away; they may move into the multi-question follow-up round later.
 - No ROS checklist yet (waiting to hear from Intelehealth).
 - Photo steps (`camera`) are skipped.
 - The AI summary is only checked for red flags, not yet fact by fact.
 - No real syncing; the visit file just has `"synced": false`.
 - This is a laptop terminal app. The Android version comes next.
 - Explanations are English only, even with --language hi.
+- Multi-question intake (`--intake group`):
+  - In the tests below, one group reply filled only about half of the questions; the rest needed a follow-up.
+  - It uses about 50% more AI calls than one-at-a-time, because every question in the group is checked against the reply and every pick gets the yes/no double-check. This matters on a phone.
+  - Tested on only 2 scripted patients, written by us, not checked by a clinician.
 - Simple explanations (`?`):
   - Every entry in `explanations.json` is an unchecked draft written by the AI assistant. A clinician or teammate needs to check them and fill in `checked_by`.
   - Only the three pilot protocols, past/family history and the complaint list are covered. In other protocols `?` usually explains only the question, and the CHW has to use `?N` for each option.
@@ -350,3 +408,285 @@ The slowest word is always the first one: the model reads the rules and the exam
 - Explain calls are few (most Abdominal Pain and Fever words are in `explanations.json`), but each one costs about 620 prompt tokens because of the 7 worked examples. On Headache, which has no entries in the file, all 3 went to the AI.
 - The AI summary (`--ai-summary`) was not turned on, so it is not counted.
 - Seconds are not simply proportional to tokens: llama.cpp reuses the start of the prompt when it matches the previous call.
+
+## Red-flag rules from the guidelines and WHO IITT (November 9 to 12, 2026)
+
+- **Placeholder rules replaced** with 78 rules from two sources: the Intelehealth *Clinical Treatment Guidelines for Telemedicine Doctors* (shared by Dr. Verma) and the WHO / ICRC / MSF *Interagency Integrated Triage Tool* (age 12+ chart, age under 12 chart, reference card). IITT replaces ETAT, because it covers adults too.
+- **All 52 complaints checked.** Every answer option in the 52 protocols was compared with the danger signs in both sources. 49 complaints can now raise at least one flag from their own answers. Follow up visit, Other and Weight gain have no danger-sign answers, so only the general rules (convulsions, unresponsive, severe pain, and so on) apply there.
+- **Levels follow the source wording literally**, even where it looks low (vomiting blood is "Refer" in the guidelines) or high. When a guideline section uses two words ("urgently" and "immediately" for pneumonia), the stronger one is used. One planned exception: IITT makes headache + fever red; we made it Urgent plus the meningitis follow-up questions, so every case is still flagged but Emergent is kept for real danger signs.
+- **Left out on purpose:** routine "refer all" cases that are not danger signs (dental caries, chronic ear discharge, osteoarthritis), and "no response to treatment in X days", which can't be known at a first visit.
+- **Bugs fixed while testing:** "ill-fitting" (clothes) matched the seizure word "fitting"; "clear discharge" (eye) matched "ear discharge"; and a "No" to "Does the child make a wheezing sound?" put "wheezing" in the text. Keywords can now match whole answers only, and only "Yes" answers carry their question.
+- **Code changes:** `intake.py` saves which question a Yes/No answer belongs to, passes the patient's age to the red-flag check, and asks the follow-up questions. `summary.py` lists flags most urgent first with level and source. `evaluate_mapping.py` reads two new optional columns in `red_flag_cases.csv`: `age` and `answer_labels` (options the CHW picked, with `Question=Answer` for Yes/No sub-questions).
+- **The patient's story is checked too** (added Nov 12): before, only saved answers were checked, so "he had a seizure yesterday" in the story raised no flag without AI. The story is now checked as soon as it is typed, with the same "no ..." handling ("no fever" gives a *possible* red flag, not a red flag).
+- **Results:** 82/82 red-flag cases pass, including cases that should NOT raise a flag and cases that show known gaps. Full scripted visits checked every follow-up path (no, yes, don't know). These cases were drafted with an AI assistant and are not clinician-checked; the expected red flags for the teaching-case evaluation should be labeled by someone who has not seen the rules.
+
+## Multi-question intake (November 11, 2026)
+
+Written by Lia (branch `lia-code`), following Dr. Soenksen's advice to ask several questions at once and then come back to what is missing or unclear. The default is still one question at a time; `--intake group` turns it on.
+
+**How it works** (`intake_group.py`, groups of 4 questions by default, in the protocol's own order):
+
+1. **Story first:** if the patient's story already answered a question, the CHW confirms it, as in the normal mode.
+2. **Group:** the app lists the rest of the group; the CHW asks them together and types the patient's whole reply once.
+3. **Fill:** the app checks each question against that reply. With a model, the AI uses its own instructions (`GROUP_RULES`), answers by option number only, never against a "no", and every pick gets the yes/no double-check. Without a model, keyword matching and plain code for durations ("3 days").
+4. **Confirm all at once:** the CHW checks all the suggestions with one reply: `y` = all correct, `2` or `1,3` = those are wrong, `u2` = save question 2 as unsure, `n` = none are right.
+5. **Follow up** (`followup.py`): every question still missing, or with a rejected suggestion, is asked once on its own. Vague durations ("a while", "sometimes in a day") and answers that disagree (the story said "no fever", the reply says "maybe fever") are asked again. At a follow-up, `u` saves "unsure" and `x` saves "not answered", so nothing is left blank.
+
+Severity questions and free-text boxes are never filled from a group reply; they are always asked on their own.
+
+**Results** (`compare_intake_modes.py`, 2 scripted patients; run on a 2-core cloud computer, so the seconds are much slower than a laptop):
+
+| Patient | Mode | CHW inputs | Required answered | Filled from group reply | Follow-ups | AI calls | AI seconds |
+|---|---|---|---|---|---|---|---|
+| Abdominal Pain | one | 45 | 17/17 | – | – | 35 | 93 |
+| Abdominal Pain | group | 38 | 17/17 | 8 | 9 | 52 | 144 |
+| Fever | one | 41 | 12/12 | – | – | 22 | 58 |
+| Fever | group | 35 | 12/12 | 7 | 8 | 34 | 98 |
+
+(MedPsy-1.7B. Without a model, group mode cut CHW inputs from 52 to 32 for Abdominal Pain.)
+
+**What we learned**
+- The CHW types about 15% less, and every required question is still answered.
+- The AI works about 50% more. Using the emulator speeds (about 4 s per AI call on the 1.7B), that is roughly 3.5 min of AI time per visit instead of 2.3 min: still well under 20 minutes.
+- One group reply filled about half the questions; the rest were asked as follow-ups.
+
+## Negation fix for lists (November 12, 2026)
+
+- **Bug:** the comma ended the "no", so "No nausea, vomiting, or diarrhea" (test case TC03) was read as a no to nausea only, and "diarrhea" raised a false URGENT "Ongoing diarrhoea" red flag.
+- **Fix:** `negation.py` now carries a "no" across commas when the rest of the sentence is a short list ending in "or" / "nor". It is strict on purpose, because wrongly marking a symptom as "no" hides it.
+- **New tests:** 7 negation cases in `test_cases.csv` and 2 in `red_flag_cases.csv`, including sentences that must NOT be treated as a list. Results: "said no" 48/48 multi-choice cases (was 41/41); red-flag cases 84/84 (was 82/82). `smoke_test.py` and `compare_intake_modes.py` still pass.
+- **TC03 now:** EMERGENT (chest pain over 50) and IMMEDIATE (pneumonia) as expected; "Ongoing diarrhoea" only shows as a possible flag to ask about. The TC05 "Acute general weakness" false alarm is a red-flag rule question, not negation, and is still open.
+- These cases were written by the AI assistant and are not clinician-checked.
+
+## Evaluation loop (November 13, 2026)
+
+`evaluate_visits.py` measures the app against the targets Dr. Verma approved, without a person typing. This follows Dr. Soenksen's suggestion: a simulated patient (a bigger AI) + our app + an AI judge.
+
+**How one case runs**
+1. The **simulated CHW** (plain code in `sim_patient.py`) reads what the app shows. It enters age and sex, picks the complaint by number, and asks the patient each question.
+2. The **simulated patient** (Claude, `claude-haiku-5-5`) knows only the case story. It answers in everyday words and says "I'm not sure" when the story doesn't say. It never sees the diagnosis or the exam findings.
+3. The CHW types the patient's words into the app, so the app's AI (or the keyword baseline) does the matching, exactly as in a real visit. Every suggestion is checked with the patient before it is saved (the app's design). If the app can't use the words, the CHW picks the numbers.
+4. **Red-flag checks** that are exam steps (sunken eyes, skin pinch) are answered from the case's exam findings; anything not written down counts as normal, as in teaching cases.
+5. The **judge** (Claude, `claude-sonnet-5-5`) compares the app's doctor summary with the true case and the key facts.
+
+**What it reports** (`eval_results/<date-time>/report.md`, plus `results.csv` and, per case, `visit.json`, `transcript.txt` and `judge.json`)
+
+| Metric | How it is measured | Target |
+| --- | --- | --- |
+| Key-fact recall | judge: captured = 1, partly = 0.5, missed = 0, over the scored facts | ≥ 85% average |
+| Diagnosis reachable | judge: could a doctor reach the diagnosis from the record + an exam? | ≥ 80% of cases |
+| Wrong facts | judge: record contradicts the case; errors the simulated patient caused (or a forced pick) are listed but not counted | 0 |
+| Red flags | plain code: expected flags raised; false alarm = an Urgent-or-higher flag not expected for the case | all Emergent/Immediate caught; false alarm in ≤ 1 of 5 cases |
+| Time | estimate: 20 s per CHW question, 8 s per y/n check, plus laptop AI time × 6 (emulated phone, Nov 10) | visit < 20 min, AI ≤ 10 min |
+
+Recall is also shown for only the facts the protocol can ask ("Askable by protocol?" = Yes or Partly), so a missed fact the protocol never asks about isn't blamed on the AI.
+
+**Free option (no API key, no cost): a bigger model on your laptop.** `--local-llm` makes Qwen3-8B (Q4_K_M, 5.0 GB, [Qwen/Qwen3-8B-GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF)) play the patient and the judge through llama.cpp, the same way MedPsy runs. It needs about 10 GB of free memory together with MedPsy. A local 8B judge is weaker than Claude, so read the transcripts and spot-check its scores.
+```
+curl -L -o ../../downloads/model/Qwen3-8B-Q4_K_M.gguf https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/main/Qwen3-8B-Q4_K_M.gguf
+PROTOCOLS="../../downloads/intelehealth-ayu-protocols/protocols/v2/All Protocols (JSON)"
+MODEL="../../downloads/model/medpsy-1.7b-q4_k_m-imat.gguf"
+JUDGE="../../downloads/model/Qwen3-8B-Q4_K_M.gguf"
+python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --local-llm "$JUDGE" --only TC01
+```
+
+**Free, used for the first results: answer sheet + judging by hand.** `--sheet eval_patient_answers.json` makes the patient answer from written answers (the same every run, so app versions compare fairly). `--judge none` saves the records; a person, or Claude in chat, writes each case's `judge.json`; then `--rescore` builds the report from the saved files.
+```
+python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --sheet eval_patient_answers.json --judge none --out eval_results/my_run
+#   ...write eval_results/my_run/TC01/judge.json etc. (same format as judge.py asks for)...
+python evaluate_visits.py "$PROTOCOLS" --model "$MODEL" --sheet eval_patient_answers.json --rescore eval_results/my_run --judge-name "June"
+```
+Answer-sheet rules: symptoms only from the story ("I'm not sure" otherwise); personal history the story leaves out (smoking, alcohol, allergies) is the plain "no", listed under `assumed`; red-flag exam checks are answered from the exam findings, and a sign not written down counts as normal. A required question the patient can't answer forces the simulated CHW to pick something (`unknown`/`none` if the question has it); the judge does not count those as app errors.
+
+**With Claude instead** (better patient and judge; costs a little, needs an API key)
+```
+pip install anthropic
+export ANTHROPIC_API_KEY="sk-ant-..."        # from console.anthropic.com
+PROTOCOLS="../intelehealth-ayu-protocols/protocols/v2/All Protocols (JSON)"
+python evaluate_visits.py "$PROTOCOLS" --offline                                   # free: tests the loop only, scores not real
+python evaluate_visits.py "$PROTOCOLS" --only TC01                                 # one case, keyword app
+python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf        # all 5 cases with MedPsy
+python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf --intake group
+python evaluate_visits.py "$PROTOCOLS" --model medpsy-1.7b-q4_k_m-imat.gguf --accept-all   # stress test: CHW accepts every suggestion
+```
+The report prints the Claude cost of the run (an estimate from the prices in `claude_api.py`).
+
+**Rules**
+- Read the transcripts and spot-check the judge before trusting a number; the judge is an AI too.
+- Dr. Verma's 10 unseen cases: put them in a file named `eval_cases_private.json` (and `eval_key_facts_private.csv`), which `.gitignore` keeps off GitHub. Run them once, after the app is frozen: `python evaluate_visits.py "$PROTOCOLS" --model ... --cases eval_cases_private.json --facts eval_key_facts_private.csv`.
+- Never train or tune prompts on the test cases.
+
+**Known limits**
+- The simulated patient is not a real patient: it may answer more neatly than a real one, and it reads the option list when the CHW does.
+- The time is an estimate from assumed seconds per input, not a measured visit.
+- Tested so far with an offline stand-in, a fake Claude, and a tiny local Qwen3-0.6B (the loop runs end to end, in both intake modes); the first real run with Qwen3-8B or Claude is still to do.
+
+## First evaluation results (November 13, 2026)
+
+MedPsy-1.7B, one question at a time, answer-sheet patient, judged by Claude in chat against Yuqi's key facts. Full report: `eval_results/2026-11-13_medpsy-1.7b_answer-sheet/report.md` (not on GitHub; results are gitignored).
+
+| Metric | Result | Target |
+| --- | --- | --- |
+| Key-fact recall (average) | 84.6% (TC01 69%, TC02 83%, TC03 94%, TC04 76%, TC05 100%) | ≥ 85% (just missed) |
+| Diagnosis reachable | 5 of 5 | ≥ 80% |
+| Wrong facts caused by the app | 0 | 0 |
+| Emergent/Immediate red flags | all caught (TC01, TC03) | 100% |
+| False alarms | 0 of 5 cases | ≤ 1 in 5 |
+| Visit time (estimate) | 12.5–17.5 min; TC04 26.3 min (84 CHW inputs) | < 20 min (TC04 misses) |
+| AI time on the phone (estimate, from tokens) | 1.7–2.9 min | ≤ 10 min |
+
+What the run found:
+- **Story pre-fill stops a question too early.** If the patient's opening words mention part of a multi-choice answer ("Nausea"), the CHW keeps it and the question is never asked, so the rest (vomiting, no appetite, "no fever") is lost. This caused most missed facts in TC01, TC04 and TC05. Fix to try: after a kept pre-fill on a multi-choice question, still ask "anything else?" with the remaining options.
+- **The AI often picks one option when the patient named several** (TC03: chest pain saved, fever not; high cholesterol not added).
+- **Required questions without an "unknown" option** (pain severity, menstrual history, exercise severity) force a guess when the patient doesn't know.
+- **"No appetite" is read as a denial** ("patient said NO to Change in appetite").
+- **Fixed in this run:** typed values (Additional information) skipped the "no" filter in `red_flags.py`, so "No nausea, vomiting or diarrhea" raised an Urgent diarrhoea flag and "No weight loss" a weight-loss flag. Now they only give a possible flag. 3 new rows in `red_flag_cases.csv` (new `typed_value` column); 87/87 pass.
+- **Fixed after the run, and run again (same patient, same cases):**
+  - **"Anything else?" after a story pre-fill** (`intake.py`, `ask_anything_else`): when the CHW keeps a story answer for a multi-choice question, the remaining options are shown once; Enter = nothing else.
+  - **"No appetite", "no energy", "no sleep" are symptoms, not denials** (`negation.py`, `SYMPTOM_AFTER_NO`). Before, "I have no appetite. No diarrhea, no constipation, and no fever." offered "said NO to Change in appetite" in the same yes/no as the real "no"s, so the CHW had to reject all of them. 2 new rows in `test_cases.csv` ("said no" 50/50).
+  - Result (`eval_results/2026-11-13_medpsy-1.7b_answer-sheet_after-fix/report.md`): **key-fact recall 84.6% → 90.6%** (TC01 69% → 92%, TC04 76% → 83%; others unchanged), still 0 wrong facts, all Emergent/Immediate flags caught, 0 false alarms, AI time 1.9–3.0 min. Visit time: TC01 16.9, TC02 18.4, TC03 15.8, TC04 27.5, TC05 13.2 min (estimate); TC04 still over 20 min (88 CHW inputs).
+  - Still open: the AI often saves one answer when the patient named several (TC03 fever, high cholesterol; TC01 anorexia); required questions without "unknown"; long visits (TC04).
+- **Group mode (`--intake group`), same 5 cases, after the fixes** (`eval_results/2026-11-13_medpsy-1.7b_answer-sheet_group-mode/report.md`): the records hold the same facts, so recall stays 90.6%, with 0 wrong facts, 0 false alarms and all serious flags caught. CHW inputs barely change (TC01 54 → 51, TC02 59 → 58, TC03 50 → 46, TC04 88 → 90, TC05 41 → 37), but AI calls go up by about half (e.g. TC04 48 → 76), so AI time on the phone rises to 3.1–5.1 min and the estimated visit gets slightly longer in every case (TC04 27.5 → 30.3 min; TC02 18.4 → 20.1 min). With these cases, group mode does not fix visit length; cutting questions in the long past-history branches is the next thing to try.
+- Limits: the answer sheets and the judging are by the same AI assistant, not clinician-checked; the patient's Additional information answers are complete, which a real patient's may not be; visit time assumes 20 s per question and 8 s per y/n check.
+
+
+## Fix: options that mean "no" (November 15, 2026)
+
+- **Bug:** the "no" check (`negation.check_picks`) dropped correct AI picks when the option itself is the "no" answer. "No, no allergies." → "No known allergies" was dropped because the patient's "no" sits in front of "allergies", which is also in the label. The same happened with "I've never smoked." → Never-smoker and "No, I don't chew tobacco." → Do not Chew. The CHW then saw "Not sure what that matches" and had to type the number. The same options were also offered as "patient said NO to ...".
+- **Fix:** `negation.py`, `is_negative_answer`. A label that starts with No, Not, Never, None, Denied, Do not / Don't, Does not / Doesn't, Has not / Hasn't, or Is not / Isn't is never dropped and never offered as "said NO". "No. of drinks" (number) is not counted. "No mood to work" does count; it is a symptom, but the patient saying "no mood" means they have it, so keeping the pick is right. Nothing else in negation changed.
+- **Tests:** `check_negative_options` in `evaluate_mapping.py`, 6 cases with real protocol labels: No known allergies, Do not Chew, Never-smoker and Does not move kept; "no fever" → Fever and "No nausea, vomiting, or diarrhea" → Vomiting still dropped. The old code passes 2/6, the new code 6/6. "Said no" 50/50, red-flag cases 87/87, `smoke_test.py` OK (all unchanged).
+- **Evaluation** (same 5 cases, MedPsy-1.7B, answer-sheet patient; `eval_results/2026-11-15_fix-negative-options/report.md`):
+
+| Case | CHW inputs Nov 13 | Old code today | Fixed code | Visit min Nov 13 | Old code today | Fixed code |
+| --- | --- | --- | --- | --- | --- | --- |
+| TC01 | 54 | 55 | 55 | 16.9 | 17.1 | 16.7 |
+| TC02 | 59 | 61 | 61 | 18.4 | 18.8 | 18.4 |
+| TC03 | 50 | 52 | 52 | 15.8 | 16.2 | 15.8 |
+| TC04 | 88 | 89 | 89 | 27.5 | 27.8 | 27.6 |
+| TC05 | 41 | 43 | 43 | 13.2 | 13.6 | 13.2 |
+
+- What changed: allergies and smoking are now AI suggestions the CHW confirms with "y", instead of "Not sure" and typing the number. The number of inputs stays the same (a "y" replaces the number), but a y/n check is quicker, so each visit is about 0.2–0.4 min shorter than the old code run the same day.
+- The +1/+2 inputs against Nov 13 are not from the fix: the old code gives the same counts today. The model's suggestions differ a little from run to run, even at temperature 0. Today it suggests "Denied answer" for "No, I don't chew tobacco." (the CHW says n and types 1), plus one or two other wrong suggestions the CHW rejects (TC02 Medications, TC03 Wheezing, TC05 Other).
+- The saved answers hold the same facts as Nov 13 in all 5 cases (TC02's duration now reads "6 months" instead of "six months"), so the Nov 13 judgements were copied: recall 90.6%, 0 wrong facts, all Emergent/Immediate flags caught, 0 false alarms. TC04 is still over 20 min.
+
+## Repeated questions: complaint vs. past history (November 15, 2026)
+
+- **Problem:** some complaint (hpi) questions are asked again in the past/family history. In TC04 (Difficulty breathing) the patient told the CHW about smoking and the hospital stays twice, each time with its own follow-ups (Since, cigarettes per day; When, Reason, How long).
+- **Repeats found in all protocols** (later question ← earlier complaint question): Smoking history ← "Do you smoke/have ever smoked?" (Cough, Difficulty breathing); recent medicine ← "Have you taken any medication recently?" (Cough, Abnormal Bleeding, Oedema, Palpitations, Weight gain, Fever & Rash, Gait & balance); Pregnancy status ← "Are you currently pregnant?" (Urine disturbance); child vaccination ← childhood vaccination (Fever & Rash); allergies ← "Any known allergies to food/insects/latex" (Difficulty breathing); Alcohol use ← long-term alcohol (Jaundice); history → Hospitalization ← immobilization/hospitalization (Difficulty breathing, Fever); history → HIV/AIDS (Fever & Rash); family history → Cancer ← breast cancer in family (Breast complaints). Related but not the same question, left alone: "treatment for this problem" (most complaints), lists of specific drugs, menstrual history, hypertension screening, family "cancer or ulcer" (Dyspepsia).
+- **Fix** (`repeated_questions.py`, `intake.py`): the later question is filled from the earlier answer through the story path. The CHW sees "(From the earlier answer: ...)" and "Patient already said: X. Keep?". No question is removed: if the CHW says no, it is asked as usual. The option comes from a small table (Cough "Yes" → Current-smoker, "No" → Never-smoker, "Yes" to immobilization → Hospitalization, ...), not from the AI, because MedPsy-1.7B read "10 to 15 cigarettes a day for 10 years" as Ex-smoker. Where the earlier question is narrower (allergies to food/insects/latex, recent stays, ...) only its "yes" is reused. The AI fills the typed follow-ups (Since, When, Reason, cigarettes per day) from the earlier answer, and the CHW checks each one. On a list (past history), only the matching option is filled; "Anything else?" still shows the rest, and their follow-ups are asked as usual. One-question mode only (group mode is unchanged).
+- **Tests:** `test_repeated_questions.py` (scripted Difficulty breathing and Cough visits, no AI): 11/11 (old code 4/11). "Said no" 50/50, red-flag cases 87/87, negative-answer options 6/6, `smoke_test.py` OK.
+- **Evaluation** (same 5 cases, MedPsy-1.7B, answer-sheet patient, old code run the same day; `eval_results/2026-11-15_dedupe/report.md`). Every case keeps the same facts (recall 90.6%, 0 wrong facts, judgements copied):
+
+| Case | CHW inputs old | new | Visit min old | new |
+| --- | --- | --- | --- | --- |
+| TC01 | 55 | 55 | 16.7 | 16.7 |
+| TC02 | 61 | 61 | 18.4 | 18.4 |
+| TC03 | 52 | 51 | 15.8 | 15.4 |
+| TC04 | 89 | 94 | 27.6 | 28.6 |
+| TC05 | 43 | 43 | 13.2 | 13.2 |
+
+- TC03: Smoking history is filled as Never-smoker from the Cough answer (one confirmation instead of the list).
+- **TC04 got worse (+5 inputs, +1 min).** Hospitalization is filled and confirmed, but: the answer sheet has no `accept` words for the new "Patient already said: <value>" prompts (When did it occur?, Reason, How many cigarettes per day do you smoke?), so the simulated patient rejects three correct values (+3); the AI's "Since" was the whole sentence, not "10 years" (+1); and "Anything else?" on the history list costs a step (+1). Smoking history itself is still asked, because "Yes, 10 to 15 a day" doesn't say current or ex-smoker.
+- **Rerun with accept words (November 15, 2026, later).** The answer sheet had no `accept` words for TC04's four new "Patient already said: <value>" prompts, so the simulated patient rejected correct values. `make_patient_answers.py` now adds them, using only the patient's own words: When did it occur? `two month`, Reason `breathing`, `cough`, How many cigarettes per day do you smoke? `10 to 15`, Since `10 year`. Nothing else in the sheet changed. Old and new code were run again on the new sheet (the old code's results are unchanged):
+
+| Case | CHW inputs old | new | Visit min old | new |
+| --- | --- | --- | --- | --- |
+| TC01 | 55 | 55 | 16.7 | 16.7 |
+| TC02 | 61 | 61 | 18.4 | 18.4 |
+| TC03 | 52 | 51 | 15.8 | 15.4 |
+| TC04 | 89 | 90 | 27.6 | 27.2 |
+| TC05 | 43 | 43 | 13.2 | 13.2 |
+
+- TC04: Hospitalization, When, Reason, Since and cigarettes per day are now confirmed with "y" instead of typed. One more input than the old code (the "Anything else?" step), but 0.4 min shorter, because a y/n check is quicker than a typed answer. No fact lost, but the saved Since value is now the AI's whole sentence ("Yes, about 10 to 15 cigarettes a day for the past 10 years.") instead of "10 years": the accept word "10 year" is in it, so the check passes. It is not wrong, but it is untidy; the AI's "Since" from a smoking answer is still weak.
+- TC04's saved values changed wording (When, Reason, cigarettes, Since), so its judgement was not copied; TC01–03 and TC05 keep the Nov 15 judgements (`eval_results/2026-11-15_dedupe/report.md`; the 92.4% average recall there covers those 4 cases only).
+
+## Android app (November 16 to 17, 2026)
+
+`android/` is a real Android app (Kotlin + [Chaquopy](https://chaquo.com/chaquopy/) for Python). It runs the
+same Python files as the laptop version: the build copies `main.py`, `intake.py`, `ai_mapper.py` and the rest
+into the app, so a fix here is in the app at the next build. MedPsy runs inside the app with llama.cpp
+(tag b12447, built by `app/src/main/cpp/CMakeLists.txt`). `app/src/main/python/llama_cpp/` is a small stand-in
+for llama-cpp-python, so `ai_mapper.py` runs unchanged. The app is fully offline.
+
+```bash
+# 1. Android Studio: open android/, install NDK 30.0.16248370 and CMake 4.1.2 (SDK Manager).
+# 2. android/local.properties (not on GitHub), add:
+#      protocols.dir=<path to "All Protocols (JSON)">
+#      python.build=<a Python 3.14 on this computer>
+# 3. Run the app once (first build ~5-10 min: it compiles llama.cpp). Without a model it uses keywords.
+# 4. Copy MedPsy to the phone/emulator (debug build), then run the app again:
+ADB=~/Library/Android/sdk/platform-tools/adb
+$ADB push medpsy-1.7b-q4_k_m-imat.gguf /data/local/tmp/
+$ADB shell run-as com.example.intakeapp mkdir -p files/models
+$ADB shell run-as com.example.intakeapp cp /data/local/tmp/medpsy-1.7b-q4_k_m-imat.gguf files/models/
+$ADB shell rm /data/local/tmp/medpsy-1.7b-q4_k_m-imat.gguf
+# Visits are saved on the phone in files/visits/. To copy one to the laptop:
+$ADB shell run-as com.example.intakeapp cat files/visits/<visit file>.json > my_visit.json
+```
+
+Engine check: on the laptop, the engine gave the same answer as llama-cpp-python on 45 of 46 AI calls of a
+TC01 visit (the one difference was a pick that also changes between llama-cpp-python runs).
+
+First visit on the emulator (TC01, appendicitis, typed by hand from the answer sheet; emulator AIML_Phone,
+arm64, 4 cores, 6 GB, on an Apple-silicon Mac):
+
+| | Result |
+| --- | --- |
+| Model load | 2.6 s |
+| AI time for the visit | 41.5 s (28 calls, 1.5 s each on average; 7547 tokens read, 194 written) |
+| Whole visit (by the clock) | about 11 min |
+| Red flag | IMMEDIATE: Suspected appendicitis, raised right after the story |
+| AI suggestions the CHW rejected | Colicky pain, Leaning forward, an Additional-information summary that said "no GI symptoms" |
+
+The emulator runs close to the Mac's own speed, so a low-cost phone will be slower; the estimate from the
+evaluation (up to ~3 min of AI per visit) is still the number to plan with.
+
+Two bugs found in this visit, fixed:
+- "no constipation" made the app offer "Constant" as a said-no option (both start with "const"). Words that
+  start with "const" or "inter" now need 7 matching letters (`negation.LONGER_STEM_STARTS`).
+- Typing only "y" or "n" on a numbered question was sent to the AI as the patient's words ("n" became "Yes"
+  for pregnancy). The app now asks for the option number instead.
+
+App buttons (added November 17): the app opens on two buttons. **New visit** is a visit typed by the CHW.
+**Run test cases** lets the phone play TC01-TC05 by itself with the evaluation's answer-sheet patient and
+simulated CHW (`sim_patient.py`), and shows the real AI time on the phone for each case. The visits,
+transcripts and a `results.csv` are saved on the phone in `files/visits/test_runs/<time>/`. MedPsy stays
+loaded between visits. Copy a run to the laptop with:
+```bash
+$ADB shell run-as com.example.intakeapp tar cf - files/visits/test_runs > phone_test_runs.tar
+```
+
+Keyword app vs MedPsy app, same day (November 17, answer-sheet patient, records only, see
+`eval_results/2026-11-17_keyword-vs-medpsy/comparison.md`): simple cases take 11-18 min in both, the complex
+case (TC04) 25-27 min. MedPsy cuts how often the CHW reads an option list and picks a number by more than half (56 -> 23 over 5 cases, not counting age and complaint)
+but doubles the y/n checks (54 -> 111), so the 20 s / 8 s estimate comes out about even. A timed visit is
+needed to show a real time saving.
+
+## "Patient not sure" on required questions (November 18, 2026)
+
+Some required protocol questions (pain severity, menstrual history, what aggravates the cough, ...) have no
+"unknown" option, so a CHW whose patient didn't know had to guess. Now pressing Enter (Skip on the phone) on a
+required question asks "Patient not sure? (y/n)"; y saves the answer with status `unsure`, which the doctor
+summary shows as "patient unsure". If the question has its own "Don't know/Unsure" option, the app points to it
+instead. `run_info.unsure_answers` counts them per visit, so overuse is visible. The simulated CHW uses it
+instead of a forced pick. Same 5 cases (keyword app): the 9 forced guesses (e.g. "Mild" pain and "Has not
+started menstruation" for TC01/TC02) are now "patient unsure"; CHW inputs and visit times unchanged. MedPsy
+check on TC01-TC02: same inputs, same red flags.
+
+## Patient's own words in the doctor summary (November 18, 2026)
+
+In the Nov 15 judged run, all 11 facts the app missed (or only partly recorded) were said by the patient in reply
+to a question, and the words were already saved in visit.json (`patient_words`), but the doctor summary only
+listed the chosen options. When the protocol has no option for a fact (pain spreading to the back, no jaundice,
+high cholesterol, "hospitalized twice"), it never reached the doctor.
+
+Now `summary.facts_lines` adds the patient's words under an answer when they say more than the chosen option:
+`Pain radiates to: Chest (patient said: "To my back and my chest.")`. Plain code, no AI, no extra CHW input.
+Left out: the opening story (shown at the top already), words reused from an earlier answer, replies that only
+restate the answer ("No, I don't drink."), and the same reply twice (shown on the "has" answer, not the "said no"
+one). Red flags are unchanged (they already read the saved words).
+
+Re-scored the Nov 15 records with the new summary (eval_results/2026-11-18_patient-words): key-fact recall
+90.6% -> 99.0% (TC01-TC03 and TC05 100%, TC04 95%). Still partly: TC04's sputum colour (the patient didn't know
+it) and "chest tightness" saved as "Chest pain/discomfort". The recovered facts are quotes, not structured
+answers, and the re-score was done by Claude, so a fresh run and a teammate's check should confirm it.

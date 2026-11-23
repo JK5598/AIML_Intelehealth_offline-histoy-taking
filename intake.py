@@ -4,6 +4,7 @@ import explanations
 import negation
 import protocols as p
 import red_flags
+import repeated_questions
 
 
 class Console:
@@ -40,9 +41,23 @@ def is_yes(reply):
     return reply.strip().lower() in ("y", "yes")
 
 
+PATIENT_NOT_SURE = "patient not sure"
+UNSURE_LABEL_WORDS = ("unknown", "don't know", "dont know", "not sure", "unsure")
+
+
+def unsure_option_number(labels):
+    """The number of an option like "Don't know/Unsure" or "Unknown", if the question has one."""
+    for number, label in enumerate(labels, start=1):
+        text = label.lower()
+        if any(word in text for word in UNSURE_LABEL_WORDS):
+            return number
+    return None
+
+
 class Intake:
     def __init__(self, patient, mapper, console, language="en"):
         self.patient = patient
+        self.follow_ups_done = set()
         self.mapper = mapper
         self.console = console
         self.language = language
@@ -57,6 +72,8 @@ class Intake:
         self.said_no_ids = set()
         self.section = ""
         self.rejected = []
+        self.asked = {}       # complaint question -> the answers saved for it and its follow-ups
+        self.earlier = None   # an earlier answer the current history question repeats
         self.explainer = explanations.Explainer(mapper, console)
 
     def record(self, question, chosen, value=None, source="tapped", patient_words=None, status="present"):
@@ -64,6 +81,7 @@ class Intake:
             "section": self.section,
             "question_id": question.get("id"),
             "question": p.display_text(question),
+            "question_label": question.get("text", "").strip(),
             "answer_ids": [option.get("id") for option in chosen],
             "answers": [option.get("text", "").strip() for option in chosen],
             "value": value,
@@ -86,24 +104,59 @@ class Intake:
             "patient_words": patient_words,
         })
 
+    def red_flag_answers(self):
+        """The saved answers plus the patient's story, so a danger sign the patient only mentioned in
+        their story (e.g. "he had a seizure yesterday") still raises a red flag."""
+        if not self.story:
+            return self.answers
+        story = {"answers": [], "value": None, "patient_words": self.story, "status": "present"}
+        return self.answers + [story]
+
     def check_red_flags(self):
-        flags, possible = red_flags.check(self.complaint, self.answers)
+        flags, possible = red_flags.check(self.complaint, self.red_flag_answers(), self.patient)
         for flag in flags:
             if flag not in self.alerts:
                 self.alerts.append(flag)
                 self.console.show("")
-                self.console.show(f"   !!! RED FLAG: {flag}. Consider urgent referral. !!!")
+                self.console.show(f"   !!! RED FLAG - {red_flags.describe(flag)}. Refer as per level. !!!")
         for flag in possible:
             if flag not in self.alerts and flag not in self.possible_alerts:
                 self.possible_alerts.append(flag)
                 self.console.show("")
-                self.console.show(f"   ?? POSSIBLE RED FLAG: {flag}. It came up next to a 'no' or 'not'. "
+                self.console.show(f"   ?? POSSIBLE RED FLAG - {red_flags.describe(flag)}. It came up next to a 'no' or 'not'. "
                                   f"Please check with the patient. ??")
         still_possible = []
         for flag in self.possible_alerts:
             if flag in possible:
                 still_possible.append(flag)
         self.possible_alerts = still_possible
+        self.ask_red_flag_follow_ups(flags)
+
+    def ask_red_flag_follow_ups(self, flags):
+        """A broad red flag (e.g. headache + fever) fired: ask the yes/no questions that decide
+        whether it is an emergency. Each answer is recorded like any other answer, so the
+        red-flag check runs again and can raise the level."""
+        for item in red_flags.follow_ups_for(flags):
+            if item["id"] in self.follow_ups_done:
+                continue
+            self.follow_ups_done.add(item["id"])
+            if red_flags.follow_up_already_known(item, self.complaint, self.red_flag_answers()):
+                continue  # already answered earlier in the visit: don't ask twice
+            reply = ""
+            for _ in range(3):
+                reply = self.console.ask(f"   RED-FLAG CHECK: {item['question']} (y = yes / n = no / d = don't know):")
+                reply = reply.strip().lower()
+                if reply[:1] in ("y", "n", "d"):
+                    break
+            question = {"id": "follow_up_" + item["id"], "text": item["label"], "display": item["question"]}
+            if reply.startswith("n"):
+                self.record(question, [{"id": item["id"], "text": item["label"]}],
+                            source="red-flag follow-up", status="said_no")
+            elif reply.startswith("y"):
+                self.record(question, [{"id": item["id"], "text": item["label"]}], source="red-flag follow-up")
+            else:  # don't know, or no clear answer: treat as yes so the level is never lowered by doubt
+                self.record(question, [{"id": item["id"], "text": item["label"] + " (not sure)"}],
+                            source="red-flag follow-up")
 
     def confirm(self, prompt, question, option_labels):
         """Asks a yes/no question. Typing '?' shows simple explanations, then asks again."""
@@ -161,11 +214,12 @@ class Intake:
             self.console.show(f"   {number}. {label}")
         self.console.show(explain_hint(len(labels)))
 
-    def choose_options(self, question, options):
+    def choose_options(self, question, options, optional=False):
+        """optional=True: Enter is allowed even on a required question (used for "anything else?")."""
         labels = [p.option_label(option, self.language) for option in options]
         english_labels = [p.option_label(option) for option in options]
         multi = p.is_multi_choice(question)
-        required = p.is_required(question)
+        required = p.is_required(question) and not optional
         self.questions_asked += 1
 
         self.show_choices(question, labels, multi)
@@ -185,10 +239,21 @@ class Intake:
                     self.console.show(f"   There is no option {number}.")
                 continue
             if reply == "":
-                if required:
-                    self.console.show("   This question is required.")
+                if not required:
+                    return [], None, None
+                unsure_number = unsure_option_number(english_labels)
+                if unsure_number is not None:
+                    self.console.show(f"   This question is required. If the patient is not sure, "
+                                      f"pick {unsure_number}. {labels[unsure_number - 1]}.")
                     continue
-                return [], None, None
+                # No "don't know" option in the protocol: let the CHW save "patient not sure" instead of guessing.
+                if is_yes(self.console.ask("   This question is required. Patient not sure? "
+                                           "(y = save 'patient not sure', n = ask again)")):
+                    return [], PATIENT_NOT_SURE, None
+                continue
+            if reply.lower() in ("y", "n"):
+                self.console.show("   Please type the option number. (y / n only answer the 'Keep?' and 'Correct?' questions.)")
+                continue
 
             picked = parse_numbers(reply, len(options))
             if picked is not None:
@@ -216,29 +281,34 @@ class Intake:
                 continue
             return chosen, source, words
 
-    def try_story(self, question, options):
-        """If the patient already mentioned this in their own words, confirm instead of asking."""
+    def try_story(self, question, options, story=None, source="from story", picked=None):
+        """If the patient already mentioned this in their own words, confirm instead of asking.
+        story: the text to fill from (default: the opening story; or an earlier answer, see repeated_questions.py).
+        picked: options already chosen by plain code (default: the AI picks them from the text)."""
+        if story is None:
+            story = self.story
         question_text = p.display_text(question)
         single_input = len(options) == 1 and p.input_type(options[0]) and not p.children(options[0])
 
         if single_input:
-            value = self.mapper.value_from_story(question_text, self.story)
+            value = self.mapper.value_from_story(question_text, story)
             if not value:
                 return False
-            self.console.show("")
-            self.console.show(p.display_text(question, self.language))
+            self.show_prefilled_question(question, story, source)
             if not self.confirm(f"   Patient already said: {value}. Keep? (y/n)", question, []):
-                self.note_rejected(question, [], "from story", self.story, value=value)
+                self.note_rejected(question, [], source, story, value=value)
                 return False
-            self.filled_from_story += 1
-            self.record(question, options, value=value, source="from story", patient_words=self.story)
+            if source == "from story":
+                self.filled_from_story += 1
+            self.record(question, options, value=value, source=source, patient_words=story)
             return True
 
         labels = [p.option_label(option) for option in options]
         multi = p.is_multi_choice(question)
-        picked = self.mapper.answer_from_story(question_text, labels, self.story, multi)
-        picked, dropped = negation.check_picks(labels, picked, self.story)
-        self.offer_said_no(question, options, self.story, "from story", skip=picked)
+        if picked is None:
+            picked = self.mapper.answer_from_story(question_text, labels, story, multi)
+        picked, dropped = negation.check_picks(labels, picked, story)
+        self.offer_said_no(question, options, story, source, skip=picked)
         if not picked:
             return False
         chosen = [options[i] for i in picked]
@@ -246,23 +316,65 @@ class Intake:
             chosen = chosen[:1]
         shown = ", ".join(p.option_label(option, self.language) for option in chosen)
         chosen_labels = [p.option_label(option) for option in chosen]
-        self.console.show("")
-        self.console.show(p.display_text(question, self.language))
+        self.show_prefilled_question(question, story, source)
         if not self.confirm(f"   Patient already said: {shown}. Keep? (y/n)", question, chosen_labels):
-            self.note_rejected(question, chosen, "from story", self.story)
+            self.note_rejected(question, chosen, source, story)
             return False
-        self.filled_from_story += 1
-        self.follow_up(question, chosen, "from story", self.story)
+        if source == "from story":
+            self.filled_from_story += 1
+        self.follow_up(question, chosen, source, story)
+        if multi and not any(p.is_exclusive(option) for option in chosen):
+            self.ask_anything_else(question, options, chosen)
         return True
 
+    def show_prefilled_question(self, question, story, source):
+        self.console.show("")
+        self.console.show(p.display_text(question, self.language))
+        if source == "from earlier answer":   # so the CHW knows which answer this comes from
+            self.console.show(f"   (From the earlier answer: {story})")
+
+    def ask_anything_else(self, question, options, chosen):
+        """The story answered only part of a multi-choice question (e.g. "Nausea"). Before moving on,
+        show the other options once, so the rest (vomiting, "no fever") isn't lost. Enter = nothing else."""
+        remaining = []
+        for option in options:
+            if option in chosen or p.is_exclusive(option):
+                continue
+            if (question.get("id"), option.get("id")) in self.said_no_ids:
+                continue
+            remaining.append(option)
+        if not remaining:
+            return
+        self.console.show("")
+        self.console.show("   Anything else for this question? Ask the patient (Enter = nothing else).")
+        more, source, words = self.choose_options(question, remaining, optional=True)
+        if more:
+            self.follow_up(question, more, source, words)
+
     def ask_question(self, question):
+        first_answer = len(self.answers)
+        self.ask_and_save(question)
+        if self.section == "hpi":   # kept so a later history question that repeats it can reuse the answer
+            self.asked[p.display_text(question)] = self.answers[first_answer:]
+
+    def ask_and_save(self, question):
         if not p.applies_to_patient(question, self.patient):
             return
 
         options = [o for o in p.children(question) if p.applies_to_patient(o, self.patient)]
 
-        if (self.use_story and self.story and options and p.story_prefill_allowed(question)
-                and self.try_story(question, options)):
+        story, source, picked = "", "from story", None
+        if self.use_story and self.story:
+            story = self.story
+        elif self.earlier and question.get("id") in self.earlier["ids"]:
+            story, source = self.earlier["text"], "from earlier answer"
+            if question.get("id") == self.earlier["question_id"]:
+                # the option comes from the table in repeated_questions.py, not from the AI
+                picked = [i for i, option in enumerate(options) if p.option_label(option) in self.earlier["options"]]
+                if not picked:
+                    story = ""
+        if (story and options and p.story_prefill_allowed(question)
+                and self.try_story(question, options, story, source, picked)):
             return
 
         if p.input_type(question) and not options:
@@ -284,6 +396,8 @@ class Intake:
         chosen, source, words = self.choose_options(question, options)
         if chosen:
             self.follow_up(question, chosen, source, words)
+        elif source == PATIENT_NOT_SURE:
+            self.record(question, [], source=None, status="unsure")
         else:
             self.record(question, [], source=None, status="skipped")
 
@@ -310,9 +424,34 @@ class Intake:
                 self.ask_question(follow_up)
         self.use_story = use_story
 
+    def earlier_answer_for(self, question):
+        """A history question the complaint questions already asked (see repeated_questions.py).
+        'ids' are the question and the follow-ups that may be filled from the earlier answer: only those
+        under the matching option, so e.g. Diabetes' follow-ups are never filled from a hospital stay."""
+        text, options = repeated_questions.find_earlier_answer(p.display_text(question), self.asked)
+        if not text:
+            return None
+        if None in options:   # the earlier answer doesn't say which option: fill the follow-ups of any
+            roots = [question]
+        else:
+            roots = [option for option in p.children(question) if p.option_label(option) in options]
+        ids = {question.get("id")}
+        for root in roots:
+            ids |= node_ids(root)
+        return {"text": text, "ids": ids, "question_id": question.get("id"), "options": options}
+
     def run_section(self, protocol, section, use_story=False):
         self.section = section
         self.use_story = use_story
         for question in p.children(protocol):
+            self.earlier = self.earlier_answer_for(question) if section != "hpi" else None
             self.ask_question(question)
+        self.earlier = None
         self.use_story = False
+
+
+def node_ids(node):
+    ids = {node.get("id")}
+    for child in p.children(node):
+        ids |= node_ids(child)
+    return ids

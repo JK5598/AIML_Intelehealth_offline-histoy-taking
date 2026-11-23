@@ -21,7 +21,7 @@ INTAKE_MODES = {"one": Intake, "group": GroupIntake}
 #----- end of Lia's code -----
 
 
-SCHEMA_VERSION = "0.4"
+SCHEMA_VERSION = "0.5"
 
 
 def ask_patient(console):
@@ -105,6 +105,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
 
     more = console.ask("\nIn the patient's own words, tell me more about the problem (Enter to skip):")
     intake.story = " ".join(part for part in (first_words, more) if part)
+    intake.check_red_flags()   # a danger sign in the story alerts right away
 
     console.show(f"\n--- {complaint} ---")
     intake.run_section(protocol, "hpi", use_story=True)
@@ -134,7 +135,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
     if first_words:
         accepted_suggestions += 1
     for answer in intake.answers:
-        if answer["source"] in (mapper.name, "from story", "from group reply"):   # Lia's code: + "from group reply"
+        if answer["source"] in (mapper.name, "from story", "from group reply", "from earlier answer"):   # Lia's code: + "from group reply"
             accepted_suggestions += 1
 
     visit = {
@@ -173,6 +174,7 @@ def run_visit(console, mapper, protocol_folder, language="en", ai_summary=False,
     #----- Lia's code: which intake mode ran, how many times the CHW typed, and the follow-ups -----
     visit["run_info"]["intake_mode"] = intake_mode
     visit["run_info"]["chw_inputs"] = console.inputs
+    visit["run_info"]["unsure_answers"] = sum(1 for a in visit["answers"] if a.get("status") == "unsure")
     if hasattr(intake, "extra_run_info"):
         visit["run_info"].update(intake.extra_run_info())
     #----- end of Lia's code -----

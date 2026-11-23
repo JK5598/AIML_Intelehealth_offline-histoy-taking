@@ -20,3 +20,8 @@ _backup*/
 __pycache__/
 *.pyc
 .DS_Store
+
+# Evaluation results, and Dr. Verma's unseen cases (must stay private)
+eval_results/
+eval_cases_private*.json
+eval_key_facts_private*.csv

@@ -3,3 +3,6 @@ llama-cpp-python>=0.3.36
 
 # Optional, for checking the code
 pyflakes
+
+# Only for the evaluation loop (evaluate_visits.py), not the app
+anthropic
