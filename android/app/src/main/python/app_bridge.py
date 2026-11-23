@@ -35,9 +35,8 @@ class PhoneConsole:
 
     def show(self, text=""):
         #----- Lia's code: send each line with its style (section / question / red flag / plain) -----
-        self.state.saw(text)
-        for line in text.split("\n"):
-            self.screen.showStyled(line, screen_ui.line_style(line))
+        for line, style in self.state.saw(text):
+            self.screen.showStyled(line, style)
         #----- end of Lia's code -----
 
     def ask(self, prompt):
@@ -53,6 +52,9 @@ class PhoneConsole:
             self.screen.askWith(prompt, kind, json.dumps(buttons), multi)
             #----- end of Lia's code -----
             reply = self.answers.get().strip()   # wait until the CHW taps Send / Skip / an option button
+            #----- Lia's code: one clean line: line breaks (e.g. from pasting) and double spaces become one space -----
+            reply = " ".join(reply.split())
+            #----- end of Lia's code -----
             #----- Lia's code: Back removes the last answer and starts the replay; End stops the visit -----
             if reply == END:
                 raise EndVisit()

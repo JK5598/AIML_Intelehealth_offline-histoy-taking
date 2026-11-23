@@ -13,8 +13,10 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.text.InputType
+import android.view.Gravity
+import android.graphics.drawable.GradientDrawable
+import androidx.core.view.WindowCompat
 import android.widget.PopupMenu
 import androidx.appcompat.app.AlertDialog
 import android.widget.LinearLayout
@@ -94,8 +96,14 @@ class MainActivity : AppCompatActivity() {
         // A taller answer box: always 2 lines, grows to 5, long answers wrap so the CHW can read them back.
         // The keyboard still shows Send (not a new-line key), so Send on the keyboard still sends.
         input.setSingleLine(false)
-        input.minLines = 2
-        input.maxLines = 5
+        input.minLines = 3
+        input.maxLines = 6
+        input.gravity = Gravity.TOP or Gravity.START          // text starts at the top left of the box
+        input.background = GradientDrawable().apply {          // a light rounded border, so the box is easy to see
+            setColor(Color.WHITE)
+            setStroke(3, Color.parseColor("#9575CD"))
+            cornerRadius = 16f
+        }
         input.setHorizontallyScrolling(false)
         input.imeOptions = EditorInfo.IME_ACTION_SEND
         input.setRawInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
@@ -450,12 +458,15 @@ class MainActivity : AppCompatActivity() {
                 prompt.text = question.trim()
                 showChoices(kind, buttonsJson, multi)
                 waitingForAnswer = true
-                // The cursor is always in the answer box, so the CHW can type without tapping it first.
-                input.requestFocus()
-                if (kind == "text") {
-                    // Typing questions (the patient's words, a duration, a name): open the keyboard too.
-                    val keyboard = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                    keyboard.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+                // The cursor is always in the answer box (blinking), so the CHW can type without tapping it.
+                // Done after the screen is drawn ("post"); asking earlier is ignored by Android.
+                input.post {
+                    input.requestFocus()
+                    input.setSelection(input.text.length)
+                    if (kind == "text" || kind == "options") {
+                        // Questions where the CHW types: open the keyboard too. (Yes/No questions: buttons only.)
+                        WindowCompat.getInsetsController(window, input).show(WindowInsetsCompat.Type.ime())
+                    }
                 }
             }
         }
