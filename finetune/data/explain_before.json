@@ -1,0 +1,482 @@
+[
+ {
+  "text": "Yes",
+  "answer": "Yes, it spreads to other areas like arms or legs."
+ },
+ {
+  "text": "Very sudden",
+  "answer": "Like a sudden, sharp, or severe event that happens quickly."
+ },
+ {
+  "text": "All day",
+  "answer": "Throughout the entire day."
+ },
+ {
+  "text": "Describe the sensation",
+  "answer": "Asks about how the numbness, tingling, or loss of feeling feels."
+ },
+ {
+  "text": "Night",
+  "answer": "During sleep or at night."
+ },
+ {
+  "text": "After headache",
+  "answer": "After the headache."
+ },
+ {
+  "text": "Loss of smell/taste sensation",
+  "answer": "You can't smell or taste things well."
+ },
+ {
+  "text": "More than 40",
+  "answer": "Over 40 years old."
+ },
+ {
+  "text": "Did the bleeding require treatment (Consultation/Transfusion/Surgery)?",
+  "answer": "Did the bleeding need medical help like seeing a doctor, getting blood transfused, or having surgery?"
+ },
+ {
+  "text": "Describe where it is getting stuck",
+  "answer": "Asks where in the throat or chest the feeling of something getting stuck is."
+ },
+ {
+  "text": "Psychiatric condition",
+  "answer": "Asks if the patient has any mental or emotional health issues."
+ },
+ {
+  "text": "Cough",
+  "answer": "Asks if the cough is present or not."
+ },
+ {
+  "text": "Solid foods",
+  "answer": "Hard foods like meat or bread."
+ },
+ {
+  "text": "Sharp shooting",
+  "answer": "Like a sudden, sharp, stabbing pain that shoots through the area."
+ },
+ {
+  "text": "Describe the abnormal sensation",
+  "answer": "Asks about how the person feels or senses movement, like feeling unsteady or like they might fall."
+ },
+ {
+  "text": "Do you have the following symptom(s)?",
+  "answer": "Asks if you feel your heart racing, pounding, or skipping beats."
+ },
+ {
+  "text": "Middle (R) - Right Lumbar",
+  "answer": "The upper right side of your belly, near where your ribs meet your belly button."
+ },
+ {
+  "text": "Pain radiates to",
+  "answer": "The pain moves or spreads to another area, like a wave."
+ },
+ {
+  "text": "Preprandial",
+  "answer": "Before eating."
+ },
+ {
+  "text": "Recurring/relapsing",
+  "answer": "It comes and goes, or comes back after going away."
+ },
+ {
+  "text": "Liver disease",
+  "answer": "A condition affecting the liver, which can cause fatigue, yellowing of skin/eyes, and problems with digestion or clotting."
+ },
+ {
+  "text": "Thyroid disease",
+  "answer": "A problem with the gland in the neck that controls metabolism, like feeling too hot/cold or having weight changes."
+ },
+ {
+  "text": "Diffuse",
+  "answer": "All over, not in one specific spot."
+ },
+ {
+  "text": "Swelling in the painful area",
+  "answer": "Fluid buildup making the area look puffy or tight."
+ },
+ {
+  "text": "Dry",
+  "answer": "Not producing mucus or phlegm."
+ },
+ {
+  "text": "Pain appears after coughing",
+  "answer": "The pain happens when you cough, like when you have a strong sneeze or laugh."
+ },
+ {
+  "text": "Which part of the abdomen do you feel pain?",
+  "answer": "Asks where in the belly the pain is."
+ },
+ {
+  "text": "No",
+  "answer": "You did not use a thermometer to check your temperature."
+ },
+ {
+  "text": "None",
+  "answer": "No specific disease has been diagnosed."
+ },
+ {
+  "text": "What is your occupation?",
+  "answer": "Asks about your job, as some jobs can make breathing harder or expose you to things that irritate your lungs."
+ },
+ {
+  "text": "Cold intolerance",
+  "answer": "Feeling cold when others don't, like always needing a blanket or shivering in cool weather."
+ },
+ {
+  "text": "Have you ever taken any of the following drugs?",
+  "answer": "Asks if you've ever taken certain medicines for other problems."
+ },
+ {
+  "text": "Thigh",
+  "answer": "The top and front part of the thigh."
+ },
+ {
+  "text": "Sister",
+  "answer": "Family member, like a mother, grandmother, or aunt."
+ },
+ {
+  "text": "Left",
+  "answer": "The left side of the body."
+ },
+ {
+  "text": "Consistent",
+  "answer": "It happens every time or always."
+ },
+ {
+  "text": "Yellow",
+  "answer": "The mucus (phlegm) in the cough is yellow."
+ },
+ {
+  "text": "Does the symptom get worse with the following situation(s)?",
+  "answer": "Asks if breathing gets harder when you do certain things like climb stairs, exercise, or lie down."
+ },
+ {
+  "text": "Rigor",
+  "answer": "Shaking chills or shaking when you're cold."
+ },
+ {
+  "text": "Have your clothes become loose or ill-fitting?",
+  "answer": "Asks if you've lost weight without trying, like clothes becoming too big."
+ },
+ {
+  "text": "from nose",
+  "answer": "Going up through the nose."
+ },
+ {
+  "text": "Since",
+  "answer": "Since you've had it for a long time."
+ },
+ {
+  "text": "Hematuria",
+  "answer": "Coughing up blood in urine, or pink/red urine."
+ },
+ {
+  "text": "Stabbing",
+  "answer": "Sharp, like a needle going through your chest or belly."
+ },
+ {
+  "text": "24 hours-6 weeks after delivery",
+  "answer": "After childbirth, up to 6 weeks."
+ },
+ {
+  "text": "Don't know or Declined to answer",
+  "answer": "We don't know or the person didn't want to say."
+ },
+ {
+  "text": "Palpitations",
+  "answer": "Feeling your heart race, pound, or skip beats in your chest."
+ },
+ {
+  "text": "When does the pain increase?",
+  "answer": "Asks when the skin problem gets worse."
+ },
+ {
+  "text": "Upper (L) - Left Hypochondrium",
+  "answer": "Upper middle belly, just below the ribs on the left side."
+ },
+ {
+  "text": "Heat intolerance",
+  "answer": "Feeling unusually hot or uncomfortable in warm weather."
+ },
+ {
+  "text": "Sudden",
+  "answer": "Out of the blue, very quickly."
+ },
+ {
+  "text": "Which eye(s) is affected?",
+  "answer": "Which eye(s) are red or painful?"
+ },
+ {
+  "text": "Tremor",
+  "answer": "Shaking or shaking hands when you hold them out."
+ },
+ {
+  "text": "How has the abdominal pain progressed?",
+  "answer": "How has the stomach pain gotten better or worse over time?"
+ },
+ {
+  "text": "High salt",
+  "answer": "Asks about eating a lot of salty food."
+ },
+ {
+  "text": "Red or pink",
+  "answer": "Coughing up blood or pink-tinged mucus."
+ },
+ {
+  "text": "Intermittent",
+  "answer": "Comes and goes, like a fever."
+ },
+ {
+  "text": "Dull, aching",
+  "answer": "A constant, soft, and steady pain that doesn't get worse with movement or touch."
+ },
+ {
+  "text": "Syphilis",
+  "answer": "A sexually transmitted infection that can cause sores, rashes, and other symptoms over time."
+ },
+ {
+  "text": "Upper (R) - Right Hypochondrium",
+  "answer": "Upper right belly area, near the ribs."
+ },
+ {
+  "text": "Fever",
+  "answer": "A feeling of being hot or too warm, like when you have a fever."
+ },
+ {
+  "text": "Bloating",
+  "answer": "A feeling of fullness or tightness in the belly, like it's swollen or heavy."
+ },
+ {
+  "text": "Increase in frequency of urination",
+  "answer": "Going to the bathroom more often than usual, especially when you're not thirsty."
+ },
+ {
+  "text": "How long does the symptom continue?",
+  "answer": "How long has the fast or racing heart been happening?"
+ },
+ {
+  "text": "Productive (With sputum)",
+  "answer": "Coughs up up, like mucus or phlegm, from the lungs or throat."
+ },
+ {
+  "text": "Is it painful or painless while swallowing?",
+  "answer": "Asks if swallowing hurts or doesn't hurt when you try to swallow."
+ },
+ {
+  "text": "Red staining",
+  "answer": "Bright red, possibly from the stomach or throat."
+ },
+ {
+  "text": "Static (Not change)",
+  "answer": "No change over time."
+ },
+ {
+  "text": "Sneezing",
+  "answer": "A sudden, forceful sneeze to clear your nose or throat."
+ },
+ {
+  "text": "Have you ever been diagnosed with the following kidney/bladder/urinary tract diseases?",
+  "answer": "Asks if you've ever had a known kidney, bladder, or urinary tract problem."
+ },
+ {
+  "text": "Headache",
+  "answer": "A headache, like a bad ache or pressure in the head."
+ },
+ {
+  "text": "Gradually increasing (Progressive)",
+  "answer": "Gets worse and worse over time."
+ },
+ {
+  "text": "Does the sensation stay the same or is it gradually increasing?",
+  "answer": "Asks if the feeling of fainting or passing out gets worse or stays the same over time."
+ },
+ {
+  "text": "Continous",
+  "answer": "Always present, never stops."
+ },
+ {
+  "text": "Muscle pain",
+  "answer": "Aching or soreness in your muscles, like when you've been active or have a cold."
+ },
+ {
+  "text": "Over few hours",
+  "answer": "Develops or gets worse over a few hours."
+ },
+ {
+  "text": "Mild",
+  "answer": "A little bit, not strong or bad."
+ },
+ {
+  "text": "Over seconds",
+  "answer": "For less than a second."
+ },
+ {
+  "text": "Gradual",
+  "answer": "Started slowly and slowly getting worse over time."
+ },
+ {
+  "text": "Decreased",
+  "answer": "Less than usual."
+ },
+ {
+  "text": "Describe the pain",
+  "answer": "Asks about the type of pain: sharp, dull, or burning?"
+ },
+ {
+  "text": "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+  "answer": "Asks if the patient has used any medicines, including traditional remedies like herbs or special treatments."
+ },
+ {
+  "text": "In the morning",
+  "answer": "Early in the day, like when you wake up."
+ },
+ {
+  "text": "Progressive",
+  "answer": "Getting worse over time."
+ },
+ {
+  "text": "Does the pain go to other part of the body?",
+  "answer": "Asks if the pain spreads to another area, like the back or shoulder."
+ },
+ {
+  "text": "Mucous",
+  "answer": "Mucus, like sticky or jelly-like stuff, in the stool."
+ },
+ {
+  "text": "Green",
+  "answer": "The color of the mucus you cough up."
+ },
+ {
+  "text": "Hands",
+  "answer": "Asks about numbness or tingling in the hands."
+ },
+ {
+  "text": "Cramping",
+  "answer": "A tight, squeezing, or pulling feeling in the stomach or abdomen."
+ },
+ {
+  "text": "Evening",
+  "answer": "Late in the day."
+ },
+ {
+  "text": "How often do you chew tobacco?",
+  "answer": "Asks how often the person uses tobacco, like chewing tobacco."
+ },
+ {
+  "text": "Jaundice",
+  "answer": "Asks if there's a family history of yellowing of the skin or eyes (jaundice)."
+ },
+ {
+  "text": "Both ears",
+  "answer": "Both ears."
+ },
+ {
+  "text": "Have you ever been diagnosed with specific diseases?",
+  "answer": "Asks if you've ever been told you have a specific eye condition or disease."
+ },
+ {
+  "text": "Pain on affected nodes",
+  "answer": "Pain or tenderness when you touch the swollen area."
+ },
+ {
+  "text": "Low",
+  "answer": "A mild or not very high fever."
+ },
+ {
+  "text": "Roti",
+  "answer": "A type of flatbread, like chapati or naan, eaten in many cultures."
+ },
+ {
+  "text": "Abnormal bleeding has happened in a family member",
+  "answer": "In the family, someone has had unusual bleeding, like heavy periods, nosebleeds, or bleeding after eating."
+ },
+ {
+  "text": "Dinner time",
+  "answer": "After eating, especially meals."
+ },
+ {
+  "text": "How did the symptom start?",
+  "answer": "Asks when the problem with urine first happened."
+ },
+ {
+  "text": "Regular",
+  "answer": "Comes and goes consistently."
+ },
+ {
+  "text": "Stays the same (Static)",
+  "answer": "The sensation doesn't change or get worse over time."
+ },
+ {
+  "text": "How did the abdominal pain start?",
+  "answer": "Asks how the pain began, like if it started suddenly or gradually."
+ },
+ {
+  "text": "Mother",
+  "answer": "The mother of the patient."
+ },
+ {
+  "text": "Left shoulder",
+  "answer": "Pain that spreads to the left shoulder area."
+ },
+ {
+  "text": "Pain over tips",
+  "answer": "Pain at the very end of the hand, like where your fingers touch your palm."
+ },
+ {
+  "text": "Thermal injury (Burn)",
+  "answer": "A burn or scald from hot liquid, steam, or hot objects."
+ },
+ {
+  "text": "Reduced",
+  "answer": "Less than usual."
+ },
+ {
+  "text": "Further consultation of previous visit",
+  "answer": "Asks if the patient needs to see the doctor again for the same problem."
+ },
+ {
+  "text": "Blurred(Cloudy) vision",
+  "answer": "Asks if the vision is blurry, hazy, or cloudy."
+ },
+ {
+  "text": "Difficulty hearing",
+  "answer": "Asks if the person has trouble hearing well."
+ },
+ {
+  "text": "Omeprazole",
+  "answer": "A medication for stomach acid, like for heartburn or ulcers."
+ },
+ {
+  "text": "Rapid",
+  "answer": "Sudden, quick, or fast."
+ },
+ {
+  "text": "Left ankle",
+  "answer": "Asks about pain in a specific foot or ankle."
+ },
+ {
+  "text": "Left sided",
+  "answer": "On the left side of your chest, near your heart or stomach."
+ },
+ {
+  "text": "Blurred vision",
+  "answer": "Seeing things a bit hazy or unclear."
+ },
+ {
+  "text": "Flame",
+  "answer": "Asks if the burn was caused by fire or something else."
+ },
+ {
+  "text": "Have you recently taken/are taking any of the following medication?",
+  "answer": "Asks if you've taken any medicines recently, like for high blood pressure, pain, or allergies."
+ },
+ {
+  "text": "Cough",
+  "answer": "A dry, hacking sound when you try to breathe out, often because something is irritating your throat or airways."
+ },
+ {
+  "text": "Dizziness/Lightheadedness",
+  "answer": "A feeling of spinning, unsteadiness, or faintness, like the room is moving or you might pass out."
+ }
+]

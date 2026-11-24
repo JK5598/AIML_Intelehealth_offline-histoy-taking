@@ -25,3 +25,8 @@ __pycache__/
 eval_results/
 eval_cases_private*.json
 eval_key_facts_private*.csv
+
+# Fine-tuning: the Colab upload bundle (rebuilt from finetune/data) and the hand-check sheet
+finetune/ft_data*.zip
+finetune/*.xlsx
+finetune/results_*
