@@ -15,6 +15,12 @@ val localProperties = Properties().apply {
 val protocolsDir = localProperties.getProperty("protocols.dir")
     ?: error("Add protocols.dir=<path to 'All Protocols (JSON)'> to android/local.properties")
 val buildPythonPath = localProperties.getProperty("python.build") ?: "python3.14"
+//----- Lia's code: optional test copy of the app, so it installs NEXT TO the team's IntakeApp -----
+// Only on a computer whose local.properties has a line like  app.copy=v2
+//   -> app ID com.example.intakeapp.v2, name "IntakeAppv2" on the phone.
+// Without that line (e.g. on June's Mac) nothing changes: com.example.intakeapp, "IntakeApp".
+val appCopy = localProperties.getProperty("app.copy")
+//----- end of Lia's code -----
 
 android {
     namespace = "com.example.intakeapp"
@@ -29,6 +35,14 @@ android {
         targetSdk = 37
         versionCode = 2
         versionName = "1.1"
+        //----- Lia's code: test copy name and ID (see app.copy above) -----
+        if (appCopy != null) {
+            applicationIdSuffix = ".$appCopy"
+            manifestPlaceholders["appLabel"] = "IntakeApp$appCopy"
+        } else {
+            manifestPlaceholders["appLabel"] = "@string/app_name"
+        }
+        //----- end of Lia's code -----
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
