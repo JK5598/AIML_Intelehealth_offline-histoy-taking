@@ -1,0 +1,1070 @@
+{
+"TC01-F01": {
+"source": "“The duration of symptoms is less than 48 hours.”",
+"notes": "Exact onset time is not provided."
+},
+"TC01-F02": {
+"source": "“periumbilical or epigastric pain migrating to the right lower quadrant”",
+"notes": "Preserve the source’s alternative initial locations."
+},
+"TC01-F03": {
+"source": "“a worsening progressive pain”",
+"notes": "No numerical pain score is provided."
+},
+"TC01-F04": {
+"source": "“history of anorexia”",
+"notes": "“Anorexia” means appetite loss here."
+},
+"TC01-F05": {
+"source": "“nausea”",
+"notes": "Score separately from vomiting."
+},
+"TC01-F06": {
+"source": "“vomiting…nearly always follows the onset of pain”",
+"notes": "Vomiting frequency is not provided."
+},
+"TC01-F07": {
+"source": "“draws her knees up…to avoid worsening her pain”",
+"notes": "Do not claim that this completely relieves pain."
+},
+"TC01-F08": {
+"source": "“denies history of diarrhea”",
+"notes": "Explicit negative."
+},
+"TC01-F09": {
+"source": "“or constipation”",
+"notes": "Explicit negative."
+},
+"TC01-F10": {
+"source": "“She does not have fever.”",
+"notes": "Do not infer fever from the diagnosis."
+},
+"TC01-F11": {
+"source": "“claims she is not sexually active”",
+"notes": "Does not establish pregnancy-test status."
+},
+"TC01-F12": {
+"source": "“rebound tenderness…in the right lower quadrant”",
+"notes": "Keep separate from patient-reported history."
+},
+"TC02-F01": {
+"source": "“occurring over the last 6 months”",
+"notes": "Distinguish overall history from individual attack duration."
+},
+"TC02-F02": {
+"source": "“three…‘attacks’”",
+"notes": "—"
+},
+"TC02-F03": {
+"source": "“the last 2 weeks ago”",
+"notes": "Do not portray pain as currently ongoing."
+},
+"TC02-F04": {
+"source": "“right upper quadrant discomfort”",
+"notes": "—"
+},
+"TC02-F05": {
+"source": "“steady pain without any colicky or crampy component”",
+"notes": "Attacks recur, but pain within an attack is steady."
+},
+"TC02-F06": {
+"source": "“subsided gradually after about a 5-hour interval”",
+"notes": "—"
+},
+"TC02-F07": {
+"source": "“through to the back and into the chest”",
+"notes": "—"
+},
+"TC02-F08": {
+"source": "“thought that she may have had some fever”",
+"notes": "Must not become definite fever or definite absence."
+},
+"TC02-F09": {
+"source": "“there were no rigors”",
+"notes": "—"
+},
+"TC02-F10": {
+"source": "“only a single episode of vomiting”",
+"notes": "—"
+},
+"TC02-F11": {
+"source": "“no particular relationship to eating or any specific food”",
+"notes": "Do not add a fatty-food trigger."
+},
+"TC02-F12": {
+"source": "“unaffected by position or activity”",
+"notes": "—"
+},
+"TC02-F13": {
+"source": "“no recognition of jaundice”",
+"notes": "Patient observation, not an examination result."
+},
+"TC03-F01": {
+"source": "“a 4-day history of dry cough”",
+"notes": "—"
+},
+"TC03-F02": {
+"source": "“dry cough, progressing to rusty colored sputum”",
+"notes": "Preserve the change over time."
+},
+"TC03-F03": {
+"source": "“sudden onset of chills the previous evening”",
+"notes": "—"
+},
+"TC03-F04": {
+"source": "“subjective fever”",
+"notes": "Measured clinic temperature is separate."
+},
+"TC03-F05": {
+"source": "“malaise”",
+"notes": "—"
+},
+"TC03-F06": {
+"source": "“barely slept last night with all this coughing”",
+"notes": "—"
+},
+"TC03-F07": {
+"source": "“denied experiencing shortness of breath”",
+"notes": "Keep separate from perceived breathing rate."
+},
+"TC03-F08": {
+"source": "“may be breathing ‘a little faster than normal’”",
+"notes": "Preserve uncertainty."
+},
+"TC03-F09": {
+"source": "“sharp right-sided chest pain after…a long bout of coughing”",
+"notes": "Do not change the pain to left-sided or substernal."
+},
+"TC03-F10": {
+"source": "“hypertension”",
+"notes": "Medication names are not provided."
+},
+"TC03-F11": {
+"source": "“hypercholesterolemia”",
+"notes": "—"
+},
+"TC03-F12": {
+"source": "“no antibiotic use in the previous three months”",
+"notes": "Does not mean no medications at all."
+},
+"TC04-F01": {
+"source": "“difficulty in breathing…for the last few years”",
+"notes": "Exact number of years is not provided."
+},
+"TC04-F02": {
+"source": "“episodic…But…persistent with occasional exacerbations”",
+"notes": "—"
+},
+"TC04-F03": {
+"source": "“breathlessness is worse at night”",
+"notes": "Symptoms also occur during the day."
+},
+"TC04-F04": {
+"source": "“aggravated by cold, dust and activity”",
+"notes": "Check all three triggers in scoring."
+},
+"TC04-F05": {
+"source": "“usually dry, with occasional scanty mucoid sputum”",
+"notes": "Do not classify it as exclusively dry."
+},
+"TC04-F06": {
+"source": "“no history of hemoptysis”",
+"notes": "—"
+},
+"TC04-F07": {
+"source": "“wheeze…during coughing”",
+"notes": "—"
+},
+"TC04-F08": {
+"source": "“tightness of the chest during coughing”",
+"notes": "Do not substitute chest pain."
+},
+"TC04-F09": {
+"source": "“hospitalized twice within the last 2 months”",
+"notes": "—"
+},
+"TC04-F10": {
+"source": "“uses bronchodilator and steroid inhalers”",
+"notes": "Exact products and doses are not provided."
+},
+"TC04-F11": {
+"source": "“used to take…aminophylline, ketotifen and montelukast”",
+"notes": "Do not automatically classify them as current medications."
+},
+"TC04-F12": {
+"source": "“10 to 15 cigarettes daily for the last 10 years”",
+"notes": "—"
+},
+"TC04-F13": {
+"source": "“brother…bronchial asthma and food allergy”",
+"notes": "Do not assign the brother’s allergy to the patient."
+},
+"TC04-F14": {
+"source": "“no history of…fever”",
+"notes": "—"
+},
+"TC05-F01": {
+"source": "“short duration”",
+"notes": "Do not assign a specific number of days."
+},
+"TC05-F02": {
+"source": "“high grade intermittent fever”",
+"notes": "Exact temperature is not provided."
+},
+"TC05-F03": {
+"source": "“with chills and rigors”",
+"notes": ""
+},
+"TC05-F04": {
+"source": "“increase in the evening on alternate days”",
+"notes": "Preserve both timing and frequency."
+},
+"TC05-F05": {
+"source": "“taken over the counter antibiotics but her symptoms have not improved”",
+"notes": "Antibiotic name, dose, and duration are unspecified."
+},
+"TC05-F06": {
+"source": "“a generalized feeling of discomfort”",
+"notes": "Do not substitute a specific pain location."
+},
+"TC05-F07": {
+"source": "“loss of appetite”",
+"notes": ""
+},
+"TC05-F08": {
+"source": "“nausea”",
+"notes": "Vomiting is not mentioned; do not record it as present or denied."
+},
+"TC05-F09": {
+"source": "“splenomegaly is present”",
+"notes": "Do not convert into a patient-reported symptom."
+},
+"TC06-F01": {
+"source": "“35 years old, housewife”",
+"notes": "Record separately from history score."
+},
+"TC06-F02": {
+"source": "“weight gain and generalized swelling of the whole body for 2-3 months”",
+"notes": ""
+},
+"TC06-F03": {
+"source": "“which is progressively increasing”",
+"notes": ""
+},
+"TC06-F04": {
+"source": "“despite her less appetite”",
+"notes": ""
+},
+"TC06-F05": {
+"source": "“intolerance to cold and prefers warm environment”",
+"notes": ""
+},
+"TC06-F06": {
+"source": "“For the last 2-3months, she feels very lethargic, extremely weak”",
+"notes": ""
+},
+"TC06-F07": {
+"source": "“generalized body ache”",
+"notes": ""
+},
+"TC06-F08": {
+"source": "“constipation”",
+"notes": ""
+},
+"TC06-F09": {
+"source": "“sleepiness during most of the time even during working hours”",
+"notes": ""
+},
+"TC06-F10": {
+"source": "“lack of concentration and disturbance of memory since the beginning of her illness”",
+"notes": ""
+},
+"TC06-F11": {
+"source": "“Recently, her voice has changed and become hoarse.”",
+"notes": "Exact onset unspecified."
+},
+"TC06-F12": {
+"source": "“her skin is rough and dry”",
+"notes": "Patient-reported symptom."
+},
+"TC06-F13": {
+"source": "“There is no history of chest pain, palpitation, breathlessness”",
+"notes": "Score individual negatives separately if required."
+},
+"TC06-F14": {
+"source": "“tingling, numbness of hands or feet or loss of consciousness”",
+"notes": "Continues the preceding “no history” sentence."
+},
+"TC06-F15": {
+"source": "“excessive menstrual bleeding for the last 3 months, although it was normal previously”",
+"notes": ""
+},
+"TC06-F16": {
+"source": "“normotensive, nondiabetic”",
+"notes": ""
+},
+"TC06-F17": {
+"source": "“There is no history thyroid disease, thyroid surgery, radiation to the neck”",
+"notes": ""
+},
+"TC06-F18": {
+"source": "“She denies childbirth or difficult delivery (within the last 6 months).”",
+"notes": "Does not mean she has never given birth."
+},
+"TC06-F19": {
+"source": "“no history of taking drugs including oral contraceptive pills prior to her present illness”",
+"notes": "Distinguish from treatment after symptom onset."
+},
+"TC06-F20": {
+"source": "“There is no family history of similar illness.”",
+"notes": ""
+},
+"TC06-F21": {
+"source": "“She was treated with calcium tablet and vitamins.”",
+"notes": "Dose, duration, and response unspecified."
+},
+"TC07-F01": {
+"source": "“A 49-year-old woman”",
+"notes": ""
+},
+"TC07-F02": {
+"source": "“a 2-year history of upper gastrointestinal discomfort”",
+"notes": ""
+},
+"TC07-F03": {
+"source": "“a daily, persistent ache or discomfort that waxes and wanes”",
+"notes": ""
+},
+"TC07-F04": {
+"source": "“eating tends to worsen her pain”",
+"notes": ""
+},
+"TC07-F05": {
+"source": "“feels very full, even after eating only a modest-sized meal”",
+"notes": ""
+},
+"TC07-F06": {
+"source": "“Her weight is unchanged”",
+"notes": ""
+},
+"TC07-F07": {
+"source": "“medical history is notable only for occasional migraine headaches”",
+"notes": ""
+},
+"TC07-F08": {
+"source": "“an appendectomy (age 7) and wisdom teeth extraction (age 16)”",
+"notes": ""
+},
+"TC07-F09": {
+"source": "“She does not use tobacco products”",
+"notes": ""
+},
+"TC07-F10": {
+"source": "“rarely drinks alcohol”",
+"notes": "Quantity unspecified."
+},
+"TC07-F11": {
+"source": "“Her family history is noncontributory.”",
+"notes": "Do not invent specific negative family history."
+},
+"TC07-F12": {
+"source": "“an upper gastrointestinal (UGI) series (2 years ago)” … “were normal”",
+"notes": "Prior investigation history; patient knowledge requires confirmation."
+},
+"TC07-F13": {
+"source": "“abdominal ultrasound and hepatobiliary iminodiacetic (HIDA) scan (18 months ago)” … “were normal”",
+"notes": "Prior investigation history."
+},
+"TC07-F14": {
+"source": "“upper endoscopy (12 months ago)” … “were normal”",
+"notes": "Prior investigation history."
+},
+"TC07-F15": {
+"source": "“4-h solid-phase gastric emptying scan (4 months ago) were normal”",
+"notes": "Prior investigation history."
+},
+"TC07-F16": {
+"source": "“She is Helicobacter pylori-negative.”",
+"notes": "Do not assume the patient knows this result."
+},
+"TC07-F17": {
+"source": "“Extensive laboratory tests” … “have all been normal on at least two occasions.”",
+"notes": "Keep separate from symptom history."
+},
+"TC07-F18": {
+"source": "“asks you what her diagnosis is and how her symptoms can be treated”",
+"notes": ""
+},
+"TC08-F01": {
+"source": "“A 26-year-old male”",
+"notes": ""
+},
+"TC08-F02": {
+"source": "“with no past medical history”",
+"notes": "Does not establish medication or allergy history."
+},
+"TC08-F03": {
+"source": "“a rash on bilateral arms and wrists”",
+"notes": ""
+},
+"TC08-F04": {
+"source": "“had woken up with the skin lesions 1 day prior”",
+"notes": "Exact time lesions developed is unknown."
+},
+"TC08-F05": {
+"source": "“They were very itchy.”",
+"notes": ""
+},
+"TC08-F06": {
+"source": "“gotten progressively worse since they appeared”",
+"notes": ""
+},
+"TC08-F07": {
+"source": "“more symptomatic after he showered”",
+"notes": ""
+},
+"TC08-F08": {
+"source": "“applied topical Benadryl cream”",
+"notes": "Dose and frequency unspecified."
+},
+"TC08-F09": {
+"source": "“which did not help”",
+"notes": ""
+},
+"TC08-F10": {
+"source": "“multiple scattered erythematous papules with some excoriations on bilateral arms”",
+"notes": "Do not convert into patient-reported findings."
+},
+"TC08-F11": {
+"source": "“no lesions in the web spaces of his fingers and no burrows”",
+"notes": ""
+},
+"TC08-F12": {
+"source": "“Primary Care was unsure of the source”",
+"notes": "Case title is arthropod bites; do not imply confirmed exposure."
+},
+"TC08-F13": {
+"source": "“treated for scabies with permethrin cream, and referred to dermatology in case the lesions did not clear up”",
+"notes": "Occurs at this visit, not before presentation."
+},
+"TC09-F01": {
+"source": "“A 23-year-old healthy female college student”",
+"notes": ""
+},
+"TC09-F02": {
+"source": "“who has no children”",
+"notes": "Does not establish that she has never been pregnant."
+},
+"TC09-F03": {
+"source": "“a 2-day history of ‘on and off’ dysuria”",
+"notes": ""
+},
+"TC09-F04": {
+"source": "“urgency, and frequency”",
+"notes": "Same 2-day symptom history."
+},
+"TC09-F05": {
+"source": "“a single episode of gross hematuria”",
+"notes": ""
+},
+"TC09-F06": {
+"source": "“There is no fever or back pain.”",
+"notes": ""
+},
+"TC09-F07": {
+"source": "“self-medicated with cranberry juice and pyridium 200 mg”",
+"notes": "Frequency and duration unspecified."
+},
+"TC09-F08": {
+"source": "“left over from a previous urinary tract infection”",
+"notes": ""
+},
+"TC09-F09": {
+"source": "“Her urine is consequently dark-colored.”",
+"notes": "Keep distinct from the episode of visible blood."
+},
+"TC09-F10": {
+"source": "“2 prior UTIs in the past year”",
+"notes": ""
+},
+"TC09-F11": {
+"source": "“successfully treated each time with trimethoprim-sulfamethoxazole (TMP-SMX) 160 mg/800 mg twice a day for 3 days”",
+"notes": "Historical treatment, not a new recommendation."
+},
+"TC09-F12": {
+"source": "“The last UTI was 4 months ago”",
+"notes": ""
+},
+"TC09-F13": {
+"source": "“no history of pyelonephritis”",
+"notes": ""
+},
+"TC09-F14": {
+"source": "“has been sexually active since 18 years of age”",
+"notes": ""
+},
+"TC09-F15": {
+"source": "“currently uses an oral contraceptive, and has not missed any pills”",
+"notes": "Does not establish pregnancy status."
+},
+"TC09-F16": {
+"source": "“currently in a monogamous sexual relationship”",
+"notes": ""
+},
+"TC09-F17": {
+"source": "“She believes that her partner is also monogamous.”",
+"notes": "Preserve this as her belief."
+},
+"TC09-F18": {
+"source": "“a total of 1 lifetime sexual partner”",
+"notes": ""
+},
+"TC09-F19": {
+"source": "“does not admit to any history of sexually transmitted disease”",
+"notes": "Does not establish negative current testing."
+},
+"TC09-F20": {
+"source": "“last menstrual period was 3 weeks ago, at the expected time”",
+"notes": ""
+},
+"TC09-F21": {
+"source": "“afebrile with no suprapubic tenderness or costovertebral angle tenderness”",
+"notes": "Separate from reported absence of fever and back pain."
+},
+"TC10-F01": {
+"source": "“A 48 year old man”",
+"notes": ""
+},
+"TC10-F02": {
+"source": "“involved in a weather-related car crash”",
+"notes": "Exact date and crash details unspecified."
+},
+"TC10-F03": {
+"source": "“on his way home from a dinner with friends”",
+"notes": "Do not infer alcohol use."
+},
+"TC10-F04": {
+"source": "“his seatbelt and air bag saved his life”",
+"notes": ""
+},
+"TC10-F05": {
+"source": "“symptoms of a mild-moderate head injury”",
+"notes": "Do not infer a Glasgow Coma Scale score."
+},
+"TC10-F06": {
+"source": "“struggles with fatigue”",
+"notes": "Exact onset and duration unspecified."
+},
+"TC10-F07": {
+"source": "“headaches”",
+"notes": "Severity, location, and frequency unspecified."
+},
+"TC10-F08": {
+"source": "“poor memory skills”",
+"notes": ""
+},
+"TC10-F09": {
+"source": "“an office visit shortly after his hospital discharge”",
+"notes": "Exact interval unspecified."
+},
+"TC10-F10": {
+"source": "“His wife accompanies him to the session and relays how the patient is managing at home.”",
+"notes": "Preserve the source of collateral observations."
+},
+"TC10-F11": {
+"source": "“his language seems to be okay”",
+"notes": "Wife-reported observation, not a formal normal language assessment."
+},
+"TC10-F12": {
+"source": "“finishing anything he starts”",
+"notes": "Collateral history."
+},
+"TC10-F13": {
+"source": "“remembering what she told him a few minutes before”",
+"notes": "Collateral history."
+},
+"TC10-F14": {
+"source": "“confused easily all of a sudden”",
+"notes": "Exact onset unspecified; retain her wording."
+},
+"TC10-F15": {
+"source": "“wonders if the crash caused this”",
+"notes": "Concern expressed by the wife."
+},
+"TC10-F16": {
+"source": "“scores in the attention and executive functioning domains are the lowest”",
+"notes": "Numerical scores not provided."
+},
+"TC10-F17": {
+"source": "“new learning and immediate or delayed recall are also difficult for him”",
+"notes": "Distinguish test results from reported symptoms."
+},
+"TC11-F01": {
+"source": "“tiredness and difficulty sleeping”",
+"notes": ""
+},
+"TC11-F02": {
+"source": "“awakening with shortness of breath”",
+"notes": ""
+},
+"TC11-F03": {
+"source": "“able to sleep better using pillows to elevate his chest and head”",
+"notes": ""
+},
+"TC11-F04": {
+"source": "“Six months earlier, the patient experienced myocardial infarction”",
+"notes": ""
+},
+"TC11-F05": {
+"source": "“A stent was placed in the occluded coronary artery”",
+"notes": ""
+},
+"TC11-F06": {
+"source": "“The moderate exercise regimen that he followed after the myocardial infarction is now causing him to become progressively more short of breath.”",
+"notes": ""
+},
+"TC12-F01": {
+"source": "“pain in lower abdomen”",
+"notes": ""
+},
+"TC12-F02": {
+"source": "“history of heavy periods”",
+"notes": ""
+},
+"TC12-F03": {
+"source": "“The pain increases during periods and is severe.”",
+"notes": ""
+},
+"TC12-F04": {
+"source": "“intermittent bleeding between periods”",
+"notes": ""
+},
+"TC12-F05": {
+"source": "“has 3 children”",
+"notes": ""
+},
+"TC13-F01": {
+"source": "“7 months pregnant”",
+"notes": ""
+},
+"TC13-F02": {
+"source": "“heat intolerance”",
+"notes": ""
+},
+"TC13-F03": {
+"source": "“palpitations”",
+"notes": ""
+},
+"TC13-F04": {
+"source": "“extreme fatigue”",
+"notes": ""
+},
+"TC13-F05": {
+"source": "“exertional dyspnea”",
+"notes": ""
+},
+"TC13-F06": {
+"source": "“prominent eyes for the past 6 months”",
+"notes": ""
+},
+"TC13-F07": {
+"source": "“several months ago she developed skin lesions on her legs”",
+"notes": ""
+},
+"TC14-F01": {
+"source": "“was cooking in the kitchen when she collapsed onto the floor”",
+"notes": ""
+},
+"TC14-F02": {
+"source": "“slowly regained consciousness over the next two days”",
+"notes": ""
+},
+"TC14-F03": {
+"source": "“paralysis of the right face and arm”",
+"notes": ""
+},
+"TC14-F04": {
+"source": "“loss of sensation to touch on the skin of the right face and arm”",
+"notes": ""
+},
+"TC14-F05": {
+"source": "“inability to answer questions but ability to understand what was said to her”",
+"notes": ""
+},
+"TC14-F06": {
+"source": "“ability to write down her thoughts more easily than to speak them”",
+"notes": ""
+},
+"TC15-F01": {
+"source": "“4 day history of severe nausea and vomiting”",
+"notes": ""
+},
+"TC15-F02": {
+"source": "“unable to keep down liquids secondary to profound nausea”",
+"notes": ""
+},
+"TC15-F03": {
+"source": "“a 2 day history of swelling in her lower legs, face and arms”",
+"notes": ""
+},
+"TC15-F04": {
+"source": "“feeling feverish approximately 2 weeks ago in the setting of a severe sore throat with both symptoms resolving after a few days”",
+"notes": ""
+},
+"TC15-F05": {
+"source": "“mild shortness of breath with exertion over the past week”",
+"notes": ""
+},
+"TC15-F06": {
+"source": "“urine has been small in volume and brownish in colour”",
+"notes": ""
+},
+"TC15-F07": {
+"source": "“She denies any fever or chills”",
+"notes": ""
+},
+"TC16-F01": {
+"source": "“a 6-hour history of irritability, decreased oral intake, and fever of 100.4°F (38°C)”",
+"notes": "Ped1. Mother provides the history. Use the reported temperature for this fact."
+},
+"TC16-F02": {
+"source": "“delivered vaginally at 39-weeks gestation”",
+"notes": ""
+},
+"TC16-F03": {
+"source": "“an uncomplicated pregnancy with routine prenatal care”",
+"notes": ""
+},
+"TC16-F04": {
+"source": "“her only medication was prenatal vitamin”",
+"notes": "Record under maternal history."
+},
+"TC17-F01": {
+"source": "“increased shortness of breath and a change in the quantity and color of his sputum for the past week”",
+"notes": "Resp1. Preserve the one-week time course."
+},
+"TC17-F02": {
+"source": "“The sputum is usually scant and clear.”",
+"notes": ""
+},
+"TC17-F03": {
+"source": "“recently it has become yellow and continues all day”",
+"notes": ""
+},
+"TC17-F04": {
+"source": "“trouble raising sputum in the past year”",
+"notes": ""
+},
+"TC17-F05": {
+"source": "“progressively short of breath over the last five years”",
+"notes": "Distinguish the five-year progression from the worsening this past week."
+},
+"TC17-F06": {
+"source": "“He is now dyspneic at rest.”",
+"notes": ""
+},
+"TC18-F01": {
+"source": "“occasional fever for 2-3 months that is low grade, not associated with chill and rigor”",
+"notes": "Blood1"
+},
+"TC18-F02": {
+"source": "“occasional evening rise of temperature and night sweating”",
+"notes": ""
+},
+"TC18-F03": {
+"source": "“cough which is dry, worse at night”",
+"notes": ""
+},
+"TC18-F04": {
+"source": "“marked loss of weight and appetite for 3 months”",
+"notes": ""
+},
+"TC18-F05": {
+"source": "“painless lumps initially on the right side of his neck, and then on the axilla and groins”",
+"notes": "Preserve the order and the side of the neck."
+},
+"TC18-F06": {
+"source": "“These lumps are gradually increasing in size.”",
+"notes": ""
+},
+"TC19-F01": {
+"source": "“fever, headache, and a maculopapular rash on her trunk”",
+"notes": "Infect1. The first rash was on the trunk."
+},
+"TC19-F02": {
+"source": "“three days after returning home from college for spring recess”",
+"notes": "Three days is the interval before onset."
+},
+"TC19-F03": {
+"source": "“Subsequently, she experiences nausea, vomiting, photophobia”",
+"notes": ""
+},
+"TC19-F04": {
+"source": "“a petechial rash which spreads Within hours from her extremities to her trunk”",
+"notes": "Preserve the direction and speed of spread."
+},
+"TC19-F05": {
+"source": "“no history of drug allergy or tick exposure”",
+"notes": ""
+},
+"TC20-F01": {
+"source": "“My top partial denture bothers me and the teeth on my top right hurt.”",
+"notes": "Dental1"
+},
+"TC20-F02": {
+"source": "“some bleeding when brushing”",
+"notes": ""
+},
+"TC20-F03": {
+"source": "“his mouth was feeling dry”",
+"notes": ""
+},
+"TC20-F04": {
+"source": "“has not been to the dentist in the past three years”",
+"notes": ""
+},
+"TC20-F05": {
+"source": "“diagnosed with type 2 diabetes mellitus eight years ago”",
+"notes": ""
+},
+"TC20-F06": {
+"source": "“paresthesia of his feet (‘It feels like I am walking on clouds’)”",
+"notes": "Preserve the patient’s description."
+},
+"TC21-F01": {
+"source": "“retrosternal (6) chest pain”",
+"notes": "Cardio2"
+},
+"TC21-F02": {
+"source": "“non irradiated”",
+"notes": ""
+},
+"TC21-F03": {
+"source": "“at 00:30 AM (8) while sleeping”",
+"notes": ""
+},
+"TC21-F04": {
+"source": "“profuse (3) cold (4) sweating”",
+"notes": ""
+},
+"TC21-F05": {
+"source": "“systemic arterial hypertension (10) and dyslipidemia”",
+"notes": ""
+},
+"TC22-F01": {
+"source": "“white vaginal discharge off and on for 7-8 months”",
+"notes": "Obgyn2"
+},
+"TC22-F02": {
+"source": "“frequency of micturition”",
+"notes": ""
+},
+"TC22-F03": {
+"source": "“heavy and painful periods”",
+"notes": ""
+},
+"TC22-F04": {
+"source": "“pain in lower abdomen and backache”",
+"notes": ""
+},
+"TC22-F05": {
+"source": "“a burning pain when she passes urine”",
+"notes": ""
+},
+"TC22-F06": {
+"source": "“White discharge is foul smelling.”",
+"notes": ""
+},
+"TC22-F07": {
+"source": "“does her chores with difficulty because of the pain”",
+"notes": ""
+},
+"TC23-F01": {
+"source": "“about 2 years ago when he had the sudden onset of polyuria and excessive thirst which has persisted”",
+"notes": "Endoc2"
+},
+"TC23-F02": {
+"source": "“an estimated 7 to 8 quarts of water daily”",
+"notes": ""
+},
+"TC23-F03": {
+"source": "“a distinct preference for ice water”",
+"notes": ""
+},
+"TC23-F04": {
+"source": "“nocturia 3 or 4 times each night”",
+"notes": ""
+},
+"TC23-F05": {
+"source": "“recently his vision is somewhat blurred”",
+"notes": ""
+},
+"TC24-F01": {
+"source": "“a 2-day history of runny nose, productive cough, and wheezing”",
+"notes": "Ped2. Caregiver provides the history."
+},
+"TC24-F02": {
+"source": "“Subjective fever and decreased appetite also were noted today.”",
+"notes": "The measured temperature in the case comes from the physical exam."
+},
+"TC24-F03": {
+"source": "“no known cardiorespiratory disease”",
+"notes": ""
+},
+"TC24-F04": {
+"source": "“his immunizations are current”",
+"notes": ""
+},
+"TC24-F05": {
+"source": "“His two younger siblings are recovering from ‘chest colds.’”",
+"notes": ""
+},
+"TC25-F01": {
+"source": "“frequent attack of cough with profuse expectoration of mucoid sputum for several years”",
+"notes": "Resp3"
+},
+"TC25-F02": {
+"source": "“Initially, cough was present during winter only and persisted for 2 to 3 months.”",
+"notes": ""
+},
+"TC25-F03": {
+"source": "“For the last month, it is present throughout day and night”",
+"notes": ""
+},
+"TC25-F04": {
+"source": "“more marked in the morning and also on exposure to cold and dust”",
+"notes": ""
+},
+"TC25-F05": {
+"source": "“occasional tightness all over the chest, which is worse on coughing”",
+"notes": "Preserve the link to coughing."
+},
+"TC25-F06": {
+"source": "“difficulty in breathing, more marked during moderate to severe exertion, relieved by taking rest”",
+"notes": ""
+},
+"TC25-F07": {
+"source": "“2 years back he was admitted in the hospital due to severe attack of cough and breathlessness”",
+"notes": ""
+},
+"TC26-F01": {
+"source": "“severe weakness for 2-3 months, which is gradually worsening”",
+"notes": "Blood2"
+},
+"TC26-F02": {
+"source": "“she finds it difficult to perform regular daily activities”",
+"notes": ""
+},
+"TC26-F03": {
+"source": "“For the last 3 months, she also experiences occasional dizziness, light-headedness, tingling and numbness in both feet and occasional cramps in calf muscles.”",
+"notes": "Preserve the location of the foot symptoms and calf cramps."
+},
+"TC26-F04": {
+"source": "“palpitation, loss of appetite and weight loss for 3 months”",
+"notes": ""
+},
+"TC26-F05": {
+"source": "“There is no history of fever, difficulty in swallowing, bleeding from any sites or menorrhagia and bowel or bladder abnormality.”",
+"notes": "This row scores the bleeding history."
+},
+"TC27-F01": {
+"source": "“five days after extraction of his right third molar”",
+"notes": "Infect2. Five days is the interval from extraction to symptom onset."
+},
+"TC27-F02": {
+"source": "“progressive fullness under the chin”",
+"notes": ""
+},
+"TC27-F03": {
+"source": "“pain associated trismus and dysphagia”",
+"notes": ""
+},
+"TC27-F04": {
+"source": "“He reports fever, chills”",
+"notes": ""
+},
+"TC27-F05": {
+"source": "“some difficulty with breathing particularly when he reclines”",
+"notes": "Preserve the positional trigger."
+},
+"TC27-F06": {
+"source": "“He denies any drug allergy.”",
+"notes": ""
+},
+"TC28-F01": {
+"source": "“a 20-year history of constipation-predominant irritable bowel syndrome”",
+"notes": "GI2"
+},
+"TC28-F02": {
+"source": "“Travel to Asia 9 months ago resulted of several days of no bowel movements, followed by hard, pebbly, and difficult to pass stools for several days.”",
+"notes": ""
+},
+"TC28-F03": {
+"source": "“Bowel movements now occur 2–3 times a day, although she never feels completely empty.”",
+"notes": ""
+},
+"TC28-F04": {
+"source": "“There is no blood or pain with defecation.”",
+"notes": ""
+},
+"TC28-F05": {
+"source": "“she has to strain excessively to evacuate the stool”",
+"notes": ""
+},
+"TC28-F06": {
+"source": "“supplemental fiber to her diet caused uncomfortable abdominal bloating”",
+"notes": ""
+},
+"TC28-F07": {
+"source": "“causing her to miss 2–3 workdays a month and occasional social engagements”",
+"notes": ""
+},
+"TC29-F01": {
+"source": "“left foot pain which started acutely 2 days prior”",
+"notes": "Derma2"
+},
+"TC29-F02": {
+"source": "“the pain was so severe she had trouble putting her shoe on”",
+"notes": ""
+},
+"TC29-F03": {
+"source": "“in the toe webbing between her left fourth and fifth toes”",
+"notes": ""
+},
+"TC29-F04": {
+"source": "“She had applied over-the-counter Lotrimin for athlete’s foot but it did not help.”",
+"notes": ""
+},
+"TC29-F05": {
+"source": "“two thick yellow toenails on her left fourth and fifth toes, which had been like that for years”",
+"notes": "Nail changes predate the acute pain."
+},
+"TC30-F01": {
+"source": "“awakened from sleep last night by exquisite pain in his right knee”",
+"notes": "Renal2"
+},
+"TC30-F02": {
+"source": "“his right knee, which had become swollen and warm”",
+"notes": ""
+},
+"TC30-F03": {
+"source": "“had attended a crab-fest that afternoon”",
+"notes": "The source confirms attendance. Food and alcohol intake are unspecified."
+},
+"TC30-F04": {
+"source": "“He denies trauma to the joint.”",
+"notes": ""
+},
+"TC30-F05": {
+"source": "“subjective fevers and sweats, but hasn't taken his temperature”",
+"notes": ""
+},
+"TC30-F06": {
+"source": "“no other joints currently hurt”",
+"notes": ""
+},
+"TC30-F07": {
+"source": "“an intensely painful left big toe several years ago that got better with ‘aspirin’”",
+"notes": "Keep the prior left toe episode separate from the current right knee pain."
+}
+}

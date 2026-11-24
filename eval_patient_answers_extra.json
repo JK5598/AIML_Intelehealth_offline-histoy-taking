@@ -1,0 +1,1511 @@
+{
+  "TC06": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "Yes, calcium tablets and vitamins.",
+        "has": [
+          "Yes"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No one in my family has had anything like this.",
+        "has": [
+          "None"
+        ]
+      },
+      "Amount of weight gained in kgs": {
+        "say": "I'm not sure how many kilos."
+      },
+      "Since when have you had this symptom?": {
+        "say": "A few months, and it keeps getting worse.",
+        "accept": [
+          "month"
+        ]
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "I feel really tired and weak and achy all over, I can't stand the cold, and I've been constipated. I'm sleepy most of the time, my concentration and memory are worse, my voice has gone hoarse and my skin is rough and dry. My periods haven't stopped; they've been very heavy.",
+        "has": [
+          "Constipation",
+          "Cold intolerance",
+          "Muscle weakness",
+          "Other [describe]"
+        ],
+        "not": [
+          "Amenorrhea"
+        ]
+      },
+      "Other [describe]": {
+        "say": "Sleepy most of the time, poor concentration and memory, hoarse voice, rough dry skin, and my whole body is swelling."
+      },
+      "Have you ever been diagnosed with any of the following specific diseases?": {
+        "say": "No, I've never had thyroid problems.",
+        "not": [
+          "Thyroid dysfunction ( Hypo/hyperthyroidism )"
+        ]
+      },
+      "Change of Appetite": {
+        "say": "My appetite is gone. I'm barely eating anything.",
+        "has": [
+          "Decreased"
+        ]
+      },
+      "Eating habits": {
+        "say": "I'm not sure."
+      },
+      "Do you exercise regularly (>30 min/day)?": {
+        "say": "I'm not sure."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I was given calcium tablets and vitamins at some point.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Yes [Describe]": {
+        "say": "Calcium tablets and vitamins."
+      },
+      "Additional information": {
+        "say": "My periods have been very heavy for the last few months; they used to be normal. No chest pain, palpitations or trouble breathing. No tingling or numbness, and I haven't passed out. No thyroid surgery or radiation to my neck. I haven't given birth in the last six months. Before this started I wasn't on any medicines, not even birth control pills. No one in my family has had anything like this."
+      },
+      "Have you taken any medication recently?": {
+        "say": "Calcium tablets and vitamins. Before this started I wasn't on any medicines, not even birth control pills."
+      },
+      "Pregnancy status": {
+        "say": "I don't know.",
+        "has": [
+          "Don't know"
+        ]
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I don't have high blood pressure or diabetes, and no thyroid problems.",
+        "not": [
+          "High Blood Pressure",
+          "Diabetes"
+        ]
+      },
+      "Name of Medications": {
+        "say": "Calcium tablets and vitamins.",
+        "has": [
+          "Medication name 1"
+        ]
+      },
+      "Medication Name": {
+        "say": "Calcium tablets and vitamins."
+      },
+      "From": {
+        "say": "I'm not sure."
+      },
+      "To": {
+        "say": "I'm not sure."
+      },
+      "How often do you have trouble taking medicines the way you have been told to take them?": {
+        "say": "I'm not sure."
+      },
+      "How long, in days / weeks / months": {
+        "say": "A few months. I can't say exactly."
+      }
+    },
+    "denies": [
+      "Amenorrhea",
+      "High Blood Pressure",
+      "Diabetes",
+      "Thyroid dysfunction ( Hypo/hyperthyroidism )"
+    ],
+    "assumed": [
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "Doctor, I've been putting on weight and my whole body has been swelling up — it's been going on for a few months now, and it keeps getting worse. The odd thing is, I'm barely eating anything; my appetite is gone. I've been feeling really tired and weak, and achy all over. I can't stand the cold — I always want to be somewhere warm. I've been constipated, and I feel sleepy most of the time, even when I'm supposed to be working. My concentration and memory have gone downhill since this all started. My voice has changed too — it's gone hoarse recently. And my skin feels rough and dry."
+  },
+  "TC07": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "No, I'm not taking any medicines.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I don't smoke.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "I hardly ever drink.",
+        "has": [
+          "Yes"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "Nothing runs in the family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Since when have you had this symptom?": {
+        "say": "About two years.",
+        "accept": [
+          "2 year",
+          "two year"
+        ]
+      },
+      "How does this symptom start?": {
+        "say": "I'm not sure."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "It's a discomfort in my upper stomach, and I feel really full even after a small meal. My weight hasn't changed.",
+        "has": [
+          "Abdominal pain",
+          "Other [describe]"
+        ],
+        "not": [
+          "Weight change (kg)"
+        ]
+      },
+      "Which part of the abdomen do you feel pain?": {
+        "say": "My upper stomach, in the middle.",
+        "has": [
+          "Upper (C) - Epigastric"
+        ]
+      },
+      "How did the abdominal pain start?": {
+        "say": "I'm not sure."
+      },
+      "How has the abdominal pain progressed?": {
+        "say": "It's there every day. It comes and goes in how bad it is, but it never really goes away."
+      },
+      "Describe the pain": {
+        "say": "It's a discomfort that never really goes away, though how bad it is changes.",
+        "has": [
+          "Constant"
+        ]
+      },
+      "When does the pain increase?": {
+        "say": "Eating tends to make it worse.",
+        "has": [
+          "Postprandial"
+        ]
+      },
+      "Does the pain go to other part of the body?": {
+        "say": "I'm not sure."
+      },
+      "Other [describe]": {
+        "say": "I feel really full even after just a small meal."
+      },
+      "Has anyone of your family members been diagnosed with cancers or gastric/duodenal ulcer?": {
+        "say": "Nothing runs in the family that I know of.",
+        "has": [
+          "No"
+        ]
+      },
+      "Eating habits": {
+        "say": "I'm not sure."
+      },
+      "Have you ever been diagnosed with any of the following specific diseases?": {
+        "say": "No. My only other medical thing is the occasional migraine.",
+        "has": [
+          "None"
+        ]
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I've had a bunch of tests over the past couple of years, an upper GI series, an ultrasound and a HIDA scan, an endoscopy and a gastric emptying scan, and I was told they were all normal.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Yes [Describe]": {
+        "say": "Upper GI series, ultrasound and HIDA scan, endoscopy and a gastric emptying scan; all normal."
+      },
+      "Additional information": {
+        "say": "It's there every day for two years; how bad it is changes, but it never goes away. My weight hasn't changed. I really just want to know what this is and what can be done about it."
+      },
+      "Pregnancy status": {
+        "say": "No, I'm not pregnant.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I get the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager.",
+        "has": [
+          "Operation",
+          "Other [Describe]"
+        ]
+      },
+      "What was the operation?": {
+        "say": "Appendix out as a kid, and wisdom teeth out as a teenager.",
+        "has": [
+          "Abdomen (Stomach/Liver/Bile/Kidney/Colon)",
+          "Head (Eyes/Ears/Nose/Mouth)"
+        ]
+      },
+      "When did it occur?": {
+        "say": "Appendix as a kid, wisdom teeth as a teenager."
+      },
+      "Other [Describe]": {
+        "say": "Occasional migraines."
+      },
+      "Since": {
+        "say": "I'm not sure."
+      },
+      "How often do you take alcohol?": {
+        "say": "Hardly ever."
+      },
+      "No. of drinks consumed in one go": {
+        "say": "I'm not sure."
+      },
+      "How long, in days / weeks / months": {
+        "say": "About two years."
+      }
+    },
+    "denies": [
+      "Weight change (kg)"
+    ],
+    "assumed": [
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Pregnancy status"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after just a small meal. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of."
+  },
+  "TC09": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "I'm on the birth control pill, and I took some leftover Pyridium.",
+        "has": [
+          "Yes"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Describe the urinary disturbance you are experiencing": {
+        "say": "It burns when I pee; it comes and goes. I'm going more often and I feel like I have to go urgently. Once I saw blood in my urine, and now my urine looks dark.",
+        "has": [
+          "Dysuria",
+          "Increase in Frequency/urgency",
+          "Urine color change"
+        ]
+      },
+      "Increase in Frequency/urgency": {
+        "say": "I go more often, and I feel I have to go right away.",
+        "has": [
+          "Urgency (difficult to postpone urination)",
+          "Daytime frequency (need to urinate again within 2 hours after urination)"
+        ]
+      },
+      "Urine color change": {
+        "say": "Once I saw blood in it. Now it looks dark, I think from the Pyridium I took.",
+        "has": [
+          "Red-brown",
+          "Other (Describe)"
+        ]
+      },
+      "Red-brown": {
+        "say": "I saw blood just once."
+      },
+      "Eyes:Jaundice;": {
+        "say": "I'm not sure."
+      },
+      "Nighttime frequency an average (times/night)": {
+        "say": "I'm not sure."
+      },
+      "Other (Describe)": {
+        "say": "Dark urine now, after the leftover Pyridium."
+      },
+      "Since when have you had this symptom?": {
+        "say": "The past couple of days.",
+        "accept": [
+          "2 day",
+          "two day",
+          "couple"
+        ]
+      },
+      "How did the symptom start?": {
+        "say": "I'm not sure."
+      },
+      "How has the symptom progressed?": {
+        "say": "The burning comes and goes."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "No fever, and my back doesn't hurt.",
+        "not": [
+          "Fever"
+        ]
+      },
+      "Any change in fluid intake?": {
+        "say": "I'm not sure."
+      },
+      "Have you ever been diagnosed with any of the following specific diseases?": {
+        "say": "I've had two urinary infections in the past year; the last one was a few months ago. Both cleared up with antibiotics. I've never had a kidney infection.",
+        "has": [
+          "Prior urinary tract infection (times)"
+        ]
+      },
+      "Prior urinary tract infection (times)": {
+        "say": "Two, in the past year.",
+        "accept": [
+          "2",
+          "two"
+        ]
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I tried cranberry juice and some Pyridium 200 mg left over from my last urinary infection.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Yes [Describe]": {
+        "say": "Cranberry juice and leftover Pyridium 200 mg."
+      },
+      "Additional information": {
+        "say": "My last urinary infection was a few months ago, and both cleared with antibiotics I was given; never a kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I have one partner and we're monogamous, and I've never had an STI. My last period was about three weeks ago, on time. I don't have any children."
+      },
+      "Pregnancy status": {
+        "say": "I don't think so. I'm on the pill and haven't missed any, and my last period was three weeks ago.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a history of any of the following?": {
+        "say": "Just the two urinary infections. Never a kidney infection.",
+        "has": [
+          "None"
+        ]
+      },
+      "Name of Medications": {
+        "say": "The birth control pill and Pyridium.",
+        "has": [
+          "Medication name 1",
+          "Medication name 2"
+        ]
+      },
+      "Medication Name": {
+        "say": "Birth control pill; Pyridium 200 mg."
+      },
+      "From": {
+        "say": "I'm not sure."
+      },
+      "To": {
+        "say": "I'm not sure."
+      },
+      "How often do you have trouble taking medicines the way you have been told to take them?": {
+        "say": "I haven't missed any pills.",
+        "has": [
+          "I always take them as prescribed"
+        ]
+      },
+      "How long, in days / weeks / months": {
+        "say": "A couple of days."
+      }
+    },
+    "denies": [
+      "Fever"
+    ],
+    "assumed": [
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?",
+      "Pregnancy status",
+      "Do you have a history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "Doctor, for the past couple of days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection."
+  },
+  "TC14": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "No, I'm not taking any medicines.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Since when have you had this symptom?": {
+        "say": "Since she collapsed. She slowly woke up over the next two days.",
+        "accept": [
+          "day",
+          "collapse"
+        ]
+      },
+      "Which part of the body do you feel weakness/paralysis?": {
+        "say": "She can't move the right side of her face or her right arm.",
+        "has": [
+          "One limb/part of one limb",
+          "One side of the face"
+        ]
+      },
+      "One limb/part of one limb": {
+        "say": "Her right arm.",
+        "has": [
+          "Right arm"
+        ]
+      },
+      "One side of the face": {
+        "say": "The right side.",
+        "has": [
+          "Right"
+        ]
+      },
+      "How did the symptom start?": {
+        "say": "Suddenly. She collapsed onto the floor while she was cooking.",
+        "has": [
+          "Very sudden"
+        ]
+      },
+      "How has the symptom progressed?": {
+        "say": "I'm not sure."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "She can't feel it when the right side of her face or her right arm is touched. She understands what we say but can't answer out loud; writing is easier for her. She collapsed and was unconscious, and slowly came round over two days.",
+        "has": [
+          "Paresthesia",
+          "Aphasia",
+          "Other [describe]"
+        ]
+      },
+      "Describe the abnormal sensation": {
+        "say": "She can't feel touch there.",
+        "has": [
+          "Sensory loss"
+        ]
+      },
+      "Does the sensation stay the same or is it gradually increasing?": {
+        "say": "I'm not sure."
+      },
+      "Affected areas (Describe)": {
+        "say": "The right side of her face and her right arm."
+      },
+      "Other [describe]": {
+        "say": "She collapsed while cooking and slowly regained consciousness over two days."
+      },
+      "Eating habits": {
+        "say": "I'm not sure."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I called an ambulance when she collapsed.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Yes [Describe]": {
+        "say": "An ambulance came when she collapsed."
+      },
+      "Additional information": {
+        "say": "She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. She understands what we say but can't answer out loud; it's easier for her to write down what she wants to say."
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I'm not sure."
+      },
+      "How long, in days / weeks / months": {
+        "say": "Since she collapsed; she came round over two days."
+      }
+    },
+    "denies": [],
+    "assumed": [
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no",
+      "Has the patient fainted or nearly fainted with this?": "yes"
+    },
+    "opening": "My mother is 77. She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. When she woke up, she couldn’t move the right side of her face or her right arm. She couldn’t feel it when those areas were touched, either. She understood what we said to her, but she couldn’t answer our questions out loud. It was easier for her to write down what she wanted to say."
+  },
+  "TC19": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "No, I'm not taking any medicines.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No known medicine allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Which part of the body has the rash?": {
+        "say": "First on my body. Then tiny spots on my arms and legs, and within a few hours they spread to my body too.",
+        "has": [
+          "All over"
+        ]
+      },
+      "Since when have you had rash?": {
+        "say": "It started with the fever; I'm not sure exactly how many days."
+      },
+      "Rate of rash spread": {
+        "say": "The tiny spots spread from my arms and legs to my body within a few hours.",
+        "has": [
+          "within hours"
+        ]
+      },
+      "How has the rash spread?": {
+        "say": "From my arms and legs to my body.",
+        "has": [
+          "Centripetal"
+        ]
+      },
+      "Since when have you had fever?": {
+        "say": "I'm not sure exactly. It started three days after I got home."
+      },
+      "How does fever change?": {
+        "say": "I'm not sure."
+      },
+      "Severity of Fever": {
+        "say": "I'm not sure."
+      },
+      "In a day, when do you feel fever the most?": {
+        "say": "I'm not sure."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "I have a headache, I felt sick to my stomach and threw up, and the light really bothers me.",
+        "has": [
+          "Headache",
+          "Nausea",
+          "Vomiting",
+          "Other [describe]"
+        ]
+      },
+      "Other [describe]": {
+        "say": "Light really bothers my eyes."
+      },
+      "Any contact with persons with fever & rash in the past month?": {
+        "say": "I'm not sure."
+      },
+      "Any recent exposure to an animal in the past month?": {
+        "say": "I'm not sure."
+      },
+      "Any recent animal/insect/tick bites in the past month?": {
+        "say": "Not that I know of. No ticks.",
+        "has": [
+          "No"
+        ]
+      },
+      "Have you recently eaten any contaminated food or water?": {
+        "say": "I'm not sure."
+      },
+      "Have you ever been diagnosed with HIV/AIDS?": {
+        "say": "I'm not sure."
+      },
+      "Have you recently taken any medication?": {
+        "say": "I'm not sure."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I'm not sure."
+      },
+      "Additional information": {
+        "say": "It started three days after I came home from college for spring break: fever, headache and a rash on my body. Then I felt sick, threw up, and the light bothered me. Then tiny spots came on my arms and legs and spread to my body within a few hours. No known medicine allergies, and no contact with ticks that I know of."
+      },
+      "Pregnancy status": {
+        "say": "No, I'm not pregnant.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I'm not sure."
+      },
+      "How long, in days / weeks / months": {
+        "say": "It started three days after I got home; I can't say exactly."
+      }
+    },
+    "denies": [],
+    "assumed": [
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?",
+      "Pregnancy status"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no",
+      "Is the patient confused, very drowsy or hard to wake? (Ask the family too)": "no",
+      "Has the patient had a seizure or fit with this illness?": "no"
+    },
+    "opening": "I’m 19. Three days after I came home from college for spring break, I got a fever and a headache and noticed a rash on my body. Then I felt sick to my stomach, threw up, and found that the light really bothered me. After that, tiny spots appeared on my arms and legs. Within a few hours, those spots had spread to my body, too. I don’t have any known medicine allergies, and I don’t know of any contact with ticks."
+  },
+  "TC20": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "No, I'm not taking any medicines.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Since when have you had this symptom?": {
+        "say": "I'm not sure."
+      },
+      "How did the symptom start?": {
+        "say": "I'm not sure."
+      },
+      "Do the following situations make the symptom worse?": {
+        "say": "I'm not sure."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "The teeth on the top right hurt, my mouth feels dry, and I sometimes see a little blood when I brush.",
+        "has": [
+          "Toothache",
+          "Gum bleeding",
+          "Other [describe]"
+        ]
+      },
+      "[Describe]": {
+        "say": "The top right teeth hurt, and my upper partial denture bothers me."
+      },
+      "Other [describe]": {
+        "say": "Dry mouth, and my upper partial denture bothers me."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "No. I haven't seen a dentist in three years.",
+        "has": [
+          "None"
+        ]
+      },
+      "Additional information": {
+        "say": "My upper partial denture bothers me. I haven't seen a dentist in three years. I was diagnosed with type 2 diabetes eight years ago. My feet feel strange when I walk, almost like I'm walking on clouds. I also broke my wrist recently without much of an injury; the bone doctor recommended a bone density test, but I haven't had it yet."
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I have type 2 diabetes, for eight years. I also broke my wrist recently without much of an injury.",
+        "has": [
+          "Diabetes",
+          "Other [Describe]"
+        ]
+      },
+      "When were you diagnosed?": {
+        "say": "Eight years ago."
+      },
+      "Current medication": {
+        "say": "I'm not sure."
+      },
+      "Last measured Blood Sugar and HbA1C": {
+        "say": "I don't know.",
+        "has": [
+          "Not known"
+        ]
+      },
+      "Other [Describe]": {
+        "say": "Broke my wrist recently without much of an injury; bone density test recommended."
+      },
+      "How long, in days / weeks / months": {
+        "say": "I'm not sure."
+      }
+    },
+    "denies": [],
+    "assumed": [
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "I’m 67. My upper partial denture bothers me, and the teeth on the top right hurt. My mouth feels dry, and I sometimes see a little blood when I brush. I haven’t seen a dentist in three years. I was diagnosed with type 2 diabetes eight years ago. My feet feel strange when I walk, almost like I’m walking on clouds. I also broke my wrist recently without much of an injury. The bone doctor recommended a bone density test, but I haven’t had it yet."
+  },
+  "TC21": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "No, I'm not taking any medicines.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Which part of the chest do you feel pain?": {
+        "say": "Right behind my breastbone.",
+        "has": [
+          "Retrosternal - Center of the chest"
+        ]
+      },
+      "Since when have you had this symptom?": {
+        "say": "Since about half past midnight.",
+        "accept": [
+          "hour",
+          "night",
+          "midnight",
+          "12"
+        ]
+      },
+      "How did the symptom start?": {
+        "say": "It woke me up from sleep."
+      },
+      "How does the pain feel?": {
+        "say": "It's really bad pain."
+      },
+      "How long does the pain continue?": {
+        "say": "It lasted a long time.",
+        "has": [
+          "Prolonged"
+        ]
+      },
+      "In a day, when do you feel pain the most?": {
+        "say": "It started at night; it woke me up around half past midnight.",
+        "has": [
+          "At night"
+        ]
+      },
+      "Severity": {
+        "say": "It's really bad.",
+        "has": [
+          "Severe, 7-9"
+        ]
+      },
+      "Does this pain go to other part(s) of the body?": {
+        "say": "No, it stayed in my chest.",
+        "has": [
+          "Does not move"
+        ]
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "I broke out in a heavy cold sweat with the pain.",
+        "has": [
+          "Sweating"
+        ]
+      },
+      "Does the symptom get worse with the following situation(s)?": {
+        "say": "I'm not sure."
+      },
+      "Does the symptom get better with the following situation(s)?": {
+        "say": "I'm not sure."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I'm not sure."
+      },
+      "Additional information": {
+        "say": "I woke up around half past midnight with really bad pain right behind my breastbone. It lasted a long time and stayed in my chest. I broke out in a heavy cold sweat with it. I have high blood pressure, and I've been told my cholesterol levels are abnormal."
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I have high blood pressure, and I've been told my cholesterol is abnormal.",
+        "has": [
+          "High Blood Pressure",
+          "Other [Describe]"
+        ]
+      },
+      "Diagnosed on": {
+        "say": "I'm not sure."
+      },
+      "Current medication": {
+        "say": "I'm not sure."
+      },
+      "Other [Describe]": {
+        "say": "Abnormal cholesterol levels."
+      },
+      "How long, in days / weeks / months": {
+        "say": "Since about half past midnight."
+      }
+    },
+    "denies": [],
+    "assumed": [
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "I’m 44. I was asleep when I woke up around half past midnight with really bad pain right behind my breastbone. It lasted a long time and stayed in my chest without spreading anywhere else. I broke out in a heavy cold sweat with the pain. I have high blood pressure, and I’ve been told my cholesterol levels are abnormal."
+  },
+  "TC27": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "No, I'm not taking any medicines.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No known allergies to medicines.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Since when have you had this symptom?": {
+        "say": "It started five days after my right wisdom tooth was pulled. I'm not sure how many days ago."
+      },
+      "How did the symptom start?": {
+        "say": "I'm not sure."
+      },
+      "Do the following situations make the symptom worse?": {
+        "say": "It's hard to swallow, and lying back makes the breathing harder."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "The area under my chin is swelling and keeps getting bigger. It hurts, I have trouble opening my mouth and swallowing, I've had fever and chills, and it's getting hard to breathe, especially when I lie back.",
+        "has": [
+          "Facial swelling",
+          "Fever",
+          "Limited mandibular movement",
+          "Other [describe]"
+        ]
+      },
+      "Other [describe]": {
+        "say": "Trouble swallowing, chills, and it's getting hard to breathe, especially lying back."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I had my right wisdom tooth pulled; this started five days later.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Yes [Describe]": {
+        "say": "Right wisdom tooth pulled; the swelling started five days later."
+      },
+      "Additional information": {
+        "say": "I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger and it hurts. I can't open my mouth well and it's hard to swallow. I've had fever and chills, and it's getting hard to breathe, especially when I lie back. No known allergies to medicines."
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I had my right wisdom tooth pulled recently.",
+        "has": [
+          "Operation"
+        ]
+      },
+      "What was the operation?": {
+        "say": "My right wisdom tooth was pulled.",
+        "has": [
+          "Head (Eyes/Ears/Nose/Mouth)"
+        ]
+      },
+      "When did it occur?": {
+        "say": "Five days before the swelling started."
+      },
+      "How long, in days / weeks / months": {
+        "say": "It started five days after the tooth was pulled. I can't say exactly."
+      }
+    },
+    "denies": [],
+    "assumed": [
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "I’m 44. I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger. It hurts, and I’m having trouble opening my mouth and swallowing. I’ve had a fever and chills. It’s also getting hard to breathe, especially when I lie back. I don’t have any known allergies to medicines."
+  },
+  "TC28": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "Yes, Lexapro, and milk of magnesia now and then.",
+        "has": [
+          "Yes"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Since when have you had this symptom?": {
+        "say": "About nine months, since a trip to Asia. I've had IBS with constipation for 20 years.",
+        "accept": [
+          "9 month",
+          "nine month"
+        ]
+      },
+      "How many times each week do you have satisfactory bowel movements/pass stool?": {
+        "say": "I go two or three times a day, but I never feel like I've emptied completely."
+      },
+      "How much time does it take to pass stool?": {
+        "say": "I'm not sure."
+      },
+      "What is the consistency of the stool?": {
+        "say": "I'm not sure."
+      },
+      "Has the shape of the stool changed?": {
+        "say": "I'm not sure."
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "I have to push really hard, and I never feel like I've emptied my bowels completely. There's no blood, and it doesn't hurt when I go. Fiber made my belly feel bloated.",
+        "has": [
+          "Tenesmus",
+          "Other [describe]"
+        ],
+        "not": [
+          "Blood in stool",
+          "Rectal bleeding",
+          "Pain around the anus while passing stool"
+        ]
+      },
+      "Enter frequency of this symptom": {
+        "say": "Every time, two or three times a day."
+      },
+      "Other [describe]": {
+        "say": "I have to push really hard, and fiber made my belly uncomfortably bloated."
+      },
+      "Have you taken any medication or had any addiction?": {
+        "say": "Lexapro, and milk of magnesia now and then.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Any recent change in diet?": {
+        "say": "I tried adding fiber, but it made my belly bloated.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Yes [Describe]": {
+        "say": "Lexapro and occasional milk of magnesia; I also tried adding fiber, which made me bloated."
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "It used to be well controlled with Lexapro and milk of magnesia now and then. I tried fiber.",
+        "has": [
+          "Yes [Describe]"
+        ]
+      },
+      "Additional information": {
+        "say": "I've had irritable bowel syndrome for 20 years, mostly constipation; it was well controlled with Lexapro and occasional milk of magnesia. Nine months ago on a trip to Asia I went several days without a bowel movement, then had hard stools like little pebbles that were hard to pass. Now I go two or three times a day but have to push hard and never feel empty. No blood and no pain. Fiber made me bloated. I miss two or three days of work a month, and sometimes social plans."
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I've had irritable bowel syndrome for 20 years.",
+        "has": [
+          "Other [Describe]"
+        ]
+      },
+      "Other [Describe]": {
+        "say": "Irritable bowel syndrome for 20 years, mostly constipation."
+      },
+      "Name of Medications": {
+        "say": "Lexapro and milk of magnesia.",
+        "has": [
+          "Medication name 1",
+          "Medication name 2"
+        ]
+      },
+      "Medication Name": {
+        "say": "Lexapro; milk of magnesia now and then."
+      },
+      "From": {
+        "say": "I'm not sure."
+      },
+      "To": {
+        "say": "I'm not sure."
+      },
+      "How often do you have trouble taking medicines the way you have been told to take them?": {
+        "say": "I'm not sure."
+      },
+      "How long, in days / weeks / months": {
+        "say": "About nine months."
+      }
+    },
+    "denies": [
+      "Blood in stool",
+      "Rectal bleeding",
+      "Pain around the anus while passing stool"
+    ],
+    "assumed": [
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "I’m 57, and I’ve had irritable bowel syndrome for 20 years, with constipation as my main problem. It used to be well controlled with Lexapro and occasional milk of magnesia. When I traveled to Asia nine months ago, I went several days without a bowel movement. Then, for a few days, my stools were hard, like little pebbles, and difficult to pass. Now I go two or three times a day, but I have to push really hard and never feel like I’ve emptied my bowels completely. I don’t see any blood, and it doesn’t hurt when I go. I tried adding fiber, but it made my belly feel uncomfortably bloated. This has been disruptive enough that I miss two or three days of work each month, and sometimes I miss social plans, too."
+  },
+  "TC30": {
+    "questions": {
+      "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
+        "say": "Yes, hydrochlorothiazide for my blood pressure.",
+        "has": [
+          "Yes"
+        ]
+      },
+      "Do you have any allergies?": {
+        "say": "No, no allergies.",
+        "has": [
+          "No known allergies"
+        ]
+      },
+      "Do you chew tobbaco?": {
+        "say": "No, I don't chew tobacco.",
+        "has": [
+          "Do not Chew"
+        ]
+      },
+      "Smoking history": {
+        "say": "I've never smoked.",
+        "has": [
+          "Never-smoker"
+        ]
+      },
+      "Alcohol use": {
+        "say": "No, I don't drink.",
+        "has": [
+          "No"
+        ]
+      },
+      "Do you have a family history of any of the following?": {
+        "say": "No, nothing runs in my family that I know of.",
+        "has": [
+          "None"
+        ]
+      },
+      "Which part of the leg or hip do you feel pain?": {
+        "say": "My right knee.",
+        "has": [
+          "Right leg"
+        ]
+      },
+      "Right leg": {
+        "say": "The knee.",
+        "has": [
+          "Knee"
+        ]
+      },
+      "Knee": {
+        "say": "My right knee is swollen and warm.",
+        "has": [
+          "Swelling"
+        ]
+      },
+      "Swelling": {
+        "say": "Yes, it's swollen.",
+        "has": [
+          "Yes"
+        ]
+      },
+      "Site of knee pain": {
+        "say": "I'm not sure."
+      },
+      "Since when have you had this symptom?": {
+        "say": "Since last night.",
+        "accept": [
+          "night",
+          "1 day",
+          "one day",
+          "yesterday",
+          "hour"
+        ]
+      },
+      "Pain characteristics": {
+        "say": "It's terrible pain."
+      },
+      "How did the symptom start?": {
+        "say": "Suddenly. I felt fine yesterday, and it woke me up last night.",
+        "has": [
+          "Sudden (minutes to hours)"
+        ]
+      },
+      "How has the symptom progressed?": {
+        "say": "I'm not sure."
+      },
+      "Does the pain move to other parts of the body?": {
+        "say": "No, only my right knee hurts.",
+        "has": [
+          "Pain does not radiate"
+        ]
+      },
+      "Do you have the following symptom(s)?": {
+        "say": "It's swollen and warm, it woke me up at night, and I've felt feverish and sweaty.",
+        "has": [
+          "Fever",
+          "Swelling in the painful area",
+          "Night pain",
+          "Other [describe]"
+        ]
+      },
+      "Other [describe]": {
+        "say": "The knee feels warm, and I've been sweaty. I haven't checked my temperature."
+      },
+      "Is the pain in your leg made worse by the following(s)?": {
+        "say": "I'm not sure."
+      },
+      "Have you ever been diagnosed with any of following specific diseases?": {
+        "say": "I have high blood pressure. Several years ago I had really bad pain in my left big toe that got better with aspirin.",
+        "has": [
+          "Hypertension",
+          "Other (Describe)"
+        ]
+      },
+      "Other (Describe)": {
+        "say": "Years ago, very bad pain in my left big toe that got better with aspirin."
+      },
+      "Recently have you had a trauma or surgery?": {
+        "say": "No, I didn't injure it.",
+        "has": [
+          "No"
+        ]
+      },
+      "Have you ever taken any kind of injection drug?": {
+        "say": "No.",
+        "has": [
+          "No"
+        ]
+      },
+      "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
+        "say": "I'm not sure."
+      },
+      "Additional information": {
+        "say": "I felt fine yesterday and went to a crab feast in the afternoon. Last night I woke up with terrible pain in my right knee; it's swollen and warm and I didn't injure it. I've felt feverish and sweaty but haven't checked my temperature. No other joints hurt right now. Several years ago my left big toe was very painful and got better with aspirin. I have high blood pressure and take hydrochlorothiazide."
+      },
+      "Do you have a history of any of the following?": {
+        "say": "I have high blood pressure.",
+        "has": [
+          "High Blood Pressure"
+        ]
+      },
+      "Diagnosed on": {
+        "say": "I'm not sure."
+      },
+      "Current medication": {
+        "say": "Hydrochlorothiazide.",
+        "has": [
+          "[Describe]"
+        ]
+      },
+      "[Describe]": {
+        "say": "Hydrochlorothiazide."
+      },
+      "Name of Medications": {
+        "say": "Hydrochlorothiazide.",
+        "has": [
+          "Medication name 1"
+        ]
+      },
+      "Medication Name": {
+        "say": "Hydrochlorothiazide."
+      },
+      "From": {
+        "say": "I'm not sure."
+      },
+      "To": {
+        "say": "I'm not sure."
+      },
+      "How often do you have trouble taking medicines the way you have been told to take them?": {
+        "say": "I'm not sure."
+      },
+      "How long, in days / weeks / months": {
+        "say": "Since last night."
+      }
+    },
+    "denies": [],
+    "assumed": [
+      "Do you have any allergies?",
+      "Do you chew tobbaco?",
+      "Smoking history",
+      "Alcohol use",
+      "Do you have a family history of any of the following?",
+      "Have you ever taken any kind of injection drug?"
+    ],
+    "checks": {
+      "Is the patient drinking poorly or unable to drink?": "no",
+      "Are the eyes sunken?": "no",
+      "Pinch the skin of the belly and let go: does it go back very slowly (2 seconds or more)?": "no",
+      "Is the patient unusually sleepy, floppy or hard to wake?": "no",
+      "Is the patient too breathless to say a full sentence (or, for a baby, to feed)?": "no",
+      "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
+      "Are the lips or tongue blue or grey?": "no"
+    },
+    "opening": "I’m 52. I felt fine yesterday and went to a crab feast that afternoon. Then last night I woke up with terrible pain in my right knee. It was swollen and warm, and I hadn’t injured it. I’ve felt feverish and sweaty, but I haven’t checked my temperature. None of my other joints hurt right now. Several years ago I had really bad pain in my left big toe, and it got better when I took aspirin. I also have high blood pressure and take hydrochlorothiazide."
+  }
+}
