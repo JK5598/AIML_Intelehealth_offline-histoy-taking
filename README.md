@@ -52,7 +52,7 @@ which is why a teammate spot-checks it.
 | `smoke_test.py` | Runs a whole visit with automatic answers, so you can test without typing, and saves `smoke_visit.json` |
 | `evaluate_mapping.py` | Compares baseline vs AI on the test set in `test_cases.csv` |
 | `test_cases.csv` | Test phrases with expected answers; open it in Excel, and a clinician can fill in `checked_by` |
-| `red_flag_cases.csv` | 87 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
+| `red_flag_cases.csv` | 108 test cases: complaint, age, patient words, picked options, and the red flags (and possible red flags) they should raise |
 | `evaluate_explanations.py` | Asks a model to explain every word in `explanation_test_cases.csv` and saves the answers for a person to grade |
 | `explanation_test_cases.csv` | 24 medical words from six protocols with the meaning we expect; a clinician can fill in `checked_by` |
 | `workload_report.py` | Runs 3 automatic visits with a model (about half the option questions answered in words) and prints AI calls, tokens and seconds per visit, split by task |
@@ -690,3 +690,26 @@ Re-scored the Nov 15 records with the new summary (eval_results/2026-11-18_patie
 90.6% -> 99.0% (TC01-TC03 and TC05 100%, TC04 95%). Still partly: TC04's sputum colour (the patient didn't know
 it) and "chest tightness" saved as "Chest pain/discomfort". The recovered facts are quotes, not structured
 answers, and the re-score was done by Claude, so a fresh run and a teammate's check should confirm it.
+
+## Red-flag fixes from the new test cases (November 24, 2026)
+
+Running TC06-TC30 found six rule problems, and two more extra flags turned up when re-checking (TC05, TC27).
+All fixed in `red_flags.py` (search "Nov 24 fix") by Morrison:
+
+| Problem | Cause | Fix |
+|---|---|---|
+| "Burn" fired on "it burns when I pee" (TC09) | keyword was plain "burns" | the Burns complaint (whole-answer match) and injury phrasings ("burned my", "got burnt", "scald", ...) only |
+| "Acute general weakness" fired on months-long weakness (TC06), and on the Fever protocol's "General weakness" option (TC05) | TC06 actually fired on "I **can't stand** the cold"; no duration check; any "General weakness" tick counted | "can't stand" needs "up"; "general weakness" now only counts when it is the visit's complaint (Fatigue & General weakness) and started within about a week (team decision: more than a week = not acute). "Too weak to stand / walk" still always counts |
+| "collapsed" wasn't fainting (TC14) | not in the fainting keywords | "collapsed", "lost/regained consciousness", "was unconscious" now raise Recent fainting |
+| "swelling under my chin" wasn't neck swelling (TC27) | only "neck" phrasings | under/below the chin or jaw counts, with a swell/swollen/lump word; more swallowing phrasings |
+| "Unresponsive" fired on past unconsciousness (TC14) | any mention counted | new `present_only`: "was unconscious" / "had been unresponsive" don't count, "is / still / has been unconscious" do. Whole words only, which also stops "glaucoma" matching "coma" (it raised Emergent before) |
+| "Weight loss, swallowing difficulty or abdominal mass" (Refer) fired on Ludwig's angina (TC27) | the GI referral (p. 131) counted swallowing trouble with any cause | new `explained_by`: swallowing trouble already flagged by the neck-swelling or epiglottitis rule no longer adds the GI flag (one existing test row updated to match) |
+| Knee protocol has no severity question, so "Severe pain" couldn't fire (TC30) | only the protocols' severity options counted | patient phrasings too ("terrible pain", "excruciating", "can't bear the pain", ...) |
+
+**Tests:** 21 new rows in `red_flag_cases.csv`, including ones that must stay silent (dysuria, "can't stand the
+cold", weakness for 3 months or 10 days, the Fever protocol's "General weakness" tick, pain under the chin without
+swelling, glaucoma): 108/108. Rebuilding visits from the answer sheets: TC05, TC06, TC09, TC14, TC27 and TC30 now
+give exactly the expected flags. TC19 still needs the meningitis follow-up answers in the app (as designed).
+
+**Still open:** a real severity question for pain protocols that lack one would need an intake change, so it's
+left for after Dec 1. "About a week" for acute weakness is a team decision, not from IITT.
