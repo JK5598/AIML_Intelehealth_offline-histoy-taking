@@ -38,7 +38,7 @@ import negation
 #              keywords no longer count for this rule (the same sign is already flagged with its real cause)
 #   present_only: an any_of keyword only counts if it describes the patient now. "She was unconscious" or
 #              "had been unresponsive" is the past, so it doesn't count (it raises "Recent fainting" instead);
-#              "is unconscious", "has been unconscious" and "still unresponsive" do count. Whole words only,
+#              "is unconscious", "has been unconscious", "was found unconscious" and "still unresponsive" do count. Whole words only,
 #              so "coma" does not match "glaucoma".
 # Keywords copy the protocol option labels exactly where possible (including the protocol's own
 # spelling, e.g. "conciousness"), then add common patient phrasings as backups.
@@ -72,7 +72,8 @@ STIFF_NECK = ["neck stiffness", "stiff neck"]
 FAINTING = ["fainting/loss of conciousness", "loss of consciousness (syncope)", "fainting spells", "| syncope |",
             "fainted", "fainting", "passed out", "blacked out", "collapsed", "collapsing", "| collapse |",
             "lost consciousness", "loss of consciousness", "regained consciousness", "was unconscious",
-            "were unconscious", "became unconscious", "knocked unconscious", "knocked out"]
+            "were unconscious", "became unconscious", "knocked unconscious"]
+# Not "knocked out": "my tooth got knocked out" raised Recent fainting (June's review, Nov 25).
 VISION = ["visual impairment/change in vision", "double vision", "blurred vision", "change in field of vision",
           "decreased eyesight", "loss of vision", "lost vision", "vision loss"]
 FOCAL_NEURO = ["specific weakness in particular part or side of the body", "weakness on one side",
@@ -502,7 +503,9 @@ def age_applies(rule, patient):
 
 # present_only: the nearest tense word in the 3 words before a keyword decides past or now.
 PAST_WORDS = {"was", "were", "had", "became", "become", "went", "got", "once", "previously", "earlier"}
-NOW_WORDS = {"is", "are", "still", "now", "has", "have", "keeps", "remains"}
+# "found" counts as now and beats "was" because it is nearer: "was found unconscious" means unconscious now
+# (June's review, Nov 25).
+NOW_WORDS = {"is", "are", "still", "now", "has", "have", "keeps", "remains", "found"}
 # With no tense word, the keyword counts as now, unless the visit says the patient came round.
 CAME_ROUND = ["regained consciousness", "came round", "came around", "is awake now", "now awake", "is alert now",
               "woke up after"]
