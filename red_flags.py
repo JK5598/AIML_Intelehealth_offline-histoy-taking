@@ -1,6 +1,9 @@
+import re
+
 import negation
 
 # DRAFT red-flag rules for all 52 complaints (78 rules). Not yet clinician-checked.
+# Nov 24: six fixes from the TC06-TC30 run (search for "Nov 24 fix").
 #
 # Sources:
 #   Guidelines = Intelehealth, Clinical Treatment Guidelines for Telemedicine Doctors (288 pages).
@@ -28,6 +31,15 @@ import negation
 #   follow_up: when the rule fires, the app asks these yes/no questions (see FOLLOW_UPS),
 #              skipping any the visit already answered
 #   min_age / max_age (years): rule only applies if min_age <= age < max_age
+#   any_of_if_recent: like any_of, but ignored when the visit's duration answer (or the patient's words about
+#              weakness) says more than a week (Nov 24 fix: "acute" weakness fired on months-long weakness)
+#   recent_complaint: any_of_if_recent keywords only count when this is the visit's complaint
+#   explained_by: {"rules": [...], "keywords": [...]}: if one of those (more specific) rules fired, these
+#              keywords no longer count for this rule (the same sign is already flagged with its real cause)
+#   present_only: an any_of keyword only counts if it describes the patient now. "She was unconscious" or
+#              "had been unresponsive" is the past, so it doesn't count (it raises "Recent fainting" instead);
+#              "is unconscious", "has been unconscious", "was found unconscious" and "still unresponsive" do count. Whole words only,
+#              so "coma" does not match "glaucoma".
 # Keywords copy the protocol option labels exactly where possible (including the protocol's own
 # spelling, e.g. "conciousness"), then add common patient phrasings as backups.
 # Patient words lose punctuation before matching ("can't" becomes "cant"), so patient-phrase
@@ -55,8 +67,13 @@ ALTERED_MENTAL = ["confused", "confusion", "altered mental", "altered sensorium"
                   "drowsy", "very sleepy", "agitated", "lethargic"]
 FEVER_OR_COLD = ["fever", "hypothermia", "very cold body"]
 STIFF_NECK = ["neck stiffness", "stiff neck"]
+# Nov 24 fix: "collapsed" counts as fainting, and so does unconsciousness in the past ("was unconscious",
+# "regained consciousness"), which no longer raises the Emergent "Unresponsive" flag (see present_only).
 FAINTING = ["fainting/loss of conciousness", "loss of consciousness (syncope)", "fainting spells", "| syncope |",
-            "fainted", "fainting", "passed out", "blacked out"]
+            "fainted", "fainting", "passed out", "blacked out", "collapsed", "collapsing", "| collapse |",
+            "lost consciousness", "loss of consciousness", "regained consciousness", "was unconscious",
+            "were unconscious", "became unconscious", "knocked unconscious"]
+# Not "knocked out": "my tooth got knocked out" raised Recent fainting (June's review, Nov 25).
 VISION = ["visual impairment/change in vision", "double vision", "blurred vision", "change in field of vision",
           "decreased eyesight", "loss of vision", "lost vision", "vision loss"]
 FOCAL_NEURO = ["specific weakness in particular part or side of the body", "weakness on one side",
@@ -65,12 +82,18 @@ FOCAL_NEURO = ["specific weakness in particular part or side of the body", "weak
                "slurred/slow speech", "weakness (slurred speech/dropping a cup)",
                "numbness/weakness affecting one or both leg", "drooping eyelids", "drooping of eyelids"]
 DEHYDRATION_SIGNS = ["sunken eyes", "very slow skin pinch", "drinks poorly", "unable to drink", "lethargic"]
-BURNS = ["burns", "thermal injury (burn)"]
+# Nov 24 fix: plain "burns" also matched "it burns when I pee". "| burns |" is the Burns complaint (or an answer
+# that is exactly "Burns"); the rest are injury phrasings. "Burning" (urine, chest, stomach) never matches.
+BURNS = ["| burns |", "| burn |", "thermal injury (burn)", "burn injury", "burn wound", "burn on my", "burns on my",
+         "burn on his", "burns on his", "burn on her", "burns on her", "burns from", "got burned", "got burnt",
+         "was burned", "was burnt", "burned my", "burnt my", "burned his", "burnt his", "burned her", "burnt her",
+         "burned by", "burnt by", "burned with", "burnt with", "burned it", "burnt it", "scald", "boiling water",
+         "hot oil"]
 
 RULES = [
     # ================= Emergent: IITT RED =================
     {"name": "Unresponsive", "level": "Emergent", "source": "IITT", "section": "both charts, red: top",
-     "any_of": ["unresponsive", "unconscious", "not responding", "coma"]},
+     "present_only": True, "any_of": ["unresponsive", "unconscious", "not responding", "coma", "comatose"]},
     {"name": "Respiratory distress, stridor or cyanosis", "level": "Emergent", "source": "IITT",
      "section": "both charts, red: Airway & Breathing; Reference Card: signs of respiratory distress",
      "also": "Guidelines p. 271 lists the same signs under Pneumonia",
@@ -176,8 +199,14 @@ RULES = [
                 "throat swelling"]},
     {"name": "Neck swelling with breathing or swallowing trouble", "level": "Urgent", "source": "IITT",
      "section": "both charts, yellow: Airway & Breathing (neck mass, applied only with airway symptoms)",
-     "groups": [["swelling in neck", "neck swelling", "swelling in the neck", "lump in my neck", "lump in the neck"],
-                ["difficulty swallowing"] + BREATHING]},
+     "also": "Nov 24 fix: swelling under the chin or jaw counts as neck swelling",
+     "need_any": ["swell", "swollen", "lump", "mass"],
+     "groups": [["swelling in neck", "neck swelling", "swelling in the neck", "lump in my neck", "lump in the neck",
+                 "swollen neck", "neck is swollen", "neck mass", "under my chin", "under the chin", "under his chin",
+                 "under her chin", "below my chin", "below the chin", "under my jaw", "under the jaw", "below my jaw",
+                 "below the jaw"],
+                ["difficulty swallowing", "trouble swallowing", "hard to swallow", "cant swallow", "can't swallow",
+                 "cannot swallow", "unable to swallow"] + BREATHING]},
     {"name": "Vomits everything or unable to drink", "level": "Urgent", "source": "IITT",
      "section": "both charts, yellow: Circulation", "follow_up": "dehydration",
      "any_of": ["vomits everything", "vomiting everything", "cant keep anything down", "can't keep anything down",
@@ -216,13 +245,24 @@ RULES = [
      "section": "Age < 12 chart, yellow: Disability", "max_age": ADULT,
      "any_of": ["| restless |", "restlessness", "continuously irritable", "lethargic", "lethargy", "very sleepy"]},
     {"name": "Acute general weakness", "level": "Urgent", "source": "IITT", "section": "Age >= 12 chart, yellow: Disability",
-     "min_age": ADULT, "any_of": ["general weakness", "too weak to stand", "cant stand", "can't stand"]},
+     "also": "Nov 24 fix: 'general weakness' only counts as the visit's complaint (not the Fever protocol's "
+             "'General weakness' symptom option) and only if it started within about a week (team decision); "
+             "'can't stand' needs 'up' ('I can't stand the cold' fired it)",
+     "min_age": ADULT, "any_of": ["too weak to stand", "cant stand up", "can't stand up", "cannot stand up",
+                                  "unable to stand", "too weak to walk", "cant get up", "can't get up"],
+     "any_of_if_recent": ["general weakness", "generalised weakness", "generalized weakness"],
+     "recent_complaint": "Fatigue & General weakness"},
     {"name": "Acute focal neurologic complaint", "level": "Urgent", "source": "IITT",
      "section": "Age >= 12 chart, yellow: Disability", "min_age": ADULT, "any_of": FOCAL_NEURO},
     {"name": "Acute visual disturbance", "level": "Urgent", "source": "IITT",
      "section": "Age >= 12 chart, yellow: Disability", "min_age": ADULT, "any_of": VISION},
     {"name": "Severe pain", "level": "Urgent", "source": "IITT", "section": "both charts, yellow: Disability",
-     "any_of": SEVERE_PAIN + ["worst pain", "unbearable pain"]},
+     "also": "Nov 24 fix: patient phrasings too, because some protocols (e.g. Leg, Knee or Hip Pain) have no "
+             "severity question",
+     "any_of": SEVERE_PAIN + ["worst pain", "unbearable pain", "pain is unbearable", "terrible pain", "severe pain",
+                              "excruciating", "agonizing", "agonising", "extreme pain", "intense pain",
+                              "really bad pain", "very bad pain", "cant bear the pain", "can't bear the pain",
+                              "cannot bear the pain"]},
     {"name": "Child: headache", "level": "Urgent", "source": "IITT", "section": "Age < 12 chart, yellow: Other",
      "max_age": ADULT, "any_of": ["headache"]},
     {"name": "Child: pregnancy", "level": "Urgent", "source": "IITT", "section": "Age < 12 chart, yellow: Other",
@@ -264,7 +304,11 @@ RULES = [
     {"name": "Persistent vomiting", "level": "Refer", "source": "Guidelines", "page": 159,
      "also": "p. 131, p. 138, p. 155", "any_of": PERSISTENT_VOMITING},
     {"name": "Weight loss, swallowing difficulty or abdominal mass", "level": "Refer", "source": "Guidelines",
-     "page": 131, "also": "GERD p. 155",
+     "page": 131, "also": "GERD p. 155. Nov 24 fix: the GI referral is for food-pipe trouble, so swallowing trouble "
+                          "already flagged with a neck or throat cause doesn't add it",
+     "explained_by": {"rules": ["Neck swelling with breathing or swallowing trouble",
+                                "Suspected epiglottitis (drooling with swallowing or breathing trouble)"],
+                      "keywords": ["difficulty swallowing", "trouble swallowing", "dysphagia"]},
      "any_of": ["weight loss", "losing weight", "lost weight", "difficulty swallowing", "trouble swallowing",
                 "dysphagia", "abdominal mass", "lump in my stomach", "lump in the stomach", "lump in abdomen"]},
     {"name": "Chest pain", "level": "Refer", "source": "Guidelines", "page": 155,
@@ -457,7 +501,71 @@ def age_applies(rule, patient):
     return rule.get("min_age", 0) <= age < rule.get("max_age", 200)
 
 
-def rule_matches(rule, text, patient=None):
+# present_only: the nearest tense word in the 3 words before a keyword decides past or now.
+PAST_WORDS = {"was", "were", "had", "became", "become", "went", "got", "once", "previously", "earlier"}
+# "found" counts as now and beats "was" because it is nearer: "was found unconscious" means unconscious now
+# (June's review, Nov 25).
+NOW_WORDS = {"is", "are", "still", "now", "has", "have", "keeps", "remains", "found"}
+# With no tense word, the keyword counts as now, unless the visit says the patient came round.
+CAME_ROUND = ["regained consciousness", "came round", "came around", "is awake now", "now awake", "is alert now",
+              "woke up after"]
+
+
+def whole_word(word, text):
+    return re.finditer(r"(?<![a-z])" + re.escape(word) + r"(?![a-z])", text)
+
+
+def describes_now(word, text):
+    """True if `word` appears at least once as the patient's state now, not only in the past."""
+    came_round = any(phrase in text for phrase in CAME_ROUND)
+    for match in whole_word(word, text):
+        piece_start = text.rfind("|", 0, match.start()) + 1
+        before = re.findall(r"[a-z]+", text[piece_start:match.start()])[-3:]
+        tense = None
+        for w in reversed(before):
+            if w in NOW_WORDS:
+                tense = "now"
+                break
+            if w in PAST_WORDS:
+                tense = "past"
+                break
+        if tense == "now" or (tense is None and not came_round):
+            return True
+    return False
+
+
+# "Since when have you had this symptom?" / "How long, in days / weeks / months"
+DURATION_QUESTION = re.compile(r"since when|how long|duration")
+# more than about a week: "weeks" (plural), months, years, or 8+ days. "a week" / "1 week" still counts as acute.
+LONG_DURATION = re.compile(r"(?<![a-z])(weeks|months?|years?|chronic)(?![a-z])|long time|long-standing")
+DAYS = re.compile(r"(\d+)\s*days?")
+WEAKNESS_FOR_LONG = re.compile(r"weak(ness)?(?![a-z]).{0,40}?(?<![a-z])(for|since|past|last|over)(?![a-z]).{0,25}?"
+                               r"(weeks|months?|years?)(?![a-z])|(weeks|months?|years?) of (general )?weakness")
+
+
+def long_duration(text):
+    if LONG_DURATION.search(text):
+        return True
+    return any(int(days) >= 8 for days in DAYS.findall(text))
+
+
+def symptom_is_long_standing(answers):
+    """True if the duration answer says more than a week, or the patient said the weakness has lasted that long.
+    Used by any_of_if_recent (IITT 'acute' general weakness). Team decision, not from the IITT chart."""
+    for answer in answers:
+        if answer.get("status") in ("said_no", "skipped"):
+            continue
+        said = " ".join(str(x) for x in [*answer.get("answers", []), answer.get("value") or "",
+                                          answer.get("patient_words") or ""]).lower()
+        label = (answer.get("question_label") or "").lower()
+        if DURATION_QUESTION.search(label) and long_duration(said):
+            return True
+        if WEAKNESS_FOR_LONG.search(said):
+            return True
+    return False
+
+
+def rule_matches(rule, text, patient=None, long_standing=False):
     if not age_applies(rule, patient):
         return False
     if rule.get("always"):
@@ -470,13 +578,31 @@ def rule_matches(rule, text, patient=None):
         return all(any(word in text for word in group) for group in rule["groups"])
     if "all_of" in rule:
         return all(word in text for word in rule["all_of"])
-    if "any_of" in rule:
-        return any(word in text for word in rule["any_of"])
+    if "any_of" in rule or "any_of_if_recent" in rule:
+        if rule.get("present_only"):
+            hit = any(describes_now(word, text) for word in rule.get("any_of", []))
+        else:
+            hit = any(word in text for word in rule.get("any_of", []))
+        complaint_ok = ("recent_complaint" not in rule
+                        or text.startswith("| " + rule["recent_complaint"].lower() + " |"))
+        if not hit and not long_standing and complaint_ok:
+            hit = any(word in text for word in rule.get("any_of_if_recent", []))
+        return hit
     return False
 
 
-def matching_rules(text, patient=None):
-    return [rule["name"] for rule in RULES if rule_matches(rule, text, patient)]
+def matching_rules(text, patient=None, long_standing=False):
+    names = [rule["name"] for rule in RULES if rule_matches(rule, text, patient, long_standing)]
+    return [name for name in names if not explained_elsewhere(RULES_BY_NAME[name], names, text, patient, long_standing)]
+
+
+def explained_elsewhere(rule, fired, text, patient, long_standing):
+    """explained_by: if a more specific rule already fired, does this rule still fire without those keywords?"""
+    info = rule.get("explained_by")
+    if not info or not any(name in fired for name in info["rules"]):
+        return False
+    reduced = dict(rule, any_of=[w for w in rule.get("any_of", []) if w not in info["keywords"]])
+    return not rule_matches(reduced, text, patient, long_standing)
 
 
 def said_no_text(complaint, answers):
@@ -492,10 +618,11 @@ def check(complaint, answers, patient=None):
     A possible red flag only shows up inside a 'no ...' phrase. We still show it, because
     missing a real red flag is worse than a false alarm. Once the CHW has saved the matching
     'No', the possible red flag is dropped."""
-    flags = matching_rules(visit_text(complaint, answers, keep_no_phrases=False), patient)
-    explained = matching_rules(said_no_text(complaint, answers), patient)
+    long_standing = symptom_is_long_standing(answers)
+    flags = matching_rules(visit_text(complaint, answers, keep_no_phrases=False), patient, long_standing)
+    explained = matching_rules(said_no_text(complaint, answers), patient, long_standing)
     possible = []
-    for name in matching_rules(visit_text(complaint, answers, keep_no_phrases=True), patient):
+    for name in matching_rules(visit_text(complaint, answers, keep_no_phrases=True), patient, long_standing):
         if name not in flags and name not in explained:
             possible.append(name)
     return sort_by_level(flags), sort_by_level(possible)
