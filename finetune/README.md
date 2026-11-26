@@ -85,6 +85,25 @@ time, GPU memory). It reuses the first run's replay answers (`make_replay.py` ma
 `data/explain_before.json`), and saves nothing to Google Drive: upload `ft_data_unsloth.zip`, and the results and the
 GGUF file are downloaded to the laptop at the end.
 
+## Hand-check of the data (Lia and Morrison, Nov 26)
+
+Lia and Morrison checked 50 examples each in `Group6_Finetune_Data_Check.xlsx` (100 in all): 94 Y, 6 N. None of the
+6 has a plainly wrong answer; in each, the patient's sentence could also fit a second option:
+
+| ID | Split | Sentence | Why it's unclear |
+|---|---|---|---|
+| T0412 | train | "I vomit after the headache starts." | After headache, or During? |
+| T0399 | train | "The pain is on the left side, in the middle of my belly." | Left Lumbar, or Umbilical? |
+| T0305 | train | "Urine leaks when I sneeze. It also leaks sometimes for no reason at all." | "Sometimes" is not really Continuous |
+| T0223 | train | "It's a pounding headache, like a hammer." | Pounding vs Throbbing (the patient said "pounding", so kept) |
+| T0011 | holdout | "My stool is very hard, like small stones." | Hard, or Lumpy? |
+| T0033 | holdout | "...itching and a rash all over, I am allergic to them." | Allergy, or Side-effects? |
+
+**Decision: no retraining.** The 4 training targets are 4 of 473, and they are unclear sentences, not wrong answers.
+**Holdout without the 2 unclear targets** (12 of 490 prompts dropped, 4-bit files): original 69.9%, fine-tuned 95.0%
+(McNemar p < 0.001), the same as with them (69.6% -> 94.3%). We report 94.3% (the more cautious number). The data
+files are left as they were trained; if we ever train again, reword these 6 sentences first.
+
 ## Steps
 
 1. **Hand-check** (Lia and Morrison): `Group6_Finetune_Data_Check.xlsx`, 50 rows each. Fix or drop any row marked N

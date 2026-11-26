@@ -61,7 +61,7 @@
  },
  "TC07": {
   "story": [
-   "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after just a small meal. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of.",
+   "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a normal-sized meal, nothing big. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of.",
    "I've had a bunch of tests done over the past couple of years — an upper GI series, an ultrasound and a HIDA scan, an endoscopy, and some kind of gastric emptying scan — and I was told they all came back normal. I really just want to know what this is and what can be done about it."
   ],
   "notes": [
@@ -78,8 +78,8 @@
  },
  "TC09": {
   "story": [
-   "Doctor, for the past couple of days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection.",
-   "I've been sexually active since I was 18. I'm on the pill and I haven't missed any. I'm in a monogamous relationship right now and I believe my partner is too. I've only ever had one sexual partner. No history of any sexually transmitted infections. My last period was about three weeks ago, right on time. I don't have any children."
+   "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection.",
+   "I've been sexually active since I was 18. I'm on the pill and I haven't missed any. I'm in a monogamous relationship right now and I believe my partner is too. I've only ever had one sexual partner. No history of any sexually transmitted infections. My last period was three weeks ago, right on time. I don't have any children."
   ],
   "notes": [
    "Note: antibiotic name/dose/duration blurred to \"antibiotics I was given\"; \"a few months ago\" blurs 4 months; exam findings (afebrile, no suprapubic or CVA tenderness) omitted; pregnancy status is not established — the source only says no missed pills."
@@ -156,13 +156,13 @@
  },
  "TC20": {
   "story": [
-   "I’m 67. My upper partial denture bothers me, and the teeth on the top right hurt. My mouth feels dry, and I sometimes see a little blood when I brush. I haven’t seen a dentist in three years. I was diagnosed with type 2 diabetes eight years ago. My feet feel strange when I walk, almost like I’m walking on clouds. I also broke my wrist recently without much of an injury. The bone doctor recommended a bone density test, but I haven’t had it yet."
+   "I’m 67. My upper partial denture bothers me, and the teeth on the top right hurt. My mouth feels dry, and I see a little blood when I brush. I haven’t seen a dentist in three years. I was diagnosed with type 2 diabetes eight years ago. My feet feel strange when I walk, almost like I’m walking on clouds. I also broke my wrist recently without much of an injury. The bone doctor recommended a bone density test, but I haven’t had it yet."
   ],
   "notes": []
  },
  "TC21": {
   "story": [
-   "I’m 44. I was asleep when I woke up around half past midnight with really bad pain right behind my breastbone. It lasted a long time and stayed in my chest without spreading anywhere else. I broke out in a heavy cold sweat with the pain. I have high blood pressure, and I’ve been told my cholesterol levels are abnormal."
+   "I’m 44. Around half past midnight, while I was asleep, I got really intense pain right behind my breastbone. It lasted a long time and stayed in my chest without spreading anywhere else. I broke out in a heavy cold sweat with the pain. I have high blood pressure, and I’ve been told my cholesterol and blood fat levels are abnormal."
   ],
   "notes": []
  },
@@ -200,13 +200,13 @@
  },
  "TC27": {
   "story": [
-   "I’m 44. I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger. It hurts, and I’m having trouble opening my mouth and swallowing. I’ve had a fever and chills. It’s also getting hard to breathe, especially when I lie back. I don’t have any known allergies to medicines."
+   "I’m 44. I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger. It hurts, and I’m having trouble opening my mouth and swallowing. I’ve had a fever and chills. It’s also hard to breathe, especially when I lie back. I don’t have any known allergies to medicines."
   ],
   "notes": []
  },
  "TC28": {
   "story": [
-   "I’m 57, and I’ve had irritable bowel syndrome for 20 years, with constipation as my main problem. It used to be well controlled with Lexapro and occasional milk of magnesia. When I traveled to Asia nine months ago, I went several days without a bowel movement. Then, for a few days, my stools were hard, like little pebbles, and difficult to pass. Now I go two or three times a day, but I have to push really hard and never feel like I’ve emptied my bowels completely. I don’t see any blood, and it doesn’t hurt when I go. I tried adding fiber, but it made my belly feel uncomfortably bloated. This has been disruptive enough that I miss two or three days of work each month, and sometimes I miss social plans, too."
+   "I’m 57, and I’ve had irritable bowel syndrome for 20 years, with constipation as my main problem. It used to be well controlled with Lexapro 20 mg a day and occasional milk of magnesia. When I traveled to Asia nine months ago, I went several days without a bowel movement. Then, for a few days, my stools were hard, like little pebbles, and difficult to pass. Now I go two or three times a day, but I have to push really hard and never feel like I’ve emptied my bowels completely. I don’t see any blood, and it doesn’t hurt when I go. I tried adding fiber, but it made my belly feel uncomfortably bloated. This has been disruptive enough that I miss two or three days of work each month, and sometimes I miss social plans, too."
   ],
   "notes": []
  },
@@ -218,7 +218,7 @@
  },
  "TC30": {
   "story": [
-   "I’m 52. I felt fine yesterday and went to a crab feast that afternoon. Then last night I woke up with terrible pain in my right knee. It was swollen and warm, and I hadn’t injured it. I’ve felt feverish and sweaty, but I haven’t checked my temperature. None of my other joints hurt right now. Several years ago I had really bad pain in my left big toe, and it got better when I took aspirin. I also have high blood pressure and take hydrochlorothiazide."
+   "I’m 52. I felt fine yesterday and went to a crab feast that afternoon. Then last night I woke up with terrible pain in my right knee. It was swollen and warm, and I hadn’t injured it. I’ve felt feverish and sweaty, but I haven’t checked my temperature. None of my other joints hurt right now. Several years ago I had really bad pain in my left big toe, and it got better when I took aspirin. I also have high blood pressure and take hydrochlorothiazide 25 mg."
   ],
   "notes": []
  }

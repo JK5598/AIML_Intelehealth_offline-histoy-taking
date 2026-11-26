@@ -202,7 +202,7 @@
         "say": "I'm not sure."
       },
       "Do you have the following symptom(s)?": {
-        "say": "It's a discomfort in my upper stomach, and I feel really full even after a small meal. My weight hasn't changed.",
+        "say": "It's a discomfort in my upper stomach, and I feel really full even after a normal-sized meal, nothing big. My weight hasn't changed.",
         "has": [
           "Abdominal pain",
           "Other [describe]"
@@ -239,7 +239,7 @@
         "say": "I'm not sure."
       },
       "Other [describe]": {
-        "say": "I feel really full even after just a small meal."
+        "say": "I feel really full even after a normal-sized meal, nothing big."
       },
       "Has anyone of your family members been diagnosed with cancers or gastric/duodenal ulcer?": {
         "say": "Nothing runs in the family that I know of.",
@@ -313,7 +313,6 @@
     "assumed": [
       "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?",
       "Do you have any allergies?",
-      "Do you chew tobbaco?",
       "Pregnancy status"
     ],
     "checks": {
@@ -325,7 +324,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after just a small meal. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of."
+    "opening": "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a normal-sized meal, nothing big. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of."
   },
   "TC09": {
     "questions": {
@@ -400,7 +399,7 @@
         "say": "Dark urine now, after the leftover Pyridium."
       },
       "Since when have you had this symptom?": {
-        "say": "The past couple of days.",
+        "say": "The past two days.",
         "accept": [
           "2 day",
           "two day",
@@ -445,7 +444,7 @@
         "say": "Cranberry juice and leftover Pyridium 200 mg."
       },
       "Additional information": {
-        "say": "My last urinary infection was a few months ago, and both cleared with antibiotics I was given; never a kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I have one partner and we're monogamous, and I've never had an STI. My last period was about three weeks ago, on time. I don't have any children."
+        "say": "My last urinary infection was a few months ago, and both cleared with antibiotics I was given; never a kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I have one partner and we're monogamous, and I've never had an STI. My last period was three weeks ago, right on time. I don't have any children."
       },
       "Pregnancy status": {
         "say": "I don't think so. I'm on the pill and haven't missed any, and my last period was three weeks ago.",
@@ -482,7 +481,7 @@
         ]
       },
       "How long, in days / weeks / months": {
-        "say": "A couple of days."
+        "say": "Two days."
       }
     },
     "denies": [
@@ -506,7 +505,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "Doctor, for the past couple of days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection."
+    "opening": "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection."
   },
   "TC14": {
     "questions": {
@@ -573,10 +572,7 @@
         ]
       },
       "How did the symptom start?": {
-        "say": "Suddenly. She collapsed onto the floor while she was cooking.",
-        "has": [
-          "Very sudden"
-        ]
+        "say": "She was cooking in the kitchen and collapsed onto the floor."
       },
       "How has the symptom progressed?": {
         "say": "I'm not sure."
@@ -590,7 +586,7 @@
         ]
       },
       "Describe the abnormal sensation": {
-        "say": "She can't feel touch there.",
+        "say": "Since she woke up, she can't feel touch there.",
         "has": [
           "Sensory loss"
         ]
@@ -707,7 +703,7 @@
         ]
       },
       "Since when have you had fever?": {
-        "say": "I'm not sure exactly. It started three days after I got home."
+        "say": "I'm not sure exactly. It started three days after I came home from college for spring break."
       },
       "How does fever change?": {
         "say": "I'm not sure."
@@ -767,7 +763,7 @@
         "say": "I'm not sure."
       },
       "How long, in days / weeks / months": {
-        "say": "It started three days after I got home; I can't say exactly."
+        "say": "It started three days after I came home from college for spring break; I can't say exactly."
       }
     },
     "denies": [],
@@ -840,7 +836,7 @@
         "say": "I'm not sure."
       },
       "Do you have the following symptom(s)?": {
-        "say": "The teeth on the top right hurt, my mouth feels dry, and I sometimes see a little blood when I brush.",
+        "say": "The teeth on the top right hurt, my mouth feels dry, and I see a little blood when I brush.",
         "has": [
           "Toothache",
           "Gum bleeding",
@@ -906,7 +902,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "I’m 67. My upper partial denture bothers me, and the teeth on the top right hurt. My mouth feels dry, and I sometimes see a little blood when I brush. I haven’t seen a dentist in three years. I was diagnosed with type 2 diabetes eight years ago. My feet feel strange when I walk, almost like I’m walking on clouds. I also broke my wrist recently without much of an injury. The bone doctor recommended a bone density test, but I haven’t had it yet."
+    "opening": "I’m 67. My upper partial denture bothers me, and the teeth on the top right hurt. My mouth feels dry, and I see a little blood when I brush. I haven’t seen a dentist in three years. I was diagnosed with type 2 diabetes eight years ago. My feet feel strange when I walk, almost like I’m walking on clouds. I also broke my wrist recently without much of an injury. The bone doctor recommended a bone density test, but I haven’t had it yet."
   },
   "TC21": {
     "questions": {
@@ -962,10 +958,10 @@
         ]
       },
       "How did the symptom start?": {
-        "say": "It woke me up from sleep."
+        "say": "It started while I was asleep."
       },
       "How does the pain feel?": {
-        "say": "It's really bad pain."
+        "say": "It's really intense pain."
       },
       "How long does the pain continue?": {
         "say": "It lasted a long time.",
@@ -974,7 +970,7 @@
         ]
       },
       "In a day, when do you feel pain the most?": {
-        "say": "It started at night; it woke me up around half past midnight.",
+        "say": "It started at night, around half past midnight, while I was asleep.",
         "has": [
           "At night"
         ]
@@ -1007,10 +1003,10 @@
         "say": "I'm not sure."
       },
       "Additional information": {
-        "say": "I woke up around half past midnight with really bad pain right behind my breastbone. It lasted a long time and stayed in my chest. I broke out in a heavy cold sweat with it. I have high blood pressure, and I've been told my cholesterol levels are abnormal."
+        "say": "Around half past midnight, while I was asleep, I got really intense pain right behind my breastbone. It lasted a long time and stayed in my chest. I broke out in a heavy cold sweat with it. I have high blood pressure, and I've been told my cholesterol and blood fat levels are abnormal."
       },
       "Do you have a history of any of the following?": {
-        "say": "I have high blood pressure, and I've been told my cholesterol is abnormal.",
+        "say": "I have high blood pressure, and I've been told my cholesterol and blood fats are abnormal.",
         "has": [
           "High Blood Pressure",
           "Other [Describe]"
@@ -1023,7 +1019,7 @@
         "say": "I'm not sure."
       },
       "Other [Describe]": {
-        "say": "Abnormal cholesterol levels."
+        "say": "Abnormal cholesterol and blood fat levels."
       },
       "How long, in days / weeks / months": {
         "say": "Since about half past midnight."
@@ -1047,7 +1043,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "I’m 44. I was asleep when I woke up around half past midnight with really bad pain right behind my breastbone. It lasted a long time and stayed in my chest without spreading anywhere else. I broke out in a heavy cold sweat with the pain. I have high blood pressure, and I’ve been told my cholesterol levels are abnormal."
+    "opening": "I’m 44. Around half past midnight, while I was asleep, I got really intense pain right behind my breastbone. It lasted a long time and stayed in my chest without spreading anywhere else. I broke out in a heavy cold sweat with the pain. I have high blood pressure, and I’ve been told my cholesterol and blood fat levels are abnormal."
   },
   "TC27": {
     "questions": {
@@ -1097,7 +1093,7 @@
         "say": "It's hard to swallow, and lying back makes the breathing harder."
       },
       "Do you have the following symptom(s)?": {
-        "say": "The area under my chin is swelling and keeps getting bigger. It hurts, I have trouble opening my mouth and swallowing, I've had fever and chills, and it's getting hard to breathe, especially when I lie back.",
+        "say": "The area under my chin is swelling and keeps getting bigger. It hurts, I have trouble opening my mouth and swallowing, I've had fever and chills, and it's hard to breathe, especially when I lie back.",
         "has": [
           "Facial swelling",
           "Fever",
@@ -1106,7 +1102,7 @@
         ]
       },
       "Other [describe]": {
-        "say": "Trouble swallowing, chills, and it's getting hard to breathe, especially lying back."
+        "say": "Trouble swallowing, chills, and it's hard to breathe, especially lying back."
       },
       "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
         "say": "I had my right wisdom tooth pulled; this started five days later.",
@@ -1118,7 +1114,7 @@
         "say": "Right wisdom tooth pulled; the swelling started five days later."
       },
       "Additional information": {
-        "say": "I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger and it hurts. I can't open my mouth well and it's hard to swallow. I've had fever and chills, and it's getting hard to breathe, especially when I lie back. No known allergies to medicines."
+        "say": "I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger and it hurts. I can't open my mouth well and it's hard to swallow. I've had fever and chills, and it's hard to breathe, especially when I lie back. No known allergies to medicines."
       },
       "Do you have a history of any of the following?": {
         "say": "I had my right wisdom tooth pulled recently.",
@@ -1156,12 +1152,12 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "I’m 44. I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger. It hurts, and I’m having trouble opening my mouth and swallowing. I’ve had a fever and chills. It’s also getting hard to breathe, especially when I lie back. I don’t have any known allergies to medicines."
+    "opening": "I’m 44. I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps getting bigger. It hurts, and I’m having trouble opening my mouth and swallowing. I’ve had a fever and chills. It’s also hard to breathe, especially when I lie back. I don’t have any known allergies to medicines."
   },
   "TC28": {
     "questions": {
       "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
-        "say": "Yes, Lexapro, and milk of magnesia now and then.",
+        "say": "Yes, Lexapro 20 mg a day, and milk of magnesia now and then.",
         "has": [
           "Yes"
         ]
@@ -1234,7 +1230,7 @@
         "say": "I have to push really hard, and fiber made my belly uncomfortably bloated."
       },
       "Have you taken any medication or had any addiction?": {
-        "say": "Lexapro, and milk of magnesia now and then.",
+        "say": "Lexapro 20 mg a day, and milk of magnesia now and then.",
         "has": [
           "Yes [Describe]"
         ]
@@ -1246,16 +1242,16 @@
         ]
       },
       "Yes [Describe]": {
-        "say": "Lexapro and occasional milk of magnesia; I also tried adding fiber, which made me bloated."
+        "say": "Lexapro 20 mg a day and occasional milk of magnesia; I also tried adding fiber, which made me bloated."
       },
       "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
-        "say": "It used to be well controlled with Lexapro and milk of magnesia now and then. I tried fiber.",
+        "say": "It used to be well controlled with Lexapro 20 mg a day and milk of magnesia now and then. I tried fiber.",
         "has": [
           "Yes [Describe]"
         ]
       },
       "Additional information": {
-        "say": "I've had irritable bowel syndrome for 20 years, mostly constipation; it was well controlled with Lexapro and occasional milk of magnesia. Nine months ago on a trip to Asia I went several days without a bowel movement, then had hard stools like little pebbles that were hard to pass. Now I go two or three times a day but have to push hard and never feel empty. No blood and no pain. Fiber made me bloated. I miss two or three days of work a month, and sometimes social plans."
+        "say": "I've had irritable bowel syndrome for 20 years, mostly constipation; it was well controlled with Lexapro 20 mg a day and occasional milk of magnesia. Nine months ago on a trip to Asia I went several days without a bowel movement, then for several days had hard stools like little pebbles that were hard to pass. Now I go two or three times a day but have to push hard and never feel empty. No blood and no pain. Fiber made me bloated. I miss two or three days of work a month, and sometimes social plans."
       },
       "Do you have a history of any of the following?": {
         "say": "I've had irritable bowel syndrome for 20 years.",
@@ -1274,7 +1270,7 @@
         ]
       },
       "Medication Name": {
-        "say": "Lexapro; milk of magnesia now and then."
+        "say": "Lexapro 20 mg a day; milk of magnesia now and then."
       },
       "From": {
         "say": "I'm not sure."
@@ -1310,12 +1306,12 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "I’m 57, and I’ve had irritable bowel syndrome for 20 years, with constipation as my main problem. It used to be well controlled with Lexapro and occasional milk of magnesia. When I traveled to Asia nine months ago, I went several days without a bowel movement. Then, for a few days, my stools were hard, like little pebbles, and difficult to pass. Now I go two or three times a day, but I have to push really hard and never feel like I’ve emptied my bowels completely. I don’t see any blood, and it doesn’t hurt when I go. I tried adding fiber, but it made my belly feel uncomfortably bloated. This has been disruptive enough that I miss two or three days of work each month, and sometimes I miss social plans, too."
+    "opening": "I’m 57, and I’ve had irritable bowel syndrome for 20 years, with constipation as my main problem. It used to be well controlled with Lexapro 20 mg a day and occasional milk of magnesia. When I traveled to Asia nine months ago, I went several days without a bowel movement. Then, for a few days, my stools were hard, like little pebbles, and difficult to pass. Now I go two or three times a day, but I have to push really hard and never feel like I’ve emptied my bowels completely. I don’t see any blood, and it doesn’t hurt when I go. I tried adding fiber, but it made my belly feel uncomfortably bloated. This has been disruptive enough that I miss two or three days of work each month, and sometimes I miss social plans, too."
   },
   "TC30": {
     "questions": {
       "Have you recently taken any kind of medicine (including ayurvedic/homeopathic/unani/herbal)?": {
-        "say": "Yes, hydrochlorothiazide for my blood pressure.",
+        "say": "Yes, hydrochlorothiazide 25 mg for my blood pressure.",
         "has": [
           "Yes"
         ]
@@ -1400,10 +1396,7 @@
         "say": "I'm not sure."
       },
       "Does the pain move to other parts of the body?": {
-        "say": "No, only my right knee hurts.",
-        "has": [
-          "Pain does not radiate"
-        ]
+        "say": "I'm not sure."
       },
       "Do you have the following symptom(s)?": {
         "say": "It's swollen and warm, it woke me up at night, and I've felt feverish and sweaty.",
@@ -1446,7 +1439,7 @@
         "say": "I'm not sure."
       },
       "Additional information": {
-        "say": "I felt fine yesterday and went to a crab feast in the afternoon. Last night I woke up with terrible pain in my right knee; it's swollen and warm and I didn't injure it. I've felt feverish and sweaty but haven't checked my temperature. No other joints hurt right now. Several years ago my left big toe was very painful and got better with aspirin. I have high blood pressure and take hydrochlorothiazide."
+        "say": "I felt fine yesterday and went to a crab feast in the afternoon. Last night I woke up with terrible pain in my right knee; it's swollen and warm and I didn't injure it. I've felt feverish and sweaty but haven't checked my temperature. No other joints hurt right now. Several years ago my left big toe was very painful and got better with aspirin. I have high blood pressure and take hydrochlorothiazide 25 mg."
       },
       "Do you have a history of any of the following?": {
         "say": "I have high blood pressure.",
@@ -1458,13 +1451,13 @@
         "say": "I'm not sure."
       },
       "Current medication": {
-        "say": "Hydrochlorothiazide.",
+        "say": "Hydrochlorothiazide 25 mg.",
         "has": [
           "[Describe]"
         ]
       },
       "[Describe]": {
-        "say": "Hydrochlorothiazide."
+        "say": "Hydrochlorothiazide 25 mg."
       },
       "Name of Medications": {
         "say": "Hydrochlorothiazide.",
@@ -1473,7 +1466,7 @@
         ]
       },
       "Medication Name": {
-        "say": "Hydrochlorothiazide."
+        "say": "Hydrochlorothiazide 25 mg."
       },
       "From": {
         "say": "I'm not sure."
@@ -1506,6 +1499,6 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "I’m 52. I felt fine yesterday and went to a crab feast that afternoon. Then last night I woke up with terrible pain in my right knee. It was swollen and warm, and I hadn’t injured it. I’ve felt feverish and sweaty, but I haven’t checked my temperature. None of my other joints hurt right now. Several years ago I had really bad pain in my left big toe, and it got better when I took aspirin. I also have high blood pressure and take hydrochlorothiazide."
+    "opening": "I’m 52. I felt fine yesterday and went to a crab feast that afternoon. Then last night I woke up with terrible pain in my right knee. It was swollen and warm, and I hadn’t injured it. I’ve felt feverish and sweaty, but I haven’t checked my temperature. None of my other joints hurt right now. Several years ago I had really bad pain in my left big toe, and it got better when I took aspirin. I also have high blood pressure and take hydrochlorothiazide 25 mg."
   }
 }

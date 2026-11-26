@@ -49,7 +49,7 @@ NOT_PREGNANT_ASSUMED = {"say": "No, I'm not pregnant.", "has": ["No"]}
 cases = []
 sheets = {}
 facts = []
-stories = json.load(open(os.path.join(HERE, "stories.json"), encoding="utf-8"))
+stories = json.load(open(os.path.join(HERE, "extra_case_stories.json"), encoding="utf-8"))
 
 
 def add_case(case_id, source, diagnosis, age, sex, complaint, expected, only_if_asked="", notes=""):
@@ -154,7 +154,7 @@ q = assumed_history()
 q.update({
     SINCE_WHEN: {"say": "About two years.", "accept": ["2 year", "two year"]},
     "How does this symptom start?": UNSURE,
-    SYMPTOMS: {"say": "It's a discomfort in my upper stomach, and I feel really full even after a small meal. "
+    SYMPTOMS: {"say": "It's a discomfort in my upper stomach, and I feel really full even after a normal-sized meal, nothing big. "
                       "My weight hasn't changed.",
                "has": ["Abdominal pain", "Other [describe]"], "not": ["Weight change (kg)"]},
     "Which part of the abdomen do you feel pain?": {"say": "My upper stomach, in the middle.",
@@ -166,7 +166,7 @@ q.update({
                           "has": ["Constant"]},
     "When does the pain increase?": {"say": "Eating tends to make it worse.", "has": ["Postprandial"]},
     "Does the pain go to other part of the body?": UNSURE,
-    "Other [describe]": {"say": "I feel really full even after just a small meal."},
+    "Other [describe]": {"say": "I feel really full even after a normal-sized meal, nothing big."},
     "Has anyone of your family members been diagnosed with cancers or gastric/duodenal ulcer?": {
         "say": "Nothing runs in the family that I know of.", "has": ["No"]},
     "Eating habits": UNSURE,
@@ -196,18 +196,18 @@ q.update({
     HOW_LONG: {"say": "About two years."},
 })
 sheets["TC07"] = {"questions": q, "denies": ["Weight change (kg)"],
-                  "assumed": [MEDICINES, ALLERGIES, TOBACCO, PREGNANCY]}
+                  "assumed": [MEDICINES, ALLERGIES, PREGNANCY]}
 add_facts("TC07", [
-    (2, "Chief complaint / Duration", "Upper stomach discomfort for about 2 years.", "", True, "Yes", "Since when; Site", False, Y),
+    (2, "Chief complaint / Duration", "Upper stomach discomfort for 2 years.", "", True, "Yes", "Since when; Site", False, Y),
     (3, "Symptom pattern", "Present every day; varies in how bad it is but never goes away.", "", True, "Partly",
      "Describe the pain / progression; Additional information", False, Y),
     (4, "Aggravating factor", "Eating makes it worse.", "", True, "Yes", "When does the pain increase?: Postprandial", False, Y),
-    (5, "Meal-related symptom", "Feels very full even after a small meal.", "", True, "Partly", "Symptoms: Other [describe]", False, Y),
+    (5, "Meal-related symptom", "Feels very full even after a modest (normal-sized) meal.", "", True, "Partly", "Symptoms: Other [describe]", False, Y),
     (6, "Weight change", "No weight change.", "", True, "Yes", "Symptoms: Weight change (said no)", False, Y),
     (7, "Past medical history", "Occasional migraine headaches.", "", True, "Yes", "Past history: Other [Describe]", False, Y),
     (8, "Surgical history", "Appendix removed as a child; wisdom teeth removed as a teenager.", "", True, "Yes",
      "Past history: Operation", False, YE),
-    (9, "Tobacco use", "Does not smoke.", "", True, "Yes", "Smoking history", False, Y),
+    (9, "Tobacco use", "Does not use tobacco.", "", True, "Yes", "Smoking history; Do you chew tobacco?", False, Y),
     (10, "Alcohol use", "Rarely drinks alcohol.", "", True, "Yes", "Alcohol use", False, Y),
     (11, "Family history", "Nothing relevant runs in the family.", "", True, "Yes", "Family history", False, Y),
     (12, "Previous investigations", "Several earlier tests (upper GI series, ultrasound and HIDA scan, endoscopy, gastric "
@@ -239,7 +239,7 @@ q.update({
     "Eyes:Jaundice;": UNSURE,
     "Nighttime frequency an average (times/night)": UNSURE,
     "Other (Describe)": {"say": "Dark urine now, after the leftover Pyridium."},
-    SINCE_WHEN: {"say": "The past couple of days.", "accept": ["2 day", "two day", "couple"]},
+    SINCE_WHEN: {"say": "The past two days.", "accept": ["2 day", "two day", "couple"]},
     "How did the symptom start?": UNSURE,
     "How has the symptom progressed?": {"say": "The burning comes and goes."},
     SYMPTOMS: {"say": "No fever, and my back doesn't hurt.", "not": ["Fever"]},
@@ -255,7 +255,7 @@ q.update({
     "Additional information": {
         "say": "My last urinary infection was a few months ago, and both cleared with antibiotics I was given; never a "
                "kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I have one "
-               "partner and we're monogamous, and I've never had an STI. My last period was about three weeks ago, on "
+               "partner and we're monogamous, and I've never had an STI. My last period was three weeks ago, right on "
                "time. I don't have any children."},
     PREGNANCY: {"say": "I don't think so. I'm on the pill and haven't missed any, and my last period was three weeks ago.",
                 "has": ["No"]},
@@ -266,13 +266,13 @@ q.update({
     "From": UNSURE, "To": UNSURE,
     "How often do you have trouble taking medicines the way you have been told to take them?": {
         "say": "I haven't missed any pills.", "has": ["I always take them as prescribed"]},
-    HOW_LONG: {"say": "A couple of days."},
+    HOW_LONG: {"say": "Two days."},
 })
 sheets["TC09"] = {"questions": q, "denies": ["Fever"],
                   "assumed": ASSUMED[1:] + [PREGNANCY, HISTORY_LIST]}
 add_facts("TC09", [
     (2, "Obstetric history", "Has no children.", "", True, "Partly", "Additional information", False, Y),
-    (3, "Urinary symptoms / Duration", "Burning when passing urine, on and off, for a couple of days.", "", True, "Yes",
+    (3, "Urinary symptoms / Duration", "Burning when passing urine, on and off, for 2 days.", "", True, "Yes",
      "Urinary disturbance: Dysuria; Since when", False, YE),
     (4, "Urinary symptoms", "Urgency and increased frequency.", "", True, "Yes", "Frequency/urgency", False, Y),
     (5, "Urinary symptoms", "Saw blood in the urine once.", "", True, "Yes", "Urine color change: Red-brown", True, Y),
@@ -292,7 +292,7 @@ add_facts("TC09", [
     (17, "Sexual history", "Believes her partner is monogamous.", "", True, "No", "Not asked (Additional information only)", False, Y),
     (18, "Sexual history", "One lifetime sexual partner.", "", True, "No", "Not asked (Additional information only)", False, Y),
     (19, "STI history", "No history of sexually transmitted infection.", "", True, "No", "Not asked (Additional information only)", False, Y),
-    (20, "Menstrual history", "Last period about three weeks ago, on time.", "", True, "Partly", "Pregnancy status / Additional information", False, YE),
+    (20, "Menstrual history", "Last period 3 weeks ago, on time.", "", True, "Partly", "Pregnancy status / Additional information", False, YE),
 ])
 
 # =====================================================================================================
@@ -310,14 +310,13 @@ q.update({
         "has": ["One limb/part of one limb", "One side of the face"]},
     "One limb/part of one limb": {"say": "Her right arm.", "has": ["Right arm"]},
     "One side of the face": {"say": "The right side.", "has": ["Right"]},
-    "How did the symptom start?": {"say": "Suddenly. She collapsed onto the floor while she was cooking.",
-                                   "has": ["Very sudden"]},
+    "How did the symptom start?": {"say": "She was cooking in the kitchen and collapsed onto the floor."},
     "How has the symptom progressed?": UNSURE,
     SYMPTOMS: {"say": "She can't feel it when the right side of her face or her right arm is touched. She understands "
                       "what we say but can't answer out loud; writing is easier for her. She collapsed and was "
                       "unconscious, and slowly came round over two days.",
                "has": ["Paresthesia", "Aphasia", "Other [describe]"]},
-    "Describe the abnormal sensation": {"say": "She can't feel touch there.", "has": ["Sensory loss"]},
+    "Describe the abnormal sensation": {"say": "Since she woke up, she can't feel touch there.", "has": ["Sensory loss"]},
     "Does the sensation stay the same or is it gradually increasing?": UNSURE,
     "Affected areas (Describe)": {"say": "The right side of her face and her right arm."},
     "Other [describe]": {"say": "She collapsed while cooking and slowly regained consciousness over two days."},
@@ -333,15 +332,15 @@ q.update({
 })
 sheets["TC14"] = {"questions": q, "denies": [], "assumed": ASSUMED}
 add_facts("TC14", [
-    (1, "Onset / circumstances", "Collapsed suddenly while cooking.", "", True, "Yes", "How did it start: Very sudden; Additional information", False, YE),
+    (1, "Onset / circumstances", "Collapsed onto the kitchen floor while cooking.", "", True, "Yes", "How did it start; Additional information", False, YE),
     (2, "Consciousness / time course", "Slowly regained consciousness over two days.", "", True, "Partly",
      "Symptoms: Other [describe]; Additional information", True, Y),
-    (3, "Motor symptoms", "Cannot move the right side of her face or her right arm.", "", True, "Yes",
+    (3, "Motor symptoms", "After regaining consciousness, could not move the right side of her face or her right arm.", "", True, "Yes",
      "Weakness site: Right arm; One side of the face: Right", True, Y),
-    (4, "Sensory symptoms", "Cannot feel touch on the right side of the face and the right arm.", "", True, "Yes",
+    (4, "Sensory symptoms", "After regaining consciousness, could not feel touch on the right side of her face or her right arm.", "", True, "Yes",
      "Paresthesia: Sensory loss; Affected areas", False, Y),
     (5, "Speech / comprehension", "Understands what is said but cannot answer out loud.", "", True, "Yes", "Symptoms: Aphasia", True, Y),
-    (6, "Written communication", "Can communicate more easily by writing.", "", True, "Partly", "Additional information", False, Y),
+    (6, "Written communication", "Could express her thoughts more easily in writing than by speaking.", "", True, "Partly", "Additional information", False, Y),
 ])
 
 # =====================================================================================================
@@ -360,7 +359,7 @@ q.update({
     "Rate of rash spread": {"say": "The tiny spots spread from my arms and legs to my body within a few hours.",
                             "has": ["within hours"]},
     "How has the rash spread?": {"say": "From my arms and legs to my body.", "has": ["Centripetal"]},
-    "Since when have you had fever?": {"say": "I'm not sure exactly. It started three days after I got home."},
+    "Since when have you had fever?": {"say": "I'm not sure exactly. It started three days after I came home from college for spring break."},
     "How does fever change?": UNSURE,
     "Severity of Fever": UNSURE,
     "In a day, when do you feel fever the most?": UNSURE,
@@ -381,15 +380,15 @@ q.update({
     PREGNANCY: NOT_PREGNANT_ASSUMED,
     ALLERGIES: {"say": "No known medicine allergies.", "has": ["No known allergies"]},
     HISTORY_LIST: UNSURE,
-    HOW_LONG: {"say": "It started three days after I got home; I can't say exactly."},
+    HOW_LONG: {"say": "It started three days after I came home from college for spring break; I can't say exactly."},
 })
 sheets["TC19"] = {"questions": q, "denies": [], "assumed": [MEDICINES, TOBACCO, SMOKING, ALCOHOL, FAMILY, PREGNANCY]}
 add_facts("TC19", [
     (1, "Initial symptoms / rash location", "First had fever, headache and a rash on the body (trunk).", "", True, "Yes",
      "Symptoms: Headache; rash site", True, Y),
-    (2, "Onset relative to travel", "Started three days after coming home from college.", "", True, "Partly", "Additional information", False, Y),
+    (2, "Onset relative to travel", "Started three days after coming home from college for spring break.", "", True, "Partly", "Additional information", False, Y),
     (3, "Subsequent symptoms", "Then nausea, vomiting and sensitivity to light.", "", True, "Yes", "Symptoms: Nausea, Vomiting, Other", True, Y),
-    (4, "Later rash / progression", "Tiny spots on arms and legs spread to the body within hours.", "", True, "Yes",
+    (4, "Later rash / progression", "Later, tiny pinpoint spots spread from the arms and legs to the trunk within hours.", "", True, "Yes",
      "Rate of rash spread: within hours; How spread: Centripetal", True, Y),
     (5, "Allergy / exposure history", "No known medicine allergy and no known tick contact.", "", True, "Yes",
      "Allergies; tick bites: No", False, Y),
@@ -404,7 +403,7 @@ q.update({
     SINCE_WHEN: UNSURE,
     "How did the symptom start?": UNSURE,
     "Do the following situations make the symptom worse?": UNSURE,
-    SYMPTOMS: {"say": "The teeth on the top right hurt, my mouth feels dry, and I sometimes see a little blood when I "
+    SYMPTOMS: {"say": "The teeth on the top right hurt, my mouth feels dry, and I see a little blood when I "
                       "brush.", "has": ["Toothache", "Gum bleeding", "Other [describe]"]},
     "[Describe]": {"say": "The top right teeth hurt, and my upper partial denture bothers me."},
     "Other [describe]": {"say": "Dry mouth, and my upper partial denture bothers me."},
@@ -426,7 +425,7 @@ sheets["TC20"] = {"questions": q, "denies": [], "assumed": ASSUMED}
 add_facts("TC20", [
     (1, "Dental complaint / location", "Upper partial denture discomfort and pain in the upper right teeth.", "", True, "Yes",
      "Symptoms: Toothache [Describe]", False, Y),
-    (2, "Bleeding / trigger", "Sometimes bleeds a little when brushing.", "", True, "Yes", "Symptoms: Gum bleeding", False, Y),
+    (2, "Bleeding / trigger", "Some bleeding when brushing.", "", True, "Yes", "Symptoms: Gum bleeding", False, Y),
     (3, "Oral symptom", "Dry mouth.", "", True, "Partly", "Symptoms: Other [describe]", False, Y),
     (4, "Dental care history", "Has not seen a dentist in three years.", "", True, "Partly", "Treatment / Additional information", False, Y),
     (5, "Medical history / diagnosis timing", "Type 2 diabetes diagnosed eight years ago.", "", True, "Yes", "Past history: Diabetes", False, Y),
@@ -446,10 +445,10 @@ q.update({
     "Which part of the chest do you feel pain?": {"say": "Right behind my breastbone.",
                                                   "has": ["Retrosternal - Center of the chest"]},
     SINCE_WHEN: {"say": "Since about half past midnight.", "accept": ["hour", "night", "midnight", "12"]},
-    "How did the symptom start?": {"say": "It woke me up from sleep."},
-    "How does the pain feel?": {"say": "It's really bad pain."},
+    "How did the symptom start?": {"say": "It started while I was asleep."},
+    "How does the pain feel?": {"say": "It's really intense pain."},
     "How long does the pain continue?": {"say": "It lasted a long time.", "has": ["Prolonged"]},
-    "In a day, when do you feel pain the most?": {"say": "It started at night; it woke me up around half past midnight.",
+    "In a day, when do you feel pain the most?": {"say": "It started at night, around half past midnight, while I was asleep.",
                                                   "has": ["At night"]},
     "Severity": {"say": "It's really bad.", "has": ["Severe, 7-9"]},
     "Does this pain go to other part(s) of the body?": {"say": "No, it stayed in my chest.", "has": ["Does not move"]},
@@ -458,26 +457,26 @@ q.update({
     "Does the symptom get better with the following situation(s)?": UNSURE,
     TREATMENT: UNSURE,
     "Additional information": {
-        "say": "I woke up around half past midnight with really bad pain right behind my breastbone. It lasted a long time "
-               "and stayed in my chest. I broke out in a heavy cold sweat with it. I have high blood pressure, and I've "
-               "been told my cholesterol levels are abnormal."},
-    HISTORY_LIST: {"say": "I have high blood pressure, and I've been told my cholesterol is abnormal.",
+        "say": "Around half past midnight, while I was asleep, I got really intense pain right behind my breastbone. It "
+               "lasted a long time and stayed in my chest. I broke out in a heavy cold sweat with it. I have high blood "
+               "pressure, and I've been told my cholesterol and blood fat levels are abnormal."},
+    HISTORY_LIST: {"say": "I have high blood pressure, and I've been told my cholesterol and blood fats are abnormal.",
                    "has": ["High Blood Pressure", "Other [Describe]"]},
     "Diagnosed on": UNSURE,
     "Current medication": UNSURE,
-    "Other [Describe]": {"say": "Abnormal cholesterol levels."},
+    "Other [Describe]": {"say": "Abnormal cholesterol and blood fat levels."},
     HOW_LONG: {"say": "Since about half past midnight."},
 })
 sheets["TC21"] = {"questions": q, "denies": [], "assumed": ASSUMED}
 add_facts("TC21", [
     (1, "Pain location", "Pain right behind the breastbone.", "", True, "Yes", "Site: Retrosternal", True, Y),
     (2, "Pain radiation", "The pain did not spread anywhere else.", "", True, "Yes", "Radiation: Does not move", False, Y),
-    (3, "Onset / circumstances", "Woke from sleep with the pain around 12:30 a.m.", "", True, "Partly",
+    (3, "Onset / circumstances", "Pain began around 12:30 a.m. while he was asleep.", "", True, "Partly",
      "When most: At night; Since when", True, Y),
     (4, "Associated symptom", "Heavy cold sweat with the pain.", "", True, "Yes", "Symptoms: Sweating", True, Y),
-    (5, "Medical history", "High blood pressure and abnormal cholesterol.", "", True, "Yes",
+    (5, "Medical history", "High blood pressure and abnormal blood lipids (cholesterol).", "", True, "Yes",
      "Past history: High Blood Pressure; Other [Describe]", False, Y),
-    (6, "Pain severity / duration", "Very bad pain that lasted a long time.", "", True, "Yes", "Severity; How long: Prolonged", True, C),
+    (6, "Pain severity / duration", "Intense chest pain that lasted a long time (exact duration not given).", "", True, "Yes", "Severity; How long: Prolonged", True, C),
 ])
 
 # =====================================================================================================
@@ -494,16 +493,16 @@ q.update({
     "Do the following situations make the symptom worse?": {"say": "It's hard to swallow, and lying back makes the "
                                                                    "breathing harder."},
     SYMPTOMS: {"say": "The area under my chin is swelling and keeps getting bigger. It hurts, I have trouble opening my "
-                      "mouth and swallowing, I've had fever and chills, and it's getting hard to breathe, especially "
+                      "mouth and swallowing, I've had fever and chills, and it's hard to breathe, especially "
                       "when I lie back.",
                "has": ["Facial swelling", "Fever", "Limited mandibular movement", "Other [describe]"]},
-    "Other [describe]": {"say": "Trouble swallowing, chills, and it's getting hard to breathe, especially lying back."},
+    "Other [describe]": {"say": "Trouble swallowing, chills, and it's hard to breathe, especially lying back."},
     TREATMENT: {"say": "I had my right wisdom tooth pulled; this started five days later.", "has": ["Yes [Describe]"]},
     "Yes [Describe]": {"say": "Right wisdom tooth pulled; the swelling started five days later."},
     "Additional information": {
         "say": "I had my right wisdom tooth pulled, and five days later the area under my chin started swelling. It keeps "
                "getting bigger and it hurts. I can't open my mouth well and it's hard to swallow. I've had fever and "
-               "chills, and it's getting hard to breathe, especially when I lie back. No known allergies to medicines."},
+               "chills, and it's hard to breathe, especially when I lie back. No known allergies to medicines."},
     HISTORY_LIST: {"say": "I had my right wisdom tooth pulled recently.", "has": ["Operation"]},
     "What was the operation?": {"say": "My right wisdom tooth was pulled.", "has": ["Head (Eyes/Ears/Nose/Mouth)"]},
     "When did it occur?": {"say": "Five days before the swelling started."},
@@ -518,7 +517,7 @@ add_facts("TC27", [
     (3, "Pain / mouth opening / swallowing", "Pain, trouble opening the mouth and trouble swallowing.", "", True, "Yes",
      "Symptoms: Limited mandibular movement; Other", True, Y),
     (4, "Associated symptoms", "Fever and chills.", "", True, "Yes", "Symptoms: Fever; Other", False, Y),
-    (5, "Breathing difficulty / position", "Getting hard to breathe, worse when lying back.", "", True, "Partly",
+    (5, "Breathing difficulty / position", "Difficulty breathing, especially when lying back.", "", True, "Partly",
      "Symptoms: Other [describe]", True, Y),
     (6, "Drug allergy history", "No known medicine allergies.", "", True, "Yes", "Allergies", False, Y),
 ])
@@ -543,22 +542,22 @@ q.update({
     "Enter frequency of this symptom": {"say": "Every time, two or three times a day."},
     "Other [describe]": {"say": "I have to push really hard, and fiber made my belly uncomfortably bloated."},
     "Have you taken any medication or had any addiction?": {
-        "say": "Lexapro, and milk of magnesia now and then.", "has": ["Yes [Describe]"]},
+        "say": "Lexapro 20 mg a day, and milk of magnesia now and then.", "has": ["Yes [Describe]"]},
     "Any recent change in diet?": {"say": "I tried adding fiber, but it made my belly bloated.", "has": ["Yes [Describe]"]},
-    "Yes [Describe]": {"say": "Lexapro and occasional milk of magnesia; I also tried adding fiber, which made me bloated."},
-    TREATMENT: {"say": "It used to be well controlled with Lexapro and milk of magnesia now and then. I tried fiber.",
+    "Yes [Describe]": {"say": "Lexapro 20 mg a day and occasional milk of magnesia; I also tried adding fiber, which made me bloated."},
+    TREATMENT: {"say": "It used to be well controlled with Lexapro 20 mg a day and milk of magnesia now and then. I tried fiber.",
                 "has": ["Yes [Describe]"]},
     "Additional information": {
         "say": "I've had irritable bowel syndrome for 20 years, mostly constipation; it was well controlled with Lexapro "
-               "and occasional milk of magnesia. Nine months ago on a trip to Asia I went several days without a bowel "
-               "movement, then had hard stools like little pebbles that were hard to pass. Now I go two or three times a "
+               "20 mg a day and occasional milk of magnesia. Nine months ago on a trip to Asia I went several days "
+               "without a bowel movement, then for several days had hard stools like little pebbles that were hard to pass. Now I go two or three times a "
                "day but have to push hard and never feel empty. No blood and no pain. Fiber made me bloated. I miss two "
                "or three days of work a month, and sometimes social plans."},
     HISTORY_LIST: {"say": "I've had irritable bowel syndrome for 20 years.", "has": ["Other [Describe]"]},
     "Other [Describe]": {"say": "Irritable bowel syndrome for 20 years, mostly constipation."},
-    MEDICINES: {"say": "Yes, Lexapro, and milk of magnesia now and then.", "has": ["Yes"]},
+    MEDICINES: {"say": "Yes, Lexapro 20 mg a day, and milk of magnesia now and then.", "has": ["Yes"]},
     "Name of Medications": {"say": "Lexapro and milk of magnesia.", "has": ["Medication name 1", "Medication name 2"]},
-    "Medication Name": {"say": "Lexapro; milk of magnesia now and then."},
+    "Medication Name": {"say": "Lexapro 20 mg a day; milk of magnesia now and then."},
     "From": UNSURE, "To": UNSURE,
     "How often do you have trouble taking medicines the way you have been told to take them?": UNSURE,
     HOW_LONG: {"say": "About nine months."},
@@ -569,16 +568,16 @@ add_facts("TC28", [
     (1, "Gastrointestinal history / duration", "Irritable bowel syndrome with constipation for 20 years.", "", True, "Yes",
      "Past history: Other [Describe]", False, Y),
     (2, "Travel / stool changes", "After a trip to Asia nine months ago: several days without a bowel movement, then hard "
-     "pebble-like stools that were hard to pass.", "", True, "Partly", "Since when; Additional information", False, Y),
+     "several days of hard, pebble-like stools that were difficult to pass.", "", True, "Partly", "Since when; Additional information", False, Y),
     (3, "Current bowel frequency / incomplete emptying", "Now passes stool two to three times a day but never feels empty.",
      "", True, "Yes", "Symptoms: Tenesmus", False, Y),
     (4, "Negative bowel symptoms", "No bleeding and no pain when passing stool.", "", True, "Yes",
-     "Symptoms: Blood in stool, Rectal bleeding, Pain around the anus (said no)", True, Y),
+     "Symptoms: Blood in stool, Rectal bleeding, Pain around the anus (said no)", False, Y),
     (5, "Straining", "Has to push very hard to pass stool.", "", True, "Partly", "Symptoms: Other [describe]", False, Y),
     (6, "Response to added fiber", "Added fiber caused uncomfortable bloating.", "", True, "Yes", "Recent change in diet: Yes [Describe]", False, Y),
     (7, "Functional impact", "Misses two to three workdays a month and sometimes social plans.", "", True, "Partly",
      "Additional information", False, Y),
-    (8, "Medication", "Was well controlled with Lexapro and occasional milk of magnesia.", "", True, "Yes",
+    (8, "Medication", "Was previously well controlled with Lexapro 20 mg daily and occasional milk of magnesia.", "", True, "Yes",
      "Medication or addiction: Yes [Describe]; Medicines", False, C),
 ])
 
@@ -598,8 +597,7 @@ q.update({
     "How did the symptom start?": {"say": "Suddenly. I felt fine yesterday, and it woke me up last night.",
                                    "has": ["Sudden (minutes to hours)"]},
     "How has the symptom progressed?": UNSURE,
-    "Does the pain move to other parts of the body?": {"say": "No, only my right knee hurts.",
-                                                       "has": ["Pain does not radiate"]},
+    "Does the pain move to other parts of the body?": UNSURE,
     SYMPTOMS: {"say": "It's swollen and warm, it woke me up at night, and I've felt feverish and sweaty.",
                "has": ["Fever", "Swelling in the painful area", "Night pain", "Other [describe]"]},
     "Other [describe]": {"say": "The knee feels warm, and I've been sweaty. I haven't checked my temperature."},
@@ -615,14 +613,14 @@ q.update({
         "say": "I felt fine yesterday and went to a crab feast in the afternoon. Last night I woke up with terrible pain in "
                "my right knee; it's swollen and warm and I didn't injure it. I've felt feverish and sweaty but haven't "
                "checked my temperature. No other joints hurt right now. Several years ago my left big toe was very "
-               "painful and got better with aspirin. I have high blood pressure and take hydrochlorothiazide."},
+               "painful and got better with aspirin. I have high blood pressure and take hydrochlorothiazide 25 mg."},
     HISTORY_LIST: {"say": "I have high blood pressure.", "has": ["High Blood Pressure"]},
     "Diagnosed on": UNSURE,
-    "Current medication": {"say": "Hydrochlorothiazide.", "has": ["[Describe]"]},
-    "[Describe]": {"say": "Hydrochlorothiazide."},
-    MEDICINES: {"say": "Yes, hydrochlorothiazide for my blood pressure.", "has": ["Yes"]},
+    "Current medication": {"say": "Hydrochlorothiazide 25 mg.", "has": ["[Describe]"]},
+    "[Describe]": {"say": "Hydrochlorothiazide 25 mg."},
+    MEDICINES: {"say": "Yes, hydrochlorothiazide 25 mg for my blood pressure.", "has": ["Yes"]},
     "Name of Medications": {"say": "Hydrochlorothiazide.", "has": ["Medication name 1"]},
-    "Medication Name": {"say": "Hydrochlorothiazide."},
+    "Medication Name": {"say": "Hydrochlorothiazide 25 mg."},
     "From": UNSURE, "To": UNSURE,
     "How often do you have trouble taking medicines the way you have been told to take them?": UNSURE,
     HOW_LONG: {"say": "Since last night."},
@@ -639,12 +637,58 @@ add_facts("TC30", [
     (4, "Injury history", "No injury to the knee.", "", True, "Yes", "Trauma or surgery: No", False, Y),
     (5, "Subjective fever / sweating", "Feels feverish and sweaty; temperature not measured.", "", True, "Yes",
      "Symptoms: Fever; Other", True, Y),
-    (6, "Current joint involvement", "Only the right knee hurts now.", "", True, "Yes", "Radiation: Pain does not radiate", False, Y),
+    (6, "Current joint involvement", "No other joints hurt right now.", "", True, "Partly", "Additional information", False, Y),
     (7, "Prior joint episode / treatment response", "Years ago, very bad left big-toe pain that improved with aspirin.", "",
      True, "Yes", "Diagnosed diseases: Other (Describe)", False, Y),
-    (8, "Medical history / medication", "High blood pressure, takes hydrochlorothiazide.", "", True, "Yes",
+    (8, "Medical history / medication", "High blood pressure; takes hydrochlorothiazide 25 mg.", "", True, "Yes",
      "Past history: High Blood Pressure, Current medication", False, C),
+    (9, "Examination", "Temperature 39 C at the visit (exam finding, not from the patient).", "", False, "No", "", False,
+     "Added from Yuqi's note (Nov 26)"),
 ])
+
+# What was done with each of Yuqi's Nov 26 notes: fact ID -> (new Patient Answer or "", response).
+# Where her own patient description blurs a detail on purpose (its notes say so: "a few months", test dates, ages, the
+# antibiotic), the patient still blurs it, so the fact stays at the patient's level and the exact detail stays in
+# Source Text. Otherwise the fact and the patient's words were both made exact.
+KEPT_BLUR = "Kept at the patient's level: your patient description blurs this on purpose (see its note), so the app can't record the exact detail. The exact detail stays in Source Text."
+RESPONSES = {
+    "TC06-F02": ("", KEPT_BLUR),
+    "TC06-F06": ("", KEPT_BLUR),
+    "TC06-F10": ("", "No change needed: the fact already says since the illness began."),
+    "TC06-F15": ("", KEPT_BLUR),
+    "TC07-F02": ("", "Done (Nov 26): fact says 2 years."),
+    "TC07-F05": ("I feel really full even after a normal-sized meal, nothing big.", "Done (Nov 26): fact and patient answer say a normal-sized (modest) meal."),
+    "TC07-F08": ("", KEPT_BLUR),
+    "TC07-F09": ("I don't smoke. / No, I don't chew tobacco.", "Done (Nov 26): fact says no tobacco use; the chewing answer now counts as from the source."),
+    "TC07-F12": ("", KEPT_BLUR),
+    "TC09-F03": ("The past two days.", "Done (Nov 26): fact and patient answer say 2 days."),
+    "TC09-F05": ("", "No change needed: the dark urine after Pyridium is its own fact (F09)."),
+    "TC09-F11": ("", KEPT_BLUR),
+    "TC09-F12": ("", KEPT_BLUR),
+    "TC09-F20": ("My last period was three weeks ago, right on time.", "Done (Nov 26): fact and patient answer say 3 weeks."),
+    "TC14-F01": ("She was cooking in the kitchen and collapsed onto the floor.", "Done (Nov 26): 'suddenly' and the 'Very sudden' answer removed; the app now decides from her words."),
+    "TC14-F03": ("", "Done (Nov 26): fact says after regaining consciousness."),
+    "TC14-F04": ("", "Done (Nov 26): fact and patient answer say after she woke up."),
+    "TC14-F05": ("", "No change needed: the fact already needs both parts."),
+    "TC14-F06": ("", "Done (Nov 26): fact wording matched."),
+    "TC19-F02": ("I'm not sure exactly. It started three days after I came home from college for spring break.", "Done (Nov 26): fact and patient answer say spring break."),
+    "TC19-F04": ("", "Done (Nov 26): fact says pinpoint spots spread from arms and legs to the trunk within hours."),
+    "TC20-F02": ("I see a little blood when I brush.", "Done (Nov 26): 'sometimes' removed from the fact and the patient's words."),
+    "TC20-F07": ("", "Kept: it is in your patient description for TC20. Please confirm it against Dental1 when you can."),
+    "TC21-F03": ("It started at night, around half past midnight, while I was asleep.", "Done (Nov 26): fact and patient answer no longer say the pain woke him."),
+    "TC21-F05": ("I have high blood pressure, and I've been told my cholesterol and blood fats are abnormal.", "Done (Nov 26): fact says abnormal blood lipids."),
+    "TC21-F06": ("It's really intense pain. / It lasted a long time.", "Done (Nov 26): fact says intense, prolonged, duration not given."),
+    "TC27-F01": ("", "No change needed: the patient already says she doesn't know how many days ago."),
+    "TC27-F02": ("", "Checked: the red-flag fix (Morrison, Nov 24) counts 'under my chin' as neck swelling."),
+    "TC27-F05": ("It's also hard to breathe, especially when I lie back.", "Done (Nov 26): 'getting' removed from the fact and the patient's words."),
+    "TC28-F02": ("", "Done (Nov 26): fact and patient answer say several days of hard stools."),
+    "TC28-F04": ("", "Done (Nov 26): Potential Red Flag changed to No."),
+    "TC28-F08": ("It used to be well controlled with Lexapro 20 mg a day and milk of magnesia now and then.", "Done (Nov 26): fact and patient answer give Lexapro 20 mg daily."),
+    "TC30-F05": ("", "Done (Nov 26): the 39 C temperature is added as an exam row (F09, not scored)."),
+    "TC30-F06": ("No other joints hurt right now.", "Done (Nov 26): mapped to Additional information; the radiation question is now answered 'I'm not sure'."),
+    "TC30-F08": ("I have high blood pressure and take hydrochlorothiazide 25 mg.", "Done (Nov 26): fact and patient answer give 25 mg."),
+}
+CASE_ORDER = ["TC06", "TC07", "TC09", "TC14", "TC19", "TC20", "TC21", "TC27", "TC28", "TC30"]
 
 # ---------- red-flag checks (asked by the app's follow-up questions; CHW answers from the story) ----------
 # As for TC01-TC05: a sign the case does not mention is answered "no". These cases have no exam text in Yuqi's
@@ -679,14 +723,29 @@ with open(os.path.join(HERE, "eval_cases_extra.json"), "w", encoding="utf-8") as
                "cases": cases}, f, indent=1, ensure_ascii=False)
 with open(os.path.join(HERE, "eval_patient_answers_extra.json"), "w", encoding="utf-8") as f:
     json.dump(sheets, f, indent=2, ensure_ascii=False)
-# Source Text and Notes from Yuqi's sheet (Test Cases Organization.xlsx, Nov 21), where the fact came from there
-YUQI = os.path.join(HERE, "yuqi_facts.json")
-if os.path.exists(YUQI):
-    yuqi = json.load(open(YUQI, encoding="utf-8"))
-    for fact in facts:
-        if fact["Fact ID"] in yuqi:
-            fact["Source Text"] = yuqi[fact["Fact ID"]]["source"]
-            fact["Notes"] = yuqi[fact["Fact ID"]]["notes"]
+# Yuqi's check (Test Cases Organization.xlsx, Nov 26): her Source Text, Patient Answer, Review Status and Notes, plus
+# the rows she added that are not scored (age, test results, exam). RESPONSES says what was done with each note.
+review = json.load(open(os.path.join(HERE, "extra_case_yuqi_review.json"), encoding="utf-8"))["facts"]
+by_id = {fact["Fact ID"]: fact for fact in facts}
+for fact_id, row in review.items():
+    if fact_id not in by_id:
+        new = {"Case ID": fact_id.split("-")[0], "Fact ID": fact_id}
+        new.update({key: row.get(key, "") for key in facts[0] if key not in new})
+        facts.append(new)
+        by_id[fact_id] = new
+        continue
+    fact = by_id[fact_id]
+    fact["Source Text"] = row["Source Text"]
+    if not fact["Patient Answer"]:
+        fact["Patient Answer"] = row["Patient Answer"]
+    fact["Review Status"] = row["Review Status"] + "; checked by Yuqi (Nov 26)"
+    fact["Notes"] = row["Notes"]
+for fact_id, (answer, response) in RESPONSES.items():
+    fact = by_id[fact_id]
+    if answer:
+        fact["Patient Answer"] = answer
+    fact["Notes"] = (fact["Notes"] + " " if fact["Notes"] else "") + "-> " + response
+facts.sort(key=lambda fact: (CASE_ORDER.index(fact["Case ID"]), fact["Fact ID"]))
 with open(os.path.join(HERE, "eval_key_facts_extra.csv"), "w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(facts[0].keys()))
     writer.writeheader()
