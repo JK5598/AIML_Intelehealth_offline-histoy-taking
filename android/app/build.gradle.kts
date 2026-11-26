@@ -33,8 +33,8 @@ android {
         applicationId = "com.example.intakeapp"
         minSdk = 24
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
         //----- Lia's code: test copy name and ID (see app.copy above) -----
         if (appCopy != null) {
             applicationIdSuffix = ".$appCopy"
