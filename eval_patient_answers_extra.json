@@ -41,13 +41,13 @@
         "say": "I'm not sure how many kilos."
       },
       "Since when have you had this symptom?": {
-        "say": "A few months, and it keeps getting worse.",
+        "say": "It started two or three months ago, and it’s been getting worse.",
         "accept": [
           "month"
         ]
       },
       "Do you have the following symptom(s)?": {
-        "say": "I feel really tired and weak and achy all over, I can't stand the cold, and I've been constipated. I'm sleepy most of the time, my concentration and memory are worse, my voice has gone hoarse and my skin is rough and dry. My periods haven't stopped; they've been very heavy.",
+        "say": "I’ve felt really tired and weak for the past two or three months, and I ache all over. I can’t stand the cold, and I’ve been constipated. I’m sleepy most of the time, even when I’m working. I’ve had trouble concentrating and remembering things ever since this started. My voice has gotten hoarse recently, and my skin feels rough and dry. I’m still getting my periods, but they’ve been much heavier for the past three months.",
         "has": [
           "Constipation",
           "Cold intolerance",
@@ -59,7 +59,7 @@
         ]
       },
       "Other [describe]": {
-        "say": "Sleepy most of the time, poor concentration and memory, hoarse voice, rough dry skin, and my whole body is swelling."
+        "say": "I ache all over and feel sleepy most of the time, even when I’m working. I’ve had trouble concentrating and remembering things ever since this started. My voice has gotten hoarse recently, my skin feels rough and dry, and I’ve been swelling up all over."
       },
       "Have you ever been diagnosed with any of the following specific diseases?": {
         "say": "No, I've never had thyroid problems.",
@@ -68,7 +68,7 @@
         ]
       },
       "Change of Appetite": {
-        "say": "My appetite is gone. I'm barely eating anything.",
+        "say": "I haven’t felt like eating as much as usual, but I keep gaining weight.",
         "has": [
           "Decreased"
         ]
@@ -89,7 +89,7 @@
         "say": "Calcium tablets and vitamins."
       },
       "Additional information": {
-        "say": "My periods have been very heavy for the last few months; they used to be normal. No chest pain, palpitations or trouble breathing. No tingling or numbness, and I haven't passed out. No thyroid surgery or radiation to my neck. I haven't given birth in the last six months. Before this started I wasn't on any medicines, not even birth control pills. No one in my family has had anything like this."
+        "say": "My periods have been much heavier for the past three months. They were normal before that. I haven’t had chest pain, palpitations, or trouble breathing. I haven’t had any tingling or numbness in my hands or feet, and I haven’t passed out. I’ve never had thyroid surgery or radiation to my neck. I haven’t given birth or had a difficult delivery in the last six months. Before this started, I wasn’t taking any medicines, including birth control pills. No one in my family has had anything like this."
       },
       "Have you taken any medication recently?": {
         "say": "Calcium tablets and vitamins. Before this started I wasn't on any medicines, not even birth control pills."
@@ -126,7 +126,7 @@
         "say": "I'm not sure."
       },
       "How long, in days / weeks / months": {
-        "say": "A few months. I can't say exactly."
+        "say": "Two or three months."
       }
     },
     "denies": [
@@ -151,7 +151,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "Doctor, I've been putting on weight and my whole body has been swelling up — it's been going on for a few months now, and it keeps getting worse. The odd thing is, I'm barely eating anything; my appetite is gone. I've been feeling really tired and weak, and achy all over. I can't stand the cold — I always want to be somewhere warm. I've been constipated, and I feel sleepy most of the time, even when I'm supposed to be working. My concentration and memory have gone downhill since this all started. My voice has changed too — it's gone hoarse recently. And my skin feels rough and dry."
+    "opening": "Doctor, I've been putting on weight and my whole body has been swelling up — it's been going on for the past two or three months, and both have been getting worse. The odd thing is, I haven't felt like eating as much as usual, but I keep gaining weight. I've been feeling really tired and weak for the past two or three months, and achy all over. I can't stand the cold — I always want to be somewhere warm. I've been constipated, and I feel sleepy most of the time, even when I'm supposed to be working. My concentration and memory have been giving me trouble since this all started. My voice has changed too — it's gone hoarse recently. And my skin feels rough and dry."
   },
   "TC07": {
     "questions": {
@@ -174,7 +174,7 @@
         ]
       },
       "Smoking history": {
-        "say": "I don't smoke.",
+        "say": "I don't use tobacco.",
         "has": [
           "Never-smoker"
         ]
@@ -202,7 +202,7 @@
         "say": "I'm not sure."
       },
       "Do you have the following symptom(s)?": {
-        "say": "It's a discomfort in my upper stomach, and I feel really full even after a normal-sized meal, nothing big. My weight hasn't changed.",
+        "say": "It's a discomfort in my upper stomach, and I feel really full even after a modest-sized meal. My weight hasn't changed.",
         "has": [
           "Abdominal pain",
           "Other [describe]"
@@ -239,7 +239,7 @@
         "say": "I'm not sure."
       },
       "Other [describe]": {
-        "say": "I feel really full even after a normal-sized meal, nothing big."
+        "say": "I feel really full even after a modest-sized meal."
       },
       "Has anyone of your family members been diagnosed with cancers or gastric/duodenal ulcer?": {
         "say": "Nothing runs in the family that I know of.",
@@ -257,13 +257,13 @@
         ]
       },
       "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
-        "say": "I've had a bunch of tests over the past couple of years, an upper GI series, an ultrasound and a HIDA scan, an endoscopy and a gastric emptying scan, and I was told they were all normal.",
+        "say": "Upper GI series two years ago, abdominal ultrasound and HIDA scan eighteen months ago, upper endoscopy a year ago, and four-hour solid-meal gastric emptying test four months ago, and I was told they were all normal.",
         "has": [
           "Yes [Describe]"
         ]
       },
       "Yes [Describe]": {
-        "say": "Upper GI series, ultrasound and HIDA scan, endoscopy and a gastric emptying scan; all normal."
+        "say": "Upper GI series two years ago, ultrasound and HIDA scan eighteen months ago, endoscopy a year ago, and a gastric emptying test four months ago; all normal."
       },
       "Additional information": {
         "say": "It's there every day for two years; how bad it is changes, but it never goes away. My weight hasn't changed. I really just want to know what this is and what can be done about it."
@@ -275,21 +275,21 @@
         ]
       },
       "Do you have a history of any of the following?": {
-        "say": "I get the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager.",
+        "say": "I get the occasional migraine. I had my appendix out at age seven and my wisdom teeth out at age sixteen.",
         "has": [
           "Operation",
           "Other [Describe]"
         ]
       },
       "What was the operation?": {
-        "say": "Appendix out as a kid, and wisdom teeth out as a teenager.",
+        "say": "I had my appendix and wisdom teeth removed.",
         "has": [
           "Abdomen (Stomach/Liver/Bile/Kidney/Colon)",
           "Head (Eyes/Ears/Nose/Mouth)"
         ]
       },
       "When did it occur?": {
-        "say": "Appendix as a kid, wisdom teeth as a teenager."
+        "say": "Appendix at seven, wisdom teeth at sixteen."
       },
       "Other [Describe]": {
         "say": "Occasional migraines."
@@ -324,7 +324,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a normal-sized meal, nothing big. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of."
+    "opening": "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a modest-sized meal. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out when I was seven and my wisdom teeth out when I was sixteen. I don't use tobacco, and I hardly ever drink. Nothing runs in the family that I know of."
   },
   "TC09": {
     "questions": {
@@ -399,7 +399,7 @@
         "say": "Dark urine now, after the leftover Pyridium."
       },
       "Since when have you had this symptom?": {
-        "say": "The past two days.",
+        "say": "For the past two days.",
         "accept": [
           "2 day",
           "two day",
@@ -422,7 +422,7 @@
         "say": "I'm not sure."
       },
       "Have you ever been diagnosed with any of the following specific diseases?": {
-        "say": "I've had two urinary infections in the past year; the last one was a few months ago. Both cleared up with antibiotics. I've never had a kidney infection.",
+        "say": "I've had two urinary infections in the past year; the last one was four months ago. Both cleared up after I took TMP-SMX, 160/800 mg twice a day for three days each time. I've never had a kidney infection.",
         "has": [
           "Prior urinary tract infection (times)"
         ]
@@ -435,7 +435,7 @@
         ]
       },
       "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": {
-        "say": "I tried cranberry juice and some Pyridium 200 mg left over from my last urinary infection.",
+        "say": "I tried cranberry juice and some Pyridium 200 mg left over from a previous urinary infection.",
         "has": [
           "Yes [Describe]"
         ]
@@ -444,12 +444,12 @@
         "say": "Cranberry juice and leftover Pyridium 200 mg."
       },
       "Additional information": {
-        "say": "My last urinary infection was a few months ago, and both cleared with antibiotics I was given; never a kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I have one partner and we're monogamous, and I've never had an STI. My last period was three weeks ago, right on time. I don't have any children."
+        "say": "My last urinary infection was four months ago. Both infections cleared up after I took TMP-SMX, 160/800 mg twice a day for three days each time. I've never had a kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I'm in a monogamous relationship, and I believe my partner is monogamous too. I've only ever had one sexual partner, and I've never had an STI. My last period was three weeks ago, right on time. I don't have any children."
       },
       "Pregnancy status": {
-        "say": "I don't think so. I'm on the pill and haven't missed any, and my last period was three weeks ago.",
+        "say": "I'm not sure. I'm on the pill and haven't missed any, and my last period was three weeks ago.",
         "has": [
-          "No"
+          "Don't know"
         ]
       },
       "Do you have a history of any of the following?": {
@@ -505,7 +505,7 @@
       "Is the patient breathing very fast, or using neck, chest or belly muscles to breathe? (Child: chest pulling in, nostrils flaring, grunting)": "no",
       "Are the lips or tongue blue or grey?": "no"
     },
-    "opening": "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection."
+    "opening": "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine has looked dark since I took the Pyridium. I've had two urinary infections in the past year, the last one was four months ago, and both cleared up after I took TMP-SMX 160/800 mg twice a day for three days each time. I've never had a kidney infection."
   },
   "TC14": {
     "questions": {
@@ -546,14 +546,14 @@
         ]
       },
       "Since when have you had this symptom?": {
-        "say": "Since she collapsed. She slowly woke up over the next two days.",
+        "say": "I first noticed the weakness when she woke up. She slowly woke up over the next two days.",
         "accept": [
           "day",
           "collapse"
         ]
       },
       "Which part of the body do you feel weakness/paralysis?": {
-        "say": "She can't move the right side of her face or her right arm.",
+        "say": "When she woke up, she couldn't move the right side of her face or her right arm.",
         "has": [
           "One limb/part of one limb",
           "One side of the face"
@@ -572,13 +572,16 @@
         ]
       },
       "How did the symptom start?": {
-        "say": "She was cooking in the kitchen and collapsed onto the floor."
+        "say": "She collapsed onto the floor while she was cooking.",
+        "has": [
+          "Very sudden"
+        ]
       },
       "How has the symptom progressed?": {
         "say": "I'm not sure."
       },
       "Do you have the following symptom(s)?": {
-        "say": "She can't feel it when the right side of her face or her right arm is touched. She understands what we say but can't answer out loud; writing is easier for her. She collapsed and was unconscious, and slowly came round over two days.",
+        "say": "When she woke up, she couldn't feel us touching the right side of her face or her right arm. She understood what we said, but she couldn't answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud.",
         "has": [
           "Paresthesia",
           "Aphasia",
@@ -586,7 +589,7 @@
         ]
       },
       "Describe the abnormal sensation": {
-        "say": "Since she woke up, she can't feel touch there.",
+        "say": "When she woke up, she couldn't feel touch there.",
         "has": [
           "Sensory loss"
         ]
@@ -613,13 +616,13 @@
         "say": "An ambulance came when she collapsed."
       },
       "Additional information": {
-        "say": "She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. She understands what we say but can't answer out loud; it's easier for her to write down what she wants to say."
+        "say": "She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. She understood what we said, but she couldn't answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud."
       },
       "Do you have a history of any of the following?": {
         "say": "I'm not sure."
       },
       "How long, in days / weeks / months": {
-        "say": "Since she collapsed; she came round over two days."
+        "say": "I first noticed the weakness when she woke up. I'm not sure exactly how long ago that was."
       }
     },
     "denies": [],
@@ -641,7 +644,7 @@
       "Are the lips or tongue blue or grey?": "no",
       "Has the patient fainted or nearly fainted with this?": "yes"
     },
-    "opening": "My mother is 77. She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. When she woke up, she couldn’t move the right side of her face or her right arm. She couldn’t feel it when those areas were touched, either. She understood what we said to her, but she couldn’t answer our questions out loud. It was easier for her to write down what she wanted to say."
+    "opening": "My mother is 77. She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. When she woke up, she couldn’t move the right side of her face or her right arm. She couldn’t feel it when those areas were touched, either. She understood what we said to her, but she couldn’t answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud."
   },
   "TC19": {
     "questions": {
@@ -682,7 +685,7 @@
         ]
       },
       "Which part of the body has the rash?": {
-        "say": "First on my body. Then tiny spots on my arms and legs, and within a few hours they spread to my body too.",
+        "say": "The first rash was on my torso. Later, tiny spots appeared on my arms and legs and spread to my torso within a few hours.",
         "has": [
           "All over"
         ]
@@ -691,13 +694,13 @@
         "say": "It started with the fever; I'm not sure exactly how many days."
       },
       "Rate of rash spread": {
-        "say": "The tiny spots spread from my arms and legs to my body within a few hours.",
+        "say": "The tiny spots spread from my arms and legs to my torso within a few hours.",
         "has": [
           "within hours"
         ]
       },
       "How has the rash spread?": {
-        "say": "From my arms and legs to my body.",
+        "say": "The tiny spots spread from my arms and legs to my torso.",
         "has": [
           "Centripetal"
         ]
@@ -751,7 +754,7 @@
         "say": "I'm not sure."
       },
       "Additional information": {
-        "say": "It started three days after I came home from college for spring break: fever, headache and a rash on my body. Then I felt sick, threw up, and the light bothered me. Then tiny spots came on my arms and legs and spread to my body within a few hours. No known medicine allergies, and no contact with ticks that I know of."
+        "say": "It started three days after I came home from college for spring break: fever, headache and a rash on my torso. Then I felt sick, threw up, and the light bothered me. Then tiny spots came on my arms and legs and spread to my torso within a few hours. No known medicine allergies, and no contact with ticks that I know of."
       },
       "Pregnancy status": {
         "say": "No, I'm not pregnant.",
@@ -786,7 +789,7 @@
       "Is the patient confused, very drowsy or hard to wake? (Ask the family too)": "no",
       "Has the patient had a seizure or fit with this illness?": "no"
     },
-    "opening": "I’m 19. Three days after I came home from college for spring break, I got a fever and a headache and noticed a rash on my body. Then I felt sick to my stomach, threw up, and found that the light really bothered me. After that, tiny spots appeared on my arms and legs. Within a few hours, those spots had spread to my body, too. I don’t have any known medicine allergies, and I don’t know of any contact with ticks."
+    "opening": "I’m 19. Three days after I came home from college for spring break, I got a fever and a headache and noticed a rash on my torso. Then I felt sick to my stomach, threw up, and found that the light really bothered me. After that, tiny spots appeared on my arms and legs. Within a few hours, those spots had spread to my torso, too. I don’t have any known medicine allergies, and I don’t know of any contact with ticks."
   },
   "TC20": {
     "questions": {

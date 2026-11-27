@@ -9,8 +9,8 @@
    "sex": "female",
    "complaint": "Weight gain",
    "story": [
-    "Doctor, I've been putting on weight and my whole body has been swelling up — it's been going on for a few months now, and it keeps getting worse. The odd thing is, I'm barely eating anything; my appetite is gone. I've been feeling really tired and weak, and achy all over. I can't stand the cold — I always want to be somewhere warm. I've been constipated, and I feel sleepy most of the time, even when I'm supposed to be working. My concentration and memory have gone downhill since this all started. My voice has changed too — it's gone hoarse recently. And my skin feels rough and dry.",
-    "I haven't had any chest pain, palpitations, or trouble breathing. No tingling or numbness in my hands or feet, and I haven't passed out. My periods have been very heavy for the last few months — they used to be normal. I don't have high blood pressure or diabetes. No history of thyroid problems, thyroid surgery, or radiation to the neck. I haven't given birth or had a difficult delivery in the last six months. I wasn't on any medications, including birth control pills, before this started. No one else in my family has had anything like this. I was given calcium tablets and vitamins at some point."
+    "Doctor, I've been putting on weight and my whole body has been swelling up — it's been going on for the past two or three months, and both have been getting worse. The odd thing is, I haven't felt like eating as much as usual, but I keep gaining weight. I've been feeling really tired and weak for the past two or three months, and achy all over. I can't stand the cold — I always want to be somewhere warm. I've been constipated, and I feel sleepy most of the time, even when I'm supposed to be working. My concentration and memory have been giving me trouble since this all started. My voice has changed too — it's gone hoarse recently. And my skin feels rough and dry.",
+    "I haven't had any chest pain, palpitations, or trouble breathing. No tingling or numbness in my hands or feet, and I haven't passed out. My periods have been very heavy for the past three months, they used to be normal. I don't have high blood pressure or diabetes. No history of thyroid problems, thyroid surgery, or radiation to the neck. I haven't given birth or had a difficult delivery in the last six months. I wasn't on any medications, including birth control pills, before this started. No one else in my family has had anything like this. I was given calcium tablets and vitamins."
    ],
    "only_if_asked": "",
    "exam_findings_not_for_patient": "",
@@ -24,8 +24,8 @@
    "sex": "female",
    "complaint": "Dyspepsia",
    "story": [
-    "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a normal-sized meal, nothing big. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out as a kid and my wisdom teeth out when I was a teenager. I don't smoke, and I hardly ever drink. Nothing runs in the family that I know of.",
-    "I've had a bunch of tests done over the past couple of years — an upper GI series, an ultrasound and a HIDA scan, an endoscopy, and some kind of gastric emptying scan — and I was told they all came back normal. I really just want to know what this is and what can be done about it."
+    "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a modest-sized meal. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out when I was seven and my wisdom teeth out when I was sixteen. I don't use tobacco, and I hardly ever drink. Nothing runs in the family that I know of.",
+    "I had an upper GI series two years ago, an abdominal ultrasound and a HIDA scan eighteen months ago, an upper endoscopy a year ago, and a four-hour solid-meal gastric emptying test four months ago. I was told they were all normal. I really just want to know what this is and what can be done about it."
    ],
    "only_if_asked": "",
    "exam_findings_not_for_patient": "",
@@ -39,7 +39,7 @@
    "sex": "female",
    "complaint": "Urine disturbance",
    "story": [
-    "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine looks dark now. I've had two urinary infections in the past year — the last one was a few months ago — and both cleared up with antibiotics I was given. I've never had a kidney infection.",
+    "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine has looked dark since I took the Pyridium. I've had two urinary infections in the past year, the last one was four months ago, and both cleared up after I took TMP-SMX 160/800 mg twice a day for three days each time. I've never had a kidney infection.",
     "I've been sexually active since I was 18. I'm on the pill and I haven't missed any. I'm in a monogamous relationship right now and I believe my partner is too. I've only ever had one sexual partner. No history of any sexually transmitted infections. My last period was three weeks ago, right on time. I don't have any children."
    ],
    "only_if_asked": "",
@@ -54,7 +54,7 @@
    "sex": "female",
    "complaint": "Muscle weakness or Paralysis",
    "story": [
-    "My mother is 77. She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. When she woke up, she couldn’t move the right side of her face or her right arm. She couldn’t feel it when those areas were touched, either. She understood what we said to her, but she couldn’t answer our questions out loud. It was easier for her to write down what she wanted to say."
+    "My mother is 77. She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. When she woke up, she couldn’t move the right side of her face or her right arm. She couldn’t feel it when those areas were touched, either. She understood what we said to her, but she couldn’t answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud."
    ],
    "only_if_asked": "",
    "exam_findings_not_for_patient": "Her daughter gives the history; the patient can communicate in writing.",
@@ -77,7 +77,7 @@
    "sex": "female",
    "complaint": "Fever & Rash",
    "story": [
-    "I’m 19. Three days after I came home from college for spring break, I got a fever and a headache and noticed a rash on my body. Then I felt sick to my stomach, threw up, and found that the light really bothered me. After that, tiny spots appeared on my arms and legs. Within a few hours, those spots had spread to my body, too. I don’t have any known medicine allergies, and I don’t know of any contact with ticks."
+    "I’m 19. Three days after I came home from college for spring break, I got a fever and a headache and noticed a rash on my torso. Then I felt sick to my stomach, threw up, and found that the light really bothered me. After that, tiny spots appeared on my arms and legs. Within a few hours, those spots had spread to my torso, too. I don’t have any known medicine allergies, and I don’t know of any contact with ticks."
    ],
    "only_if_asked": "",
    "exam_findings_not_for_patient": "Source: she became agitated and combative on the way to hospital (observer account, not at the visit).",

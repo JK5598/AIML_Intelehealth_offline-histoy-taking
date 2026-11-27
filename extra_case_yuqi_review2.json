@@ -1,0 +1,100 @@
+{
+ "about": "Yuqi's second review (Test Cases Description Comparison.docx, Nov 27): the patients now say the exact details instead of blurring them (TC06, TC07, TC09, TC14, TC19). Merged by Claude with the Nov 26 changes she hadn't seen (TC07 'modest-sized meal', TC09 'two days' and 'three weeks', TC19 'spring break'). TC14 onset 'Very sudden' agreed by June (Nov 27).",
+ "stories": {
+  "TC06": [
+   "Doctor, I've been putting on weight and my whole body has been swelling up — it's been going on for the past two or three months, and both have been getting worse. The odd thing is, I haven't felt like eating as much as usual, but I keep gaining weight. I've been feeling really tired and weak for the past two or three months, and achy all over. I can't stand the cold — I always want to be somewhere warm. I've been constipated, and I feel sleepy most of the time, even when I'm supposed to be working. My concentration and memory have been giving me trouble since this all started. My voice has changed too — it's gone hoarse recently. And my skin feels rough and dry.",
+   "I haven't had any chest pain, palpitations, or trouble breathing. No tingling or numbness in my hands or feet, and I haven't passed out. My periods have been very heavy for the past three months, they used to be normal. I don't have high blood pressure or diabetes. No history of thyroid problems, thyroid surgery, or radiation to the neck. I haven't given birth or had a difficult delivery in the last six months. I wasn't on any medications, including birth control pills, before this started. No one else in my family has had anything like this. I was given calcium tablets and vitamins."
+  ],
+  "TC07": [
+   "Doctor, I've had this discomfort in my upper stomach for about two years now. It's there every day — it comes and goes in how bad it is, but it never really goes away. Eating tends to make it worse. And I feel really full, even after a modest-sized meal. My weight hasn't changed. My only other medical thing is the occasional migraine. I had my appendix out when I was seven and my wisdom teeth out when I was sixteen. I don't use tobacco, and I hardly ever drink. Nothing runs in the family that I know of.",
+   "I had an upper GI series two years ago, an abdominal ultrasound and a HIDA scan eighteen months ago, an upper endoscopy a year ago, and a four-hour solid-meal gastric emptying test four months ago. I was told they were all normal. I really just want to know what this is and what can be done about it."
+  ],
+  "TC09": [
+   "Doctor, for the past two days it's been burning when I pee — it comes and goes. I've also been going more often and feeling like I have to go urgently. Once, I saw blood in my urine. I don't have a fever and my back doesn't hurt. I tried cranberry juice and some Pyridium 200 mg I had left over from a previous urinary infection. My urine has looked dark since I took the Pyridium. I've had two urinary infections in the past year, the last one was four months ago, and both cleared up after I took TMP-SMX 160/800 mg twice a day for three days each time. I've never had a kidney infection.",
+   "I've been sexually active since I was 18. I'm on the pill and I haven't missed any. I'm in a monogamous relationship right now and I believe my partner is too. I've only ever had one sexual partner. No history of any sexually transmitted infections. My last period was three weeks ago, right on time. I don't have any children."
+  ],
+  "TC14": [
+   "My mother is 77. She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. When she woke up, she couldn’t move the right side of her face or her right arm. She couldn’t feel it when those areas were touched, either. She understood what we said to her, but she couldn’t answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud."
+  ],
+  "TC19": [
+   "I’m 19. Three days after I came home from college for spring break, I got a fever and a headache and noticed a rash on my torso. Then I felt sick to my stomach, threw up, and found that the light really bothered me. After that, tiny spots appeared on my arms and legs. Within a few hours, those spots had spread to my torso, too. I don’t have any known medicine allergies, and I don’t know of any contact with ticks."
+  ]
+ },
+ "answers": {
+  "TC06": {
+   "Since when have you had this symptom?": "It started two or three months ago, and it’s been getting worse.",
+   "Do you have the following symptom(s)?": "I’ve felt really tired and weak for the past two or three months, and I ache all over. I can’t stand the cold, and I’ve been constipated. I’m sleepy most of the time, even when I’m working. I’ve had trouble concentrating and remembering things ever since this started. My voice has gotten hoarse recently, and my skin feels rough and dry. I’m still getting my periods, but they’ve been much heavier for the past three months.",
+   "Other [describe]": "I ache all over and feel sleepy most of the time, even when I’m working. I’ve had trouble concentrating and remembering things ever since this started. My voice has gotten hoarse recently, my skin feels rough and dry, and I’ve been swelling up all over.",
+   "Change of Appetite": "I haven’t felt like eating as much as usual, but I keep gaining weight.",
+   "Additional information": "My periods have been much heavier for the past three months. They were normal before that. I haven’t had chest pain, palpitations, or trouble breathing. I haven’t had any tingling or numbness in my hands or feet, and I haven’t passed out. I’ve never had thyroid surgery or radiation to my neck. I haven’t given birth or had a difficult delivery in the last six months. Before this started, I wasn’t taking any medicines, including birth control pills. No one in my family has had anything like this.",
+   "How long, in days / weeks / months": "Two or three months."
+  },
+  "TC07": {
+   "Smoking history": "I don't use tobacco.",
+   "Do you have the following symptom(s)?": "It's a discomfort in my upper stomach, and I feel really full even after a modest-sized meal. My weight hasn't changed.",
+   "Other [describe]": "I feel really full even after a modest-sized meal.",
+   "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": "Upper GI series two years ago, abdominal ultrasound and HIDA scan eighteen months ago, upper endoscopy a year ago, and four-hour solid-meal gastric emptying test four months ago, and I was told they were all normal.",
+   "Yes [Describe]": "Upper GI series two years ago, ultrasound and HIDA scan eighteen months ago, endoscopy a year ago, and a gastric emptying test four months ago; all normal.",
+   "Do you have a history of any of the following?": "I get the occasional migraine. I had my appendix out at age seven and my wisdom teeth out at age sixteen.",
+   "What was the operation?": "I had my appendix and wisdom teeth removed.",
+   "When did it occur?": "Appendix at seven, wisdom teeth at sixteen."
+  },
+  "TC09": {
+   "Since when have you had this symptom?": "For the past two days.",
+   "Have you ever been diagnosed with any of the following specific diseases?": "I've had two urinary infections in the past year; the last one was four months ago. Both cleared up after I took TMP-SMX, 160/800 mg twice a day for three days each time. I've never had a kidney infection.",
+   "Have you taken any treatment (including self-medication or home remedies) or seen any health provider for this problem before coming here today?": "I tried cranberry juice and some Pyridium 200 mg left over from a previous urinary infection.",
+   "Additional information": "My last urinary infection was four months ago. Both infections cleared up after I took TMP-SMX, 160/800 mg twice a day for three days each time. I've never had a kidney infection. I've been sexually active since 18, I'm on the pill and haven't missed any, I'm in a monogamous relationship, and I believe my partner is monogamous too. I've only ever had one sexual partner, and I've never had an STI. My last period was three weeks ago, right on time. I don't have any children.",
+   "Pregnancy status": "I'm not sure. I'm on the pill and haven't missed any, and my last period was three weeks ago."
+  },
+  "TC14": {
+   "Since when have you had this symptom?": "I first noticed the weakness when she woke up. She slowly woke up over the next two days.",
+   "Which part of the body do you feel weakness/paralysis?": "When she woke up, she couldn't move the right side of her face or her right arm.",
+   "How did the symptom start?": "She collapsed onto the floor while she was cooking.",
+   "Do you have the following symptom(s)?": "When she woke up, she couldn't feel us touching the right side of her face or her right arm. She understood what we said, but she couldn't answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud.",
+   "Describe the abnormal sensation": "When she woke up, she couldn't feel touch there.",
+   "Additional information": "She was cooking in the kitchen when she collapsed onto the floor, and I called an ambulance. She slowly regained consciousness over the next two days. She understood what we said, but she couldn't answer our questions out loud. It was easier for her to write down what she wanted to say than to say it out loud.",
+   "How long, in days / weeks / months": "I first noticed the weakness when she woke up. I'm not sure exactly how long ago that was."
+  },
+  "TC19": {
+   "Which part of the body has the rash?": "The first rash was on my torso. Later, tiny spots appeared on my arms and legs and spread to my torso within a few hours.",
+   "Rate of rash spread": "The tiny spots spread from my arms and legs to my torso within a few hours.",
+   "How has the rash spread?": "The tiny spots spread from my arms and legs to my torso.",
+   "Additional information": "It started three days after I came home from college for spring break: fever, headache and a rash on my torso. Then I felt sick, threw up, and the light bothered me. Then tiny spots came on my arms and legs and spread to my torso within a few hours. No known medicine allergies, and no contact with ticks that I know of."
+  }
+ },
+ "has": {
+  "TC14": {
+   "How did the symptom start?": [
+    "Very sudden"
+   ]
+  },
+  "TC09": {
+   "Pregnancy status": [
+    "Don't know"
+   ]
+  }
+ },
+ "facts": {
+  "TC06-F02": "Weight gain and generalized swelling for 2-3 months.",
+  "TC06-F06": "Tiredness and marked weakness for 2-3 months.",
+  "TC06-F15": "Heavy periods for the past 3 months; previously normal.",
+  "TC07-F08": "Appendix removed at age 7; wisdom teeth removed at age 16.",
+  "TC07-F12": "Earlier tests reported normal: upper GI series 2 years ago, abdominal ultrasound and HIDA scan 18 months ago, upper endoscopy 12 months ago, 4-hour solid-meal gastric emptying test 4 months ago.",
+  "TC09-F11": "Both earlier infections cleared with TMP-SMX 160/800 mg twice daily for 3 days.",
+  "TC09-F12": "The last infection was 4 months ago.",
+  "TC14-F01": "Collapsed suddenly onto the kitchen floor while cooking."
+ },
+ "fact_protocol": {
+  "TC14-F01": "How did it start: Very sudden; Additional information"
+ },
+ "responses": {
+  "TC06-F02": "Done (Nov 27): Yuqi's second review; the patient now says 2-3 months.",
+  "TC06-F06": "Done (Nov 27): Yuqi's second review; the patient now says 2-3 months.",
+  "TC06-F15": "Done (Nov 27): Yuqi's second review; the patient now says 3 months.",
+  "TC07-F08": "Done (Nov 27): Yuqi's second review; the patient now gives the ages.",
+  "TC07-F12": "Done (Nov 27): Yuqi's second review; the patient now gives each test's timing.",
+  "TC09-F11": "Done (Nov 27): Yuqi's second review; the patient now names TMP-SMX and the dose.",
+  "TC09-F12": "Done (Nov 27): Yuqi's second review; the patient now says 4 months.",
+  "TC14-F01": "Done (Nov 27): onset 'Very sudden' (a collapse while cooking), agreed by June and Yuqi."
+ }
+}

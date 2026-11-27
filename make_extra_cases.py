@@ -50,6 +50,10 @@ cases = []
 sheets = {}
 facts = []
 stories = json.load(open(os.path.join(HERE, "extra_case_stories.json"), encoding="utf-8"))
+# Yuqi's second review (Nov 27): exact details in TC06, TC07, TC09, TC14, TC19 (see extra_case_yuqi_review2.json)
+review2 = json.load(open(os.path.join(HERE, "extra_case_yuqi_review2.json"), encoding="utf-8"))
+for case_id, story in review2["stories"].items():
+    stories[case_id]["story"] = story
 
 
 def add_case(case_id, source, diagnosis, age, sex, complaint, expected, only_if_asked="", notes=""):
@@ -713,6 +717,15 @@ sheets["TC19"]["checks"].update({
     "Has the patient had a seizure or fit with this illness?": "no",
 })   # neck stiffness: not described in the draft, so left unanswered (the simulated CHW says 'unsure')
 
+for case_id, answers in review2["answers"].items():
+    for question, say in answers.items():
+        entry = dict(sheets[case_id]["questions"][question])
+        entry["say"] = say
+        sheets[case_id]["questions"][question] = entry
+for case_id, labels in review2["has"].items():
+    for question, has in labels.items():
+        sheets[case_id]["questions"][question] = dict(sheets[case_id]["questions"][question], has=has)
+
 for case in cases:
     sheets[case["id"]]["opening"] = case["story"][0]
 
@@ -740,6 +753,12 @@ for fact_id, row in review.items():
         fact["Patient Answer"] = row["Patient Answer"]
     fact["Review Status"] = row["Review Status"] + "; checked by Yuqi (Nov 26)"
     fact["Notes"] = row["Notes"]
+for fact_id, text in review2["facts"].items():
+    by_id[fact_id]["Expected Fact"] = text
+for fact_id, text in review2["fact_protocol"].items():
+    by_id[fact_id]["Protocol question"] = text
+for fact_id, response in review2["responses"].items():
+    RESPONSES[fact_id] = ("", response)
 for fact_id, (answer, response) in RESPONSES.items():
     fact = by_id[fact_id]
     if answer:
